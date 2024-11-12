@@ -1,0 +1,583 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Protest+Strike&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:700');
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100vh; /* 전체 페이지 높이를 100vh로 설정 */
+    display: flex;
+    overflow-y: hidden;
+    box-sizing: border-box;
+}
+
+.container {
+    z-index:4;
+    flex-shrink: 1;
+    display: flex;
+    width: 30vw;
+
+}
+
+.sidebar {
+   
+    width: 200px;
+    background-color: #243642;
+    height: 100vh; /* 사이드바 높이를 100vh로 설정 */
+    position: fixed;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 20px 0;
+}
+
+.sidebar ul li a {
+    font-size: 19px;
+    font-family: "Protest Strike", sans-serif;
+    color: white;
+    text-decoration: none;
+    padding: 15px;
+    display: block;
+}
+
+
+
+.sidebar ul li a:hover {
+    transition: 0.5s;
+    background-color: #629584;
+    border-radius: 20px;
+    margin: 10px;
+}
+
+.content {
+    min-width: 300px;
+    flex: 0 1 auto;
+    text-align: center;
+    background-color: #387478;
+    overflow-x: hidden;
+    margin-left: 200px; /* 사이드바 너비 + 여백 */
+    height: 100vh; /* 콘텐츠 영역 높이를 100vh로 설정 */
+    overflow-y: scroll; /* 세로 스크롤 가능 */
+    width: 20vw;
+    padding: 10px;
+}
+
+ 
+        body{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-y: hidden;
+
+        }
+  
+        .draggable {
+            width: 100px;
+            height: 100px;
+            cursor: move;
+            display: inline-block;
+        }
+
+        .resizable {
+            position: absolute;
+            display: inline-block;
+        }
+        .resizer {
+            width: 10px;
+            height: 10px;
+            background: #000;
+            position: absolute;
+            right: -5px;
+            bottom: -5px;
+            cursor: se-resize;
+            border-radius: 50%;
+            display: none;
+        }
+        .resizerR {
+            width: 10px;
+            height: 10px;
+            background: #000;
+            position: absolute;
+            right: -5px;
+            top: 47%;
+            cursor: e-resize;
+            border-radius: 50%;
+            display: none;
+        } 
+        .resizerL {
+            width: 10px;
+            height: 10px;
+            background: #000;
+            position: absolute;
+            left: -5px;
+            top: 47%;
+            cursor: w-resize;
+            border-radius: 50%;
+            display: none;
+        }
+        .resizerB {
+            width: 10px;
+            height: 10px;
+            background: #000;
+            position: absolute;
+            left: 47%;
+            bottom: -5px;
+            cursor: s-resize;
+            border-radius: 50%;
+            display: none;
+        }
+        .resizerT {
+            width: 10px;
+            height: 10px;
+            background: #000;
+            position: absolute;
+            left: 47%;
+            top: -5px;
+            cursor: n-resize;
+            border-radius: 50%;
+            display: none;
+        }    
+        .resizerLB {
+            width: 10px;
+            height: 10px;
+            background: #000;
+            position: absolute;
+            left: -5px;
+            bottom: -5px;
+            cursor: sw-resize;
+            border-radius: 50%;
+            display: none;
+        }
+        .resizerLT {
+            width: 10px;
+            height: 10px;
+            background: #000;
+            position: absolute;
+            left: -5px;
+            top: -5px;
+            cursor: nw-resize;
+            border-radius: 50%;
+            display: none;
+        }
+        .resizerRT {
+            width: 10px;
+            height: 10px;
+            background: #000;
+            position: absolute;
+            right: -5px;
+            top: -5px;
+            cursor: ne-resize;
+            border-radius: 50%;
+            display: none;
+        }
+        
+		.z-index-controls {
+		    position: absolute;
+		    top: -46px;
+		    left: -5px;
+		    display: none;
+		    flex-direction: row;
+		}
+        .z-index-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #00AE68;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 5px;
+        }
+        .text-box {
+            cursor: move;
+            white-space: normal;
+            background-color: transparent;
+        }
+
+        .text-box.selected {
+            border: 1px solid #000;
+        }	
+        
+		
+    		.delete-button {     
+            background-color: #00AE68;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            margin: 0 5px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+		}
+        
+
+
+.fill-text{
+    background-color: #000;
+    color: #00AE68;
+}
+.copy-button {
+    background-color: #00AE68;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    margin: 0 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.rounded {
+    -webkit-appearance: none; /* 크롬 및 사파리에서 기본 스타일 제거 */
+    appearance: none; /* 기본 스타일 제거 */
+    width: 50px; /* 크기 조정 */
+    height: 50px; /* 크기 조정 */
+    border: none; /* 기본 테두리 제거 */
+    border-radius: 50%; /* 동그란 모양 */
+    cursor: pointer; /* 마우스 커서 변경 */
+    outline: none; /* 포커스 아웃라인 제거 */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+}
+
+.rounded::-webkit-color-swatch {
+    border-radius: 50%; /* 색상 스와치 동그랗게 */
+}
+
+.rounded::-moz-color-swatch {
+    border-radius: 50%; /* 색상 스와치 동그랗게 */
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.modal {
+   
+    display: none; /* 기본적으로 모달을 숨김 */
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* 검은색 배경 */
+}
+
+.modal-content {
+    border-radius: 20px;
+    background-color: #fff;
+    width: 600px; /* 모달 너비 */
+    height: 600px; /* 모달 높이 */
+    position: absolute; /* 절대 위치 설정 */
+    top: 50%; /* 세로 중앙 */
+    left: 50%; /* 가로 중앙 */
+    transform: translate(-50%, -50%); /* 중앙 정렬 */
+    
+    border: 1px solid #888;
+    text-align: center; /* 내용 가운데 정렬 */
+}
+
+.union {
+    color: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 420px;
+    height: 420px;
+    border: dashed gray 1px;
+    position: relative;
+    overflow: hidden;
+    margin: 20px auto; /* 가운데 정렬 및 위아래 간격 */
+}
+
+.button-container {
+    width: 100%;
+    position: absolute;
+    bottom: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    position: relative;
+    display: flex;
+    justify-content: center; /* 버튼 가운데 정렬 */
+    gap: 20px; /* 버튼 간 간격 */
+    margin-top: 20px; /* 버튼 위 간격 */
+
+}
+
+.modal-button {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.close {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+
+#startButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+
+.container2{
+
+    width: 100%;
+    height: 100%;
+}
+
+
+
+.QRmodal {
+    
+    display: none; /* 기본적으로 모달을 숨김 */
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* 검은색 배경 */
+}
+
+.QRmodal-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    border-radius: 20px;
+    background-color: #fff;
+    width: 700px; /* 모달 너비 */
+    height: 700px; /* 모달 높이 */
+    position: absolute; /* 절대 위치 설정 */
+    top: 50%; /* 세로 중앙 */
+    left: 50%; /* 가로 중앙 */
+    transform: translate(-50%, -50%); /* 중앙 정렬 */
+    
+    border: 1px solid #888;
+    text-align: center; /* 내용 가운데 정렬 */
+}
+
+#QRImage{
+    color: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 420px;
+    height: 420px;
+    border: dashed gray 1px;
+    margin: 20px auto; /* 가운데 정렬 및 위아래 간격 */
+
+}
+
+
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+}
+
+.card {
+    width: 420px;
+    height: 420px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
+
+#card-front, #card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    border-radius: 10px;
+}
+
+#card-front {
+    
+    color: white;
+    border: 3px dashed gray;
+}
+
+#card-back {
+    transform: rotateY(180deg);
+    background-color: #f44336;
+    color: white;
+}
+
+
+
+.styleBtns{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #243642;
+    width: 100%;
+    height: 60px;
+}
+
+.styleInput{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #243642;
+    width: 100%;
+    height: 60px;
+}
+
+#drop-area {
+    margin: 40px;
+    border-radius: 40px;
+    border: dashed #243642;
+    width: 42rem;
+    height: 42rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btnContainer{
+    margin-left: 10px;
+}
+
+
+.btns{
+    
+    font-size: 15px;
+    border-radius: 5px;
+    border: none;
+    background-color: white;
+    color: #00AE68;
+    margin: 5px;
+    padding: 5px 17px;
+}
+
+.btns:hover{
+    cursor: pointer;
+    transition: 0.5s;
+    background-color: #00AE68;
+    color: white;
+}
+
+input[type="file"] {
+    display: none;
+  }
+
+  .labels{
+    font-size: 15px;
+    display: inline-block;
+    color: #00AE68;
+    padding: 5px 17px;
+    background-color: white;
+    border: none;
+    border-radius: 5px;
+    margin: 10px 10px;
+
+  }
+ .labels:hover{
+    cursor: pointer;
+    background-color: #00AE68;
+    color: white;
+    transition: 0.5s;
+  }
+
+  .slider {
+    margin: 20px;
+    width: 120px; /* 슬라이더 크기 조절 */
+    accent-color:#08f596;
+    margin-left: 20px;
+}
+
+#colorInput{
+    border-radius: 5px;
+    margin-right: 20px;
+}
+
+.QRlabel, .modalLabel{
+    color: white;
+    padding: 11px 22px;
+    background-color: #00AE68;
+    border: none;
+    border-radius: 5px;
+    margin: 10px;
+}
+
+.QRlabel:hover,.modalLabel:hover{
+    cursor: pointer;
+}
+
+section{
+    width: 100%;
+    height: 100%;
+}
+
+
+
+#section5 > svg{
+    width: 70px;
+    height: 70px;
+    margin: 5px;
+}
+.selection-rectangle {
+    position: absolute;
+    border: 2px #387478 solid;
+    background-color:#08f596;
+    opacity: 0.5;
+    pointer-events: none;
+    will-change: transform, width, height;
+  }
+
+  .styleInputContainer{
+    margin-left: 10px;
+  }
+
+.inputContainer2{
+    margin: 5px;
+}
+
+  .angle{
+    display: inline-block;
+    border-radius: 5px;
+    border:#00AE68 1px solid;
+  }
+
+ input[type=number] {
+    
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
