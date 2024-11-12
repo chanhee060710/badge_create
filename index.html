@@ -1012,9 +1012,9 @@
                                                 </svg>     
                </section>
                <section id="section6">
-                <button class="btns" id="add-text">Text</button>
-                <button class="btns" id="add-circle"><i class="fa-solid fa-font"></i></button>
-                <button class="btns" id="add-reverse-circle"><i class="fa-solid fa-font"></i></button>
+                <button class="textbtn" id="add-text">Add Text</button>
+                <button class="textbtn" id="add-circle">CircleText</button>
+                <button class="textbtn" id="add-reverse-circle">Reverse Circle Text</button>
                </section>
                <section id="section7">
                 <label class="filelabel" for="fileInput">Upload New Image</label>
@@ -1026,7 +1026,6 @@
         </div>
         </div>
         <div class="container2">  
-            
             <nav class="styleBtns">
                 <div class="btnContainer">
                     <button class="btns" id="save-button"><i class="fa-solid fa-floppy-disk"></i></button>
@@ -1035,8 +1034,6 @@
                     <button class="btns" id="openModal"><i class="fa-solid fa-id-badge"></i></button>
                </div>
                 <div class="inputContainer"></div>
-                       
-
             </nav>
             <nav class="styleInput" id="textInput">
                 <div class="styleInputContainer"><button class="btns" id="redoBtn"><i class="fa-solid fa-rotate-left"></i></button>
@@ -1063,25 +1060,20 @@
                     <span class="close" id="closeModal">&times;</span>
                 </div>
             </div>
-    
-    
             <div id="QRmodal" class="QRmodal">
                 <div class="QRmodal-content">
                     <h2>QR Save</h2>
                     <div class="card-container">
                         <div class="card">
                             <div id="card-front">
-
                             </div>
                             <div id="card-back">
                                 <form action="/qrcode">
                                     <button type="submit">QR 생성</button>
-                                </form>
-                                
+                                </form>        
                             </div>
                         </div>
                     </div>
-                    
                     <div class="filebox">
                     <label class="QRlabel" for="QRFile">Upload Your Image</label>
                     <input type="file" id="QRFile"> 
@@ -1090,12 +1082,7 @@
                 </div>
             </div>
             
-        </div>
-          
-        
-        
-        <script src="../js/main.js"> </script>
-        
-            
+        </div> 
+        <script src="../js/main.js"> </script>    
 </body>
 </html>

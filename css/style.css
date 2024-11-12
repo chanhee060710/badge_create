@@ -596,7 +596,7 @@ input[type=number] {
 
 .filelabel{
         font-weight: 600;
-        font-size: 20px;
+        font-size: 15px;
         display: block;
         color: #00AE68;
         padding: 5px 17px;
@@ -613,3 +613,28 @@ input[type=number] {
     color: white;
     transition: 0.5s;
   }
+
+ .textbtn{
+    width: 200px;
+    border: none;
+    padding: 15px;
+    color: #00AE68;
+    margin: 20px;
+   font-size: 15px;
+   font-weight: 700;
+    background-color: white;
+    border-radius: 10px;
+ }
+
+ #section6{
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+ }
+
+ .textbtn:hover{
+    cursor: pointer;
+    transition: 0.5s;
+    background-color: #00AE68;
+    color: white;
+}

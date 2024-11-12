@@ -1143,7 +1143,6 @@ function initResizeL(e) {
    function moveDraggedImage(e) {
        if (draggedImage) {
            positionElement(draggedImage, e.clientX - offsetX, e.clientY - offsetY);
-           
        }
    }
 
@@ -1582,7 +1581,7 @@ reverseCircleTextButton.addEventListener('click', () => {
 
     saveButton.addEventListener('click', () => {
         const saveName = prompt("이미지의 이름을 정해주세요")
-        if(saveName==null){
+        if(saveName==null || saveName==""){
             return;
         }else{
             dropArea.style.border = "none"
@@ -1843,7 +1842,6 @@ function handleFolder2Upload() {
     checkStartButton();
 }
 
-
 function checkStartButton() {
     if (folder1Files.length > 0 && folder2Files.length > 0) {
         startButton.disabled = false;
@@ -1851,7 +1849,6 @@ function checkStartButton() {
         startButton.disabled = true;
     }
 }
-
 function startProcessing() {
     if (folder1Files.length > 0 && folder2Files.length > 0) {
         const folder1Item = union.querySelector(`#folder1-item`);
