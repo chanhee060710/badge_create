@@ -135,47 +135,40 @@ svgs.forEach(svg => {
   function endDrag() {
     if (isDragging) {
         isDragging = false;
-
-        const rect = selectionRectangle ? selectionRectangle.getBoundingClientRect() : null;
-        const boxWidth = rect ? rect.width : 0;
-        const boxHeight = rect ? rect.height : 0;
+        const rect = selectionRectangle.getBoundingClientRect();
+        const boxWidth = rect.width;
+        const boxHeight = rect.height;
         let anySelected = false;
+
         deselectAll();
         const minDragBoxSize = 10; 
-
         if (boxWidth > minDragBoxSize && boxHeight > minDragBoxSize) {
 
             elements.forEach((element) => {
                 const isInRect = isElementInRect(element, rect);
                 if (isInRect) {
-                    anySelected = true;
+                    anySelected = true; 
+
                     showResizers(element);
                 }
             });
         } else {
-            if (rect) {
-                elements.forEach((element) => {
-                    if (isElementInRect(element, rect)) {
-                        anySelected = true;
-                        toggleSelectedElement(element);
-                    }
-                });
-            }
+            dropArea.removeChild(selectionRectangle)  
+            showResizers(rect);
         }
+
         if (selectionRectangle) {
-            selectionRectangle.style.display = 'none';
-            if (dropArea.contains(selectionRectangle)) {
-                dropArea.removeChild(selectionRectangle);
-            }
-            selectionRectangle = null;
+            selectionRectangle.style.display = 'none'; 
+            dropArea.removeChild(selectionRectangle); 
+            selectionRectangle = null; 
         }
+
         if (!anySelected) {
             deselectAll();
         }
     }
     isDraggingElement = false;
 }
-
 
 
   function makeElementDraggable(element) {
@@ -440,6 +433,7 @@ function createImage(src) {
        
 
        if (dropArea.children) {
+        updateButtonStates(selectedElement);
         console.log(dropArea.children.firstChild)
 showResizers(selectedElement);
 
@@ -701,7 +695,7 @@ blindResizers(selectedElement);
     newItem.appendChild(createResizerRT());
     newItem.appendChild(createZIndexControls(newItem));
 }
-   function createResizer() {
+function createResizer() {
     const resizer = document.createElement('div');
     resizer.classList.add('resizer');
     resizer.style.zIndex = 999;
@@ -710,231 +704,386 @@ blindResizers(selectedElement);
     });
     return resizer;
 }
-
 function initResize(e) {
-     e.preventDefault();
-     const resizableElement = e.target.parentElement;
+    e.preventDefault();
+    const resizableElement = e.target.parentElement;
 
-     const isTextBox = resizableElement.classList.contains('text-box');
-     const isCircleText = resizableElement.classList.contains('circle-text');
-     let editableArea, originalFontSize, originalHeight;
-     
-     if (isTextBox&&!isCircleText) {
-         editableArea = resizableElement.querySelector('.editable-area');
-         if (!editableArea) return;
-         originalFontSize = parseFloat(getComputedStyle(editableArea).fontSize);
-         originalHeight = resizableElement.offsetHeight;
-     }
+    const isTextBox = resizableElement.classList.contains('text-box');
+    const isCircleText = resizableElement.classList.contains('circle-text');
 
-     const startWidth = resizableElement.offsetWidth;
-     const startHeight = resizableElement.offsetHeight;
-     const aspectRatio = startWidth / startHeight;
 
-     isResizing = true;
-     window.addEventListener('mousemove', startResize);
-     window.addEventListener('mouseup', stopResize);
+    const startWidth = resizableElement.offsetWidth;
+    const startHeight = resizableElement.offsetHeight;
+    const aspectRatio = startWidth / startHeight;
 
-     function startResize(e) {
-         const newWidth = e.clientX - resizableElement.getBoundingClientRect().left;
-         const newHeight = newWidth / aspectRatio;
+    isResizing = true;
+    window.addEventListener('mousemove', startResize);
+    window.addEventListener('mouseup', stopResize);
 
-         if (newHeight > 0) {
-             resizableElement.style.width = `${newWidth}px`;
-             resizableElement.style.height = `${newHeight}px`;
-             if (isTextBox&&!isCircleText) {
-                 const heightRatio = newHeight / originalHeight;
-                 const newFontSize = originalFontSize * heightRatio;
-                 editableArea.style.fontSize = `${newFontSize}px`;
-             } 
-         }
-     }
+    function startResize(e) {
+        const newWidth = e.clientX - resizableElement.getBoundingClientRect().left;
+        const newHeight = newWidth / aspectRatio;
 
+        if (newHeight > 0) {
+            if (isTextBox&&!isCircleText) {
+               resizableElement.style.width = `${e.clientX - resizableElement.getBoundingClientRect().left}px`;
+               resizableElement.style.height = `${e.clientY - resizableElement.getBoundingClientRect().top}px`;
+            } else {
+               resizableElement.style.width = `${newWidth}px`;
+               resizableElement.style.height = `${newHeight}px`;
+            }
+        }
+    }
+
+
+   function stopResize() {
+        isResizing = false;
+       window.removeEventListener('mousemove', startResize);
+       window.removeEventListener('mouseup', stopResize);
+       saveState();
+   }
+}
+
+function createResizerR() {
+   const resizer = document.createElement('div');
+   resizer.classList.add('resizerR');
+   resizer.style.zIndex = 999;
+   resizer.addEventListener('mousedown', function (e) {
+       initResizeR(e, parent);
+   });
+   return resizer;
+}
+
+function initResizeR(e) {
+   e.preventDefault();	
+   const resizableElement = e.target.parentElement;
+   isResizing = true;
+   window.addEventListener('mousemove', startResize);
+   window.addEventListener('mouseup', stopResize);
+
+   function startResize(e) {
+       const rect = resizableElement.getBoundingClientRect();
+       let newWidth = e.clientX - rect.left;
+       if (newWidth > 0) {
+            resizableElement.style.width = `${newWidth}px`;
+        }
+   }
+
+   function stopResize() {
+       isResizing = false;
+       window.removeEventListener('mousemove', startResize);
+       window.removeEventListener('mouseup', stopResize);
+       saveState();
+   }
+}
+
+function createResizerL() {
+    const resizer = document.createElement('div');
+    resizer.classList.add('resizerL');
+    resizer.style.zIndex = 999;    
+    resizer.addEventListener('mousedown', function (e) {
+        initResizeL(e);
+    });
+    return resizer;
+}
+
+function initResizeL(e) {
+    e.preventDefault();
+    const resizableElement = e.target.parentElement;
+    const startX = e.clientX;
+    const startWidth = resizableElement.offsetWidth;
+    const startLeft = resizableElement.offsetLeft;
+    isResizing = true;
+    window.addEventListener('mousemove', startResize);
+    window.addEventListener('mouseup', stopResize);
+
+    function startResize(e) {
+        const newWidth = startWidth - (e.clientX - startX);
+        const newLeft = startLeft + (e.clientX - startX);
+
+        if (newWidth > 0) {
+            resizableElement.style.width = `${newWidth}px`;
+            resizableElement.style.left = `${newLeft}px`;
+        }
+    }
 
     function stopResize() {
-         isResizing = false;
+        isResizing = false;
         window.removeEventListener('mousemove', startResize);
         window.removeEventListener('mouseup', stopResize);
         saveState();
     }
 }
 
-        function createResizerLB() {
-             const resizer = document.createElement('div');
-             resizer.classList.add('resizerLB');
-             resizer.style.zIndex = 999;
-             resizer.addEventListener('mousedown', function (e) {
-                 initResizeLB(e);
-             });
-             return resizer;
-         }
-        function initResizeLB(e) {
-             e.preventDefault();
-             const resizableElement = e.target.parentElement;
-             const isTextBox = resizableElement.classList.contains('text-box');
-             const isCircleText = resizableElement.classList.contains('circle-text');
-             let editableArea, originalFontSize, originalHeight;
+   function createResizerB() {
+        const resizer = document.createElement('div');
+        resizer.classList.add('resizerB');
+        resizer.style.zIndex = 999;
+        resizer.addEventListener('mousedown', function (e) {
+            initResizeB(e);
+        });
+        return resizer;
+    }
 
-             if (isTextBox&&!isCircleText) {
-                 editableArea = resizableElement.querySelector('.editable-area');
-                 originalFontSize = parseFloat(getComputedStyle(editableArea).fontSize);
-                 originalHeight = resizableElement.offsetHeight;
-             }
+   function initResizeB(e) {
+        e.preventDefault();
+        const resizableElement = e.target.parentElement;
+        const isTextBox = resizableElement.classList.contains('text-box');
+        let editableArea, originalFontSize, originalHeight;
 
-             const startX = e.clientX;
-             const startY = e.clientY;
-             const startWidth = resizableElement.offsetWidth;
-             const startLeft = resizableElement.offsetLeft;
-             const startHeight = resizableElement.offsetHeight;
-             const aspectRatio = startWidth / startHeight;
-             isResizing = true;
+        if (isTextBox&&!isCircleText) {
+            editableArea = resizableElement.querySelector('.editable-area');
+            originalFontSize = parseFloat(getComputedStyle(editableArea).fontSize);
+            originalHeight = resizableElement.offsetHeight;
+        }
 
-             window.addEventListener('mousemove', startResize);
-             window.addEventListener('mouseup', stopResize);
+        const startY = e.clientY;
+        const startHeight = resizableElement.offsetHeight;
+        isResizing = true;
 
-             function startResize(e) {
-                 const newWidth = startWidth - (e.clientX - startX);
-                 const newLeft = startLeft + (e.clientX - startX);
-                 let newHeight = newWidth / aspectRatio;
+        window.addEventListener('mousemove', startResize);
+        window.addEventListener('mouseup', stopResize);
 
-                 if (newWidth > 0 && newHeight > 0) {
-                     resizableElement.style.width = `${newWidth}px`;
-                     resizableElement.style.height = `${newHeight}px`;
-                     resizableElement.style.left = `${newLeft}px`;
-                     if (isTextBox&&!isCircleText) {
-                         const heightRatio = newHeight / originalHeight;
-                         const newFontSize = originalFontSize * heightRatio;
-                         editableArea.style.fontSize = `${newFontSize}px`;
-                     }
-                 }
-             }
+        function startResize(e) {
+            let newHeight = startHeight + (e.clientY - startY);
 
-             function stopResize() {
-                 isResizing = false;
-                 window.removeEventListener('mousemove', startResize);
-                 window.removeEventListener('mouseup', stopResize);
-                 saveState()
-             }
-         }
+            if (newHeight > 0) {
+                resizableElement.style.height = `${newHeight}px`;
+                if (isTextBox&&!isCircleText) {
+                    const heightRatio = newHeight / originalHeight;
+                    const newFontSize = originalFontSize * heightRatio;
+                    editableArea.style.fontSize = `${newFontSize}px`;
+                }
+            }
+        }
 
-         function createResizerLT() {
-             const resizer = document.createElement('div');
-             resizer.classList.add('resizerLT');
-             resizer.style.zIndex = 999;
-             resizer.addEventListener('mousedown', function (e) {
-                 initResizeLT(e);
-             });
-             return resizer;
-         }
-         function initResizeLT(e) {
-             e.preventDefault();
-             const resizableElement = e.target.parentElement;
-             const isTextBox = resizableElement.classList.contains('text-box');
-             const isCircleText = resizableElement.classList.contains('circle-text');
-             let editableArea, originalFontSize, originalHeight;
+        function stopResize() {
+            isResizing = false;
+            window.removeEventListener('mousemove', startResize);
+            window.removeEventListener('mouseup', stopResize);
+            saveState();
+        }
+    }
+    function createResizerT() {
+        const resizer = document.createElement('div');
+        resizer.classList.add('resizerT');
+        resizer.style.zIndex = 999;
+        resizer.addEventListener('mousedown', function (e) {
+            initResizeT(e);
+        });
+        return resizer;
+    }
 
-             if (isTextBox&&isCircleText) {
-                 editableArea = resizableElement.querySelector('.editable-area');
-                 originalFontSize = parseFloat(getComputedStyle(editableArea).fontSize);
-                 originalHeight = resizableElement.offsetHeight;
-             }
+    function initResizeT(e) {
+        e.preventDefault();
+        const resizableElement = e.target.parentElement;
+        const isTextBox = resizableElement.classList.contains('text-box');
+        let editableArea, originalFontSize, originalHeight;
 
-             const startX = e.pageX;
-             const startY = e.pageY;
-             const startWidth = resizableElement.offsetWidth;
-             const startHeight = resizableElement.offsetHeight;
-             const startLeft = resizableElement.offsetLeft;
-             const startTop = resizableElement.offsetTop;
-             const aspectRatio = startWidth / startHeight;
-             isResizing = true;
+        if (isTextBox&&!isCircleText) {
+            editableArea = resizableElement.querySelector('.editable-area');
+            originalFontSize = parseFloat(getComputedStyle(editableArea).fontSize);
+            originalHeight = resizableElement.offsetHeight;
+        }
 
-             window.addEventListener('mousemove', startResize);
-             window.addEventListener('mouseup', stopResize);
+        const startY = e.clientY;
+        const startHeight = resizableElement.offsetHeight;
+        const startTop = resizableElement.offsetTop;
+        isResizing = true;
 
-             function startResize(e) {
-                 const deltaX = startX - e.pageX;
-                 let newWidth = startWidth + deltaX;
-                 let newHeight = newWidth / aspectRatio;
-                 let newLeft = startLeft - deltaX;
-                 let newTop = startTop - (newHeight - startHeight);
+        window.addEventListener('mousemove', startResize);
+        window.addEventListener('mouseup', stopResize);
 
-                 if (newWidth > 0 && newHeight > 0) {
-                     resizableElement.style.width = `${newWidth}px`;
-                     resizableElement.style.height = `${newHeight}px`;
-                     resizableElement.style.left = `${newLeft}px`;
-                     resizableElement.style.top = `${newTop}px`;
-                     if (isTextBox&&!isCircleText) {
-                         const heightRatio = newHeight / originalHeight;
-                         const newFontSize = originalFontSize * heightRatio;
-                         editableArea.style.fontSize = `${newFontSize}px`;
-                     }
-                 }
-             }
+        function startResize(e) {
+            const newHeight = startHeight - (e.clientY - startY);
+            const newTop = startTop + (e.clientY - startY);
 
-             function stopResize() {
-                 isResizing = false;
-                 window.removeEventListener('mousemove', startResize);
-                 window.removeEventListener('mouseup', stopResize);
-				 saveState();
-             }
-         }
-         function createResizerRT() {
-             const resizer = document.createElement('div');
-             resizer.classList.add('resizerRT');
-             resizer.style.zIndex = 999;
-             resizer.addEventListener('mousedown', function (e) {
-                 initResizeRT(e);
-             });
-             return resizer;
-         }
-         function initResizeRT(e) {
-             e.preventDefault();
-             const resizableElement = e.target.parentElement;
-             const isTextBox = resizableElement.classList.contains('text-box');
-             const isCircleText = resizableElement.classList.contains('circle-text');
-             let editableArea, originalFontSize, originalHeight;
+            if (newHeight > 0) {
+                resizableElement.style.height = `${newHeight}px`;
+                resizableElement.style.top = `${newTop}px`;
+                if (isTextBox&&!isCircleText) {
+                    const heightRatio = newHeight / originalHeight;
+                    const newFontSize = originalFontSize * heightRatio;
+                    editableArea.style.fontSize = `${newFontSize}px`;
+                }
+            }
+        }
 
-             if (isTextBox&&!isCircleText) {
-                 editableArea = resizableElement.querySelector('.editable-area');
-                 originalFontSize = parseFloat(getComputedStyle(editableArea).fontSize);
-                 originalHeight = resizableElement.offsetHeight;
-             }
+        function stopResize() {
+            isResizing = false;
+            window.removeEventListener('mousemove', startResize);
+            window.removeEventListener('mouseup', stopResize);
+            saveState();
+        }
+    }
 
-             const startX = e.pageX;
-             const startY = e.pageY;
-             const startWidth = resizableElement.offsetWidth;
-             const startHeight = resizableElement.offsetHeight;
-             const startTop = resizableElement.offsetTop;
-             const aspectRatio = startWidth / startHeight;
-             isResizing = true;
+       function createResizerLB() {
+            const resizer = document.createElement('div');
+            resizer.classList.add('resizerLB');
+            resizer.style.zIndex = 999;
+            resizer.addEventListener('mousedown', function (e) {
+                initResizeLB(e);
+            });
+            return resizer;
+        }
+       function initResizeLB(e) {
+            e.preventDefault();
+            const resizableElement = e.target.parentElement;
+            const isTextBox = resizableElement.classList.contains('text-box');
+            const isCircleText = resizableElement.classList.contains('circle-text');
 
-             window.addEventListener('mousemove', startResize);
-             window.addEventListener('mouseup', stopResize);
 
-             function startResize(e) {
-                 const deltaX = e.clientX - startX;
-                 let newWidth = startWidth + deltaX;
-                 let newHeight = newWidth / aspectRatio;
-                 let newTop = startTop + (startHeight - newHeight);
+            const startX = e.clientX;
+            const startY = e.clientY;
+            const startWidth = resizableElement.offsetWidth;
+            const startLeft = resizableElement.offsetLeft;
+            const startHeight = resizableElement.offsetHeight;
+            const aspectRatio = startWidth / startHeight;
+            isResizing = true;
 
-                 if (newWidth > 0 && newHeight > 0) {
-                     resizableElement.style.width = `${newWidth}px`;
-                     resizableElement.style.height = `${newHeight}px`;
-                     resizableElement.style.top = `${newTop}px`;
-                     if (isTextBox&&!isCircleText) {
-                         const heightRatio = newHeight / originalHeight;
-                         const newFontSize = originalFontSize * heightRatio;
-                         editableArea.style.fontSize = `${newFontSize}px`;
-                     }
-                 }
-             }
+            window.addEventListener('mousemove', startResize);
+            window.addEventListener('mouseup', stopResize);
 
-             function stopResize() {
-                 isResizing = false;
-                 window.removeEventListener('mousemove', startResize);
-                 window.removeEventListener('mouseup', stopResize);
-				 saveState();
-             }
-         }
+            function startResize(e) {
+                const newWidth = startWidth - (e.clientX - startX);
+                const newLeft = startLeft + (e.clientX - startX);
+                let newHeight = newWidth / aspectRatio;
+
+                if (newWidth > 0 && newHeight > 0) {
+                    if (isTextBox&&!isCircleText) {
+                       resizableElement.style.width = `${newWidth}px`;
+                       resizableElement.style.height = `${startHeight + (e.clientY - startY)}px`;
+                       resizableElement.style.left = `${newLeft}px`;
+                    } else {
+                       resizableElement.style.width = `${newWidth}px`;
+                       resizableElement.style.height = `${newHeight}px`;
+                       resizableElement.style.left = `${newLeft}px`;						
+                    }
+                }
+            }
+
+            function stopResize() {
+                isResizing = false;
+                window.removeEventListener('mousemove', startResize);
+                window.removeEventListener('mouseup', stopResize);
+                saveState()
+            }
+        }
+
+        function createResizerLT() {
+            const resizer = document.createElement('div');
+            resizer.classList.add('resizerLT');
+            resizer.style.zIndex = 999;
+            resizer.addEventListener('mousedown', function (e) {
+                initResizeLT(e);
+            });
+            return resizer;
+        }
+        function initResizeLT(e) {
+            e.preventDefault();
+            const resizableElement = e.target.parentElement;
+            const isTextBox = resizableElement.classList.contains('text-box');
+            const isCircleText = resizableElement.classList.contains('circle-text');
+
+
+            const startX = e.pageX;
+            const startY = e.pageY;
+            const startWidth = resizableElement.offsetWidth;
+            const startHeight = resizableElement.offsetHeight;
+            const startLeft = resizableElement.offsetLeft;
+            const startTop = resizableElement.offsetTop;
+            const aspectRatio = startWidth / startHeight;
+            isResizing = true;
+
+            window.addEventListener('mousemove', startResize);
+            window.addEventListener('mouseup', stopResize);
+
+            function startResize(e) {
+                const deltaX = startX - e.pageX;
+                const deltaY = startY - e.pageY;
+                let newWidth = startWidth + deltaX;
+                let newHeight = newWidth / aspectRatio;
+                let newLeft = startLeft - deltaX;
+                let newTop = startTop - (newHeight - startHeight);
+
+                if (newWidth > 0 && newHeight > 0) {
+                    if (isTextBox&&!isCircleText) {
+                   resizableElement.style.width = `${startWidth + deltaX}px`;
+                   resizableElement.style.height = `${startHeight + deltaY}px`;
+                   resizableElement.style.left = `${newLeft}px`;
+                   resizableElement.style.top = `${startTop - ((startHeight + deltaY) - startHeight)}px`;
+                    } else {
+                       resizableElement.style.width = `${newWidth}px`;
+                       resizableElement.style.height = `${newHeight}px`;
+                       resizableElement.style.left = `${newLeft}px`;
+                       resizableElement.style.top = `${newTop}px`;
+                    }
+                }
+            }
+
+            function stopResize() {
+                isResizing = false;
+                window.removeEventListener('mousemove', startResize);
+                window.removeEventListener('mouseup', stopResize);
+                saveState();
+            }
+        }
+
+
+        function createResizerRT() {
+            const resizer = document.createElement('div');
+            resizer.classList.add('resizerRT');
+            resizer.style.zIndex = 999;
+            resizer.addEventListener('mousedown', function (e) {
+                initResizeRT(e);
+            });
+            return resizer;
+        }
+
+        function initResizeRT(e) {
+            e.preventDefault();
+            const resizableElement = e.target.parentElement;
+            const isTextBox = resizableElement.classList.contains('text-box');
+            const isCircleText = resizableElement.classList.contains('circle-text');
+
+            const startX = e.pageX;
+            const startY = e.pageY;
+            const startWidth = resizableElement.offsetWidth;
+            const startHeight = resizableElement.offsetHeight;
+            const startTop = resizableElement.offsetTop;
+            const aspectRatio = startWidth / startHeight;
+            isResizing = true;
+
+            window.addEventListener('mousemove', startResize);
+            window.addEventListener('mouseup', stopResize);
+
+            function startResize(e) {
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                let newWidth = startWidth + deltaX;
+                let newHeight = newWidth / aspectRatio;
+                let newTop = startTop + (startHeight - newHeight);
+
+                if (newWidth > 0 && newHeight > 0) {
+                    if (isTextBox&&!isCircleText) {
+                   resizableElement.style.width = `${newWidth}px`;
+                   resizableElement.style.height = `${startHeight - deltaY}px`;
+                   resizableElement.style.top = `${startTop + deltaY}px`;
+                    } else {
+                       resizableElement.style.width = `${newWidth}px`;
+                       resizableElement.style.height = `${newHeight}px`;
+                       resizableElement.style.top = `${newTop}px`;
+                    }
+                }
+            }
+
+            function stopResize() {
+                isResizing = false;
+                window.removeEventListener('mousemove', startResize);
+                window.removeEventListener('mouseup', stopResize);
+                saveState();
+            }
+        }
          fileInput.setAttribute('multiple','multiple')
          fileInput.addEventListener('change', handleFileUpload);
          function handleFileUpload() {
@@ -954,9 +1103,17 @@ function initResize(e) {
       
 
    function addUploadedImage(src) {
-	    const wrapper = createWrapper(100, 100);
-	    const img = createImage(src);
-	    wrapper.appendChild(img);
+        const div = document.createElement('div');
+        const img = createImage(src);
+        const width = img.naturalWidth;
+        const height = img.naturalHeight;
+        const ratio = height / width;
+        const newHeight = 100 * ratio;
+        const wrapper = createWrapper(100, newHeight);
+
+        div.appendChild(img);
+	    wrapper.appendChild(div);
+        
         addResizers(wrapper);
         elements.push(wrapper)
 	    dropArea.appendChild(wrapper);
@@ -996,28 +1153,52 @@ function initResize(e) {
            console.log("1")
        }
    }
-function bringToFront(element) {
+   function bringToFront(element) {
     const currentIndex = Array.from(dropArea.children).indexOf(element);
     if (currentIndex < dropArea.children.length - 1) {
         dropArea.insertBefore(dropArea.children[currentIndex + 1], element);
     }
+    updateButtonStates(element);
     saveState();
 }
 
 function sendToBack(element) {
     const currentIndex = Array.from(dropArea.children).indexOf(element);
     if (currentIndex > 0) {
-            dropArea.insertBefore(element, dropArea.children[currentIndex - 1]);
-			showResizers(selectedElement);
-			const contentEditableChild = element.querySelector('[contenteditable="true"]');
-			if (contentEditableChild) {
-			    contentEditableChild.focus();
-			} else {
-			    element.focus();
-			}
-            saveState();
+        dropArea.insertBefore(element, dropArea.children[currentIndex - 1]);
+        showResizers(element);
+        const contentEditableChild = element.querySelector('[contenteditable="true"]');
+        if (contentEditableChild) {
+            contentEditableChild.focus();
+        } else {
+            element.focus();
+        }
+        updateButtonStates(element);
+        saveState();
     }
 }
+
+function updateButtonStates(element) {
+       const currentIndex = Array.from(dropArea.children).indexOf(element);
+     const zIndexUp = element.querySelector('.z-index-up');
+     const zIndexDown = element.querySelector('.z-index-down');
+
+         if (currentIndex >= dropArea.children.length - 1) {
+             zIndexUp.disabled = true;
+             zIndexUp.style.pointerEvents = 'none';
+         } else {
+             zIndexUp.disabled = false;
+             zIndexUp.style.pointerEvents = 'auto';
+         }
+
+         if (currentIndex <= 0) {
+             zIndexDown.disabled = true;
+             zIndexDown.style.pointerEvents = 'none';
+         } else {
+             zIndexDown.disabled = false;
+             zIndexDown.style.pointerEvents = 'auto';
+         }
+     }
 
 
 function createZIndexControls(element) {
@@ -1042,7 +1223,7 @@ function createZIndexControls(element) {
     zIndexControls.style.zIndex = 999;
 
     const zIndexUp = document.createElement('button');
-    zIndexUp.classList.add('z-index-button');
+    zIndexUp.classList.add('z-index-up');
     zIndexUp.append(up)
     zIndexUp.style.zIndex = 999;
     
@@ -1052,7 +1233,7 @@ function createZIndexControls(element) {
     deleteButton.style.zIndex = 999;
 
     const zIndexDown = document.createElement('button');
-    zIndexDown.classList.add('z-index-button');
+    zIndexDown.classList.add('z-index-down');
     zIndexDown.append(down)
     zIndexDown.style.zIndex = 999;
    
@@ -1460,18 +1641,18 @@ reverseCircleTextButton.addEventListener('click', () => {
     
    
 
-document.querySelectorAll('.sidebar a').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault(); 
-        const targetId = this.getAttribute('href'); 
-        const targetElement = document.querySelector(targetId); 
+// document.querySelectorAll('.sidebar a').forEach(anchor => {
+//     anchor.addEventListener('click', function(e) {
+//         e.preventDefault(); 
+//         const targetId = this.getAttribute('href'); 
+//         const targetElement = document.querySelector(targetId); 
 
-        // 부드러운 스크롤 애니메이션
-        targetElement.scrollIntoView({
-            behavior: 'smooth'
-        });
-    });
-});
+//         // 부드러운 스크롤 애니메이션
+//         targetElement.scrollIntoView({
+//             behavior: 'smooth'
+//         });
+//     });
+// });
 
 const folderInput = document.getElementById('folderInput');
 

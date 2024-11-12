@@ -15,12 +15,13 @@
     <div class="container">
         <aside class="sidebar">
             <ul>
-                
-                <li><a href="#section1">Sheild  <i class="fa-solid fa-shield"></i></a></li>
-                <li><a href="#section2">Circle  <i class="fa-solid fa-circle"></i></a></li>
-                <li><a href="#section3">Etc  <i class="fa-solid fa-earth-americas"></i></a></li>
-                <li><a href="#section4">Ribbons <i class="fa-solid fa-font-awesome"></i></a></li>
-                <li><a href="#section5">Icons  <i class="fa-solid fa-icons"></i></a></li>
+                <li><a href="#section1"><i class="fa-solid fa-shield"></i><br>Shild</a></li>
+                <li><a href="#section2"> <i class="fa-solid fa-circle"></i> <br>  Circle </a></li>
+                <li><a href="#section3"><i class="fa-solid fa-earth-americas"></i> <br>Etc  </a></li>
+                <li><a href="#section4"><i class="fa-solid fa-font-awesome"></i><br>Ribbons </a></li>
+                <li><a href="#section5"><i class="fa-solid fa-icons"></i><br>Icons  </a></li>
+                <li><a href="#section6"><i class="fa-solid fa-font"></i><br>Text</a></li>
+                <li><a href="#section7"><i class="fa-solid fa-folder-open"></i><br>Folder</a></li>
             </ul>
         </aside>
         <div class="content">
@@ -1009,33 +1010,39 @@
                                                     <path fill="#86898C" d="M44.59,75.52h-9.17c-1.24,0-2.24,1.01-2.24,2.24c0,1.24,1.01,2.24,2.24,2.24h9.17c1.23,0,2.23-1,2.24-2.24
                                                         C46.83,76.52,45.82,75.52,44.59,75.52z" fill-id="0"></path>
                                                 </svg>     
-
+               </section>
+               <section id="section6">
+                <button class="btns" id="add-text">Text</button>
+                <button class="btns" id="add-circle"><i class="fa-solid fa-font"></i></button>
+                <button class="btns" id="add-reverse-circle"><i class="fa-solid fa-font"></i></button>
+               </section>
+               <section id="section7">
+                <label class="filelabel" for="fileInput">Upload New Image</label>
+                    <input type="file" id="fileInput">
+                    <label class="filelabel" for="folderInput">Upload New ImageFolder</label>
+                    <input type="file" id="folderInput" webkitdirectory directory multiple>
+                    
+               </section>
         </div>
         </div>
-        <div class="container2">
+        <div class="container2">  
             
             <nav class="styleBtns">
                 <div class="btnContainer">
                     <button class="btns" id="save-button"><i class="fa-solid fa-floppy-disk"></i></button>
                     <button class="btns" id="removebtn"><i class="fa-solid fa-eraser"></i></button>
                     <button class="btns" id="qrSave"><i class="fa-solid fa-qrcode"></i></button>
-                    <button class="btns" id="add-text"><i class="fa-solid fa-font"></i></button>
-                    <button class="btns" id="add-circle"><i class="fa-solid fa-font"></i></button>
-                    <button class="btns" id="add-reverse-circle"><i class="fa-solid fa-font"></i></button>
                     <button class="btns" id="openModal"><i class="fa-solid fa-id-badge"></i></button>
-                    <button class="btns" id="redoBtn"><i class="fa-solid fa-rotate-left"></i></button>
-                    <button class="btns" id="undoBtn"><i class="fa-solid fa-rotate-right"></i></button>
-                </div>
+               </div>
                 <div class="inputContainer"></div>
+                       
 
             </nav>
             <nav class="styleInput" id="textInput">
-                <div class="styleInputContainer"><label class="labels" for="fileInput"><i class="fa-solid fa-file"></i></label>
-                    <input type="file" id="fileInput">
-                    <label class="labels" for="folderInput"><i class="fa-solid fa-folder"></i></label>
-                    <input type="file" id="folderInput" webkitdirectory directory multiple>
+                <div class="styleInputContainer"><button class="btns" id="redoBtn"><i class="fa-solid fa-rotate-left"></i></button>
+                    <button class="btns" id="undoBtn"><i class="fa-solid fa-rotate-right"></i></button>
                     <input type="range" id="opacity-slider" min="0" max="100" value="100" class="slider">
-                       </div>
+                    </div>
                 <div class="inputContainer2"></div>
             </nav>
             <div id="drop-area"></div>

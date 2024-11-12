@@ -15,13 +15,13 @@ body {
     z-index:4;
     flex-shrink: 1;
     display: flex;
-    width: 30vw;
-
+    width: 25vw;
+    height: 100vh;
 }
 
 .sidebar {
    
-    width: 200px;
+    width: 100px;
     background-color: #243642;
     height: 100vh; /* 사이드바 높이를 100vh로 설정 */
     position: fixed;
@@ -33,37 +33,36 @@ body {
 }
 
 .sidebar ul li {
-    margin: 20px 0;
+    margin: 30px 5px 5px 5px;
 }
 
 .sidebar ul li a {
-    font-size: 19px;
+    font-size: 20px;
+    text-align: center;
     font-family: "Protest Strike", sans-serif;
     color: white;
     text-decoration: none;
-    padding: 15px;
+
     display: block;
 }
 
 
 
-.sidebar ul li a:hover {
+/* .sidebar ul li a:hover {
     transition: 0.5s;
     background-color: #629584;
     border-radius: 20px;
     margin: 10px;
-}
+} */
 
 .content {
-    min-width: 300px;
+    margin-left: 100px;
     flex: 0 1 auto;
     text-align: center;
     background-color: #387478;
-    overflow-x: hidden;
-    margin-left: 200px; /* 사이드바 너비 + 여백 */
-    height: 100vh; /* 콘텐츠 영역 높이를 100vh로 설정 */
-    overflow-y: scroll; /* 세로 스크롤 가능 */
-    width: 20vw;
+    overflow-y: hidden;
+    height: 100%; /* 콘텐츠 영역 높이를 100vh로 설정 */
+    width: 50vw;
     padding: 10px;
 }
 
@@ -183,7 +182,7 @@ body {
 		    display: none;
 		    flex-direction: row;
 		}
-        .z-index-button {
+        .z-index-up, .z-index-down{
             display: flex;
             justify-content: center;
             align-items: center;
@@ -191,6 +190,21 @@ body {
             color: white;
             border: none;
             cursor: pointer;
+            padding: 5px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 5px;
+        }
+        
+        .z-index-up:disabled, .z-index-down:disabled {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #D3D3D3;
+            color: white;
+            border: none;
+            cursor: not-allowed;
             padding: 5px;
             width: 40px;
             height: 40px;
@@ -545,8 +559,6 @@ section{
     height: 100%;
 }
 
-
-
 #section5 > svg{
     width: 70px;
     height: 70px;
@@ -569,15 +581,35 @@ section{
     margin: 5px;
 }
 
-  .angle{
+.angle{
     display: inline-block;
     border-radius: 5px;
     border:#00AE68 1px solid;
-  }
+}
 
- input[type=number] {
-    
+input[type=number] {
     appearance: none;
     -moz-appearance: none;
     -webkit-appearance: none;
 }
+
+
+.filelabel{
+        font-weight: 600;
+        font-size: 20px;
+        display: block;
+        color: #00AE68;
+        padding: 5px 17px;
+        background-color: white;
+        border: none;
+        border-radius: 5px;
+        margin: 30px;
+        cursor: pointer;
+}
+
+.filelabel:hover{
+    cursor: pointer;
+    background-color: #00AE68;
+    color: white;
+    transition: 0.5s;
+  }
