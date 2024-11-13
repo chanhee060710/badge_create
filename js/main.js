@@ -8,6 +8,11 @@ const slider = document.getElementById('opacity-slider');
 const colorInput = document.createElement('input')
 const inputContainer = document.querySelector(".inputContainer")
 const inputContainer2 = document.querySelector(".inputContainer2")
+const Rotatedropdown = document.querySelector('.Rotatedropdown')
+const Sizedropdown = document.querySelector('.Sizedropdown')
+const textalign = document.querySelector('.textalign')
+const createFont = document.querySelector('.createFont')
+const Spacingdropdown =document.querySelector('.Spacingdropdown')
 colorInput.type = 'color'
 colorInput.id = 'colorInput'
 let selectedElement = null;
@@ -22,6 +27,7 @@ let elements = [];
 let selectionRectangle = null;
 let startX, startY;
 let isDragging = false;
+let isSelected = false;
 
 
 const union = document.querySelector('.union')
@@ -49,10 +55,25 @@ function showResizers(element) {
             resizer.style.display = className === '.z-index-controls' ? 'flex' : 'block';
         }
     });
+    
+	if(!isSelected){
+	element.style.top = `${element.offsetTop - 1}px`;
+	element.style.left = `${element.offsetLeft - 1}px`;
+	isSelected = true;
+	}
 
     element.style.border = "1px solid";
     element.classList.add('selected');
 }
+svgs.forEach(svg => {
+    svg.style.margin = '5px'
+    svg.removeAttribute('class')
+    svg.removeAttribute('id')
+    svg.style.opacity ="1"
+    svg.id = 'svgImages'
+    svg.classList.add('draggable');
+
+});
 
 function blindResizers(element) {
     const resizerClasses = [
@@ -66,109 +87,108 @@ function blindResizers(element) {
             resizer.style.display = 'none';
         }
     });
+    if(isSelected){
+		element.style.top = `${element.offsetTop + 1}px`;
+		element.style.left = `${element.offsetLeft + 1}px`;
+	isSelected = false;
+    }
+
 
     element.style.border = "none";
     element.classList.remove('selected');
 }
 
-svgs.forEach(svg => {
-    svg.removeAttribute('class')
-    svg.removeAttribute('id')
-    svg.style.opacity ="1"
-    svg.id = 'svgImages'
-    svg.classList.add('draggable');
 
-});
-  function isElementInRect(element, rect) {
-    const elRect = element.getBoundingClientRect();
-    return !(
-      elRect.right < rect.left ||
-      elRect.left > rect.right ||
-      elRect.bottom < rect.top ||
-      elRect.top > rect.bottom
-    );
-  }
+//   function isElementInRect(element, rect) {
+//     const elRect = element.getBoundingClientRect();
+//     return !(
+//       elRect.right < rect.left ||
+//       elRect.left > rect.right ||
+//       elRect.bottom < rect.top ||
+//       elRect.top > rect.bottom
+//     );
+//   }
   
-  function deselectAll() {
-    elements.forEach((element) => {
-        blindResizers(element);
-    });
-  }
+//   function deselectAll() {
+//     elements.forEach((element) => {
+//         blindResizers(element);
+//     });
+//   }
   
-  let isDraggingElement = false;
-  dropArea.addEventListener("mousedown", (e) => {
-    if (isResizing) return;
-    if (e.target.classList.contains("element") || e.target.closest(".element")) {
-      isDraggingElement = true;
-    } else {
-      isDragging = true;
-      const dropAreaRect = dropArea.getBoundingClientRect();
-      startX = e.clientX - dropAreaRect.left;
-      startY = e.clientY - dropAreaRect.top;
-      deselectAll();
+//   let isDraggingElement = false;
+//   dropArea.addEventListener("mousedown", (e) => {
+//     if (isResizing) return;
+//     if (e.target.classList.contains("element") || e.target.closest(".element")) {
+//       isDraggingElement = true;
+//     } else {
+//       isDragging = true;
+//       const dropAreaRect = dropArea.getBoundingClientRect();
+//       startX = e.clientX - dropAreaRect.left;
+//       startY = e.clientY - dropAreaRect.top;
+//       deselectAll();
   
-      selectionRectangle = document.createElement("div");
-      selectionRectangle.classList.add("selection-rectangle");
-      selectionRectangle.style.width = `0px`;
-      selectionRectangle.style.height = `0px`;
-      selectionRectangle.style.transform = `translate(${startX}px, ${startY}px)`;
-      dropArea.appendChild(selectionRectangle);
-    }
-  });
+//       selectionRectangle = document.createElement("div");
+//       selectionRectangle.classList.add("selection-rectangle");
+//       selectionRectangle.style.width = `0px`;
+//       selectionRectangle.style.height = `0px`;
+//       selectionRectangle.style.transform = `translate(${startX}px, ${startY}px)`;
+//       dropArea.appendChild(selectionRectangle);
+//     }
+//   });
   
-  dropArea.addEventListener("mousemove", (e) => {
-    if (!isDragging || isDraggingElement) return;
+//   dropArea.addEventListener("mousemove", (e) => {
+//     if (!isDragging || isDraggingElement) return;
   
-    const dropAreaRect = dropArea.getBoundingClientRect();
-    const currentX = e.clientX - dropAreaRect.left;
-    const currentY = e.clientY - dropAreaRect.top;
-    const width = Math.abs(currentX - startX);
-    const height = Math.abs(currentY - startY);
-    const left = Math.min(currentX, startX);
-    const top = Math.min(currentY, startY);
+//     const dropAreaRect = dropArea.getBoundingClientRect();
+//     const currentX = e.clientX - dropAreaRect.left;
+//     const currentY = e.clientY - dropAreaRect.top;
+//     const width = Math.abs(currentX - startX);
+//     const height = Math.abs(currentY - startY);
+//     const left = Math.min(currentX, startX);
+//     const top = Math.min(currentY, startY);
   
-    selectionRectangle.style.width = `${width}px`;
-    selectionRectangle.style.height = `${height}px`;
-    selectionRectangle.style.transform = `translate(${left}px, ${top}px)`;
-  });
+//     selectionRectangle.style.width = `${width}px`;
+//     selectionRectangle.style.height = `${height}px`;
+//     selectionRectangle.style.transform = `translate(${left}px, ${top}px)`;
+//   });
   
-  function endDrag() {
-    if (isDragging) {
-        isDragging = false;
-        const rect = selectionRectangle.getBoundingClientRect();
-        const boxWidth = rect.width;
-        const boxHeight = rect.height;
-        let anySelected = false;
+//   function endDrag() {
+//     if (isDragging) {
+//         isDragging = false;
+//         const rect = selectionRectangle.getBoundingClientRect();
+//         const boxWidth = rect.width;
+//         const boxHeight = rect.height;
+//         let anySelected = false;
 
-        deselectAll();
-        const minDragBoxSize = 10; 
-        if (boxWidth > minDragBoxSize && boxHeight > minDragBoxSize) {
+//         deselectAll();
+//         const minDragBoxSize = 10; 
+//         if (boxWidth > minDragBoxSize && boxHeight > minDragBoxSize) {
 
-            elements.forEach((element) => {
-                const isInRect = isElementInRect(element, rect);
-                if (isInRect) {
-                    anySelected = true; 
+//             elements.forEach((element) => {
+//                 const isInRect = isElementInRect(element, rect);
+//                 if (isInRect) {
+//                     anySelected = true; 
 
-                    showResizers(element);
-                }
-            });
-        } else {
-            dropArea.removeChild(selectionRectangle)  
-            showResizers(rect);
-        }
+//                     showResizers(element);
+//                 }
+//             });
+//         } else {
+//             dropArea.removeChild(selectionRectangle)  
+//             showResizers(rect);
+//         }
 
-        if (selectionRectangle) {
-            selectionRectangle.style.display = 'none'; 
-            dropArea.removeChild(selectionRectangle); 
-            selectionRectangle = null; 
-        }
+//         if (selectionRectangle) {
+//             selectionRectangle.style.display = 'none'; 
+//             dropArea.removeChild(selectionRectangle); 
+//             selectionRectangle = null; 
+//         }
 
-        if (!anySelected) {
-            deselectAll();
-        }
-    }
-    isDraggingElement = false;
-}
+//         if (!anySelected) {
+//             deselectAll();
+//         }
+//     }
+//     isDraggingElement = false;
+// }
 
 
   function makeElementDraggable(element) {
@@ -203,54 +223,54 @@ svgs.forEach(svg => {
     });
   }
   
-  dropArea.addEventListener("mouseup", endDrag);
-  dropArea.addEventListener("mouseleave", endDrag);
+//   dropArea.addEventListener("mouseup", endDrag);
+//   dropArea.addEventListener("mouseleave", endDrag);
 
-  let groupContainer = null;
+//   let groupContainer = null;
 
-  function groupSelectedElements() {
-    const selectedElements = elements.filter((element) => element.classList.contains("selected"));
-    if (selectedElements.length === 0) return;
+//   function groupSelectedElements() {
+//     const selectedElements = elements.filter((element) => element.classList.contains("selected"));
+//     if (selectedElements.length === 0) return;
   
-    const groupContainer = document.createElement("div");
-    groupContainer.classList.add("group-container");
-    groupContainer.style.position = "absolute";
+//     const groupContainer = document.createElement("div");
+//     groupContainer.classList.add("group-container");
+//     groupContainer.style.position = "absolute";
   
-    let minX = Infinity, minY = Infinity, maxX = 0, maxY = 0;
-    selectedElements.forEach((element) => {
-      const rect = element.getBoundingClientRect();
-      const offsetX = rect.left - dropArea.getBoundingClientRect().left;
-      const offsetY = rect.top - dropArea.getBoundingClientRect().top;
+//     let minX = Infinity, minY = Infinity, maxX = 0, maxY = 0;
+//     selectedElements.forEach((element) => {
+//       const rect = element.getBoundingClientRect();
+//       const offsetX = rect.left - dropArea.getBoundingClientRect().left;
+//       const offsetY = rect.top - dropArea.getBoundingClientRect().top;
   
-      minX = Math.min(minX, offsetX);
-      minY = Math.min(minY, offsetY);
-      maxX = Math.max(maxX, offsetX + rect.width);
-      maxY = Math.max(maxY, offsetY + rect.height);
-    });
-    groupContainer.style.left = `${minX}px`;
-    groupContainer.style.top = `${minY}px`;
-    groupContainer.style.width = `${maxX - minX}px`;
-    groupContainer.style.height = `${maxY - minY}px`;
-    selectedElements.forEach((element) => {
-      const rect = element.getBoundingClientRect();
-      const offsetX = rect.left - dropArea.getBoundingClientRect().left - minX;
-      const offsetY = rect.top - dropArea.getBoundingClientRect().top - minY;
+//       minX = Math.min(minX, offsetX);
+//       minY = Math.min(minY, offsetY);
+//       maxX = Math.max(maxX, offsetX + rect.width);
+//       maxY = Math.max(maxY, offsetY + rect.height);
+//     });
+//     groupContainer.style.left = `${minX}px`;
+//     groupContainer.style.top = `${minY}px`;
+//     groupContainer.style.width = `${maxX - minX}px`;
+//     groupContainer.style.height = `${maxY - minY}px`;
+//     selectedElements.forEach((element) => {
+//       const rect = element.getBoundingClientRect();
+//       const offsetX = rect.left - dropArea.getBoundingClientRect().left - minX;
+//       const offsetY = rect.top - dropArea.getBoundingClientRect().top - minY;
   
-      element.style.position = "absolute";
-      element.style.left = `${offsetX}px`;
-      element.style.top = `${offsetY}px`;
+//       element.style.position = "absolute";
+//       element.style.left = `${offsetX}px`;
+//       element.style.top = `${offsetY}px`;
         
-      groupContainer.appendChild(element);
+//       groupContainer.appendChild(element);
       
-    });
-    dropArea.appendChild(groupContainer);
-    makeElementDraggable(groupContainer);
-  }
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "g" && e.ctrlKey) {
-      groupSelectedElements();
-    }
-  });
+//     });
+//     dropArea.appendChild(groupContainer);
+//     makeElementDraggable(groupContainer);
+//   }
+//   document.addEventListener("keydown", (e) => {
+//     if (e.key === "g" && e.ctrlKey) {
+//       groupSelectedElements();
+//     }
+//   });
 function saveState() {
     const elementsState = [];
     
@@ -386,6 +406,8 @@ svgs.forEach(element =>{
         newItem.style.width = '100px';
         newItem.style.height = `100px`;
         createSvg.style.position ="absolute";
+        console.log(createSvg.firstChild)
+        createSvg.firstChild.style.margin ="0"
         createSvg.firstChild.style.width= "100%";
         createSvg.firstChild.style.height= "100%";
 	  	testDiv.appendChild(createSvg.firstChild);
@@ -444,9 +466,27 @@ showResizers(selectedElement);
 		   const svg = selectedElement.querySelector('svg');
 		   const path = selectedElement.querySelector('path');
 
+
+           document.addEventListener("keydown", function(event) {
+
+            if (event.key === "Delete") {
+                inputContainer.innerHTML=''
+        createFont.style.display='none'
+        Rotatedropdown.style.display='none'
+        Sizedropdown.style.display='none'
+        textalign.style.display='none'
+        Spacingdropdown.style.display='none'
+               selectedElement.remove()
+                
+            }
+        });
            
 		   if (isText) {
-            inputContainer2.innerHTML=''
+            textalign.innerHTML=''
+            createFont.innerHTML=''
+            Sizedropdown.style.display='inline-block'
+            createFont.style.display='block'
+            textalign.style.display='block'
 		       const alignments = ['left', 'center', 'right'];
                const alignIcons = [
                 '/rmimg/align-left-solid.svg',   
@@ -499,28 +539,21 @@ showResizers(selectedElement);
 					       }
 					   } else {
                         console.log(alignment)
-					       selectedElement.firstChild.style.textAlign = alignment;
+					       selectedElement.querySelector('.editable-area').style.textAlign = alignment;
 					   }
 		               alignments.forEach(align => {
 		                   const alignButton = inputContainer2.querySelector(`button:nth-child(${alignments.indexOf(align) + 1})`);
 		                   alignButton.disabled = (align === alignment);
 		               });
 		           });
-		           inputContainer2.appendChild(button);
+		           textalign.appendChild(button);
                    
 		       });
-               const sizeSlider = document.createElement("input");
-sizeSlider.type = "range";
-sizeSlider.classList.add('slider');
-sizeSlider.min = "3";
-sizeSlider.max = "200";
+            createFontSelector()
+               
+               const sizeSlider = document.querySelector('#sizeSlider')
 
-const sizeInput = document.createElement("input");
-sizeInput.type = "number";
-sizeInput.classList.add('angle');
-sizeInput.min = "3";
-sizeInput.max = "200";
-sizeInput.style.marginLeft = "10px";
+const sizeInput = document.querySelector('#size')
 
 function updateFontSizeValues() {
   const currentFontSize = parseInt(
@@ -537,7 +570,7 @@ updateFontSizeValues();
 sizeSlider.addEventListener("input", (e) => {
   const sizeValue = e.target.value;
   if (!isCircleText) {
-    selectedElement.firstChild.style.fontSize = `${sizeValue}px`;
+    selectedElement.querySelector('.editable-area').style.fontSize = `${sizeValue}px`;
   } else {
     selectedElement.querySelector('svg').style.fontSize = `${sizeValue}px`;
   }
@@ -549,15 +582,16 @@ sizeInput.addEventListener("input", (e) => {
   if (sizeValue < 3) sizeValue = 3;
   if (sizeValue > 200) sizeValue = 200;
   if (!isCircleText) {
-    selectedElement.firstChild.style.fontSize = `${sizeValue}px`;
+    selectedElement.querySelector('.editable-area').style.fontSize = `${sizeValue}px`;
   } else {
     selectedElement.querySelector('svg').style.fontSize = `${sizeValue}px`;
   }
   sizeSlider.value = sizeValue;
 });
-inputContainer2.appendChild(sizeSlider);
-inputContainer2.appendChild(sizeInput);
+
 AngleFunction()
+spacingFunction()
+
             }
 
 		  const currentOpacity = window.getComputedStyle(selectedElement.firstChild).opacity;
@@ -570,12 +604,17 @@ AngleFunction()
             
 if(!isText){
     const svgElements = document.querySelectorAll('div > svg');
-    inputContainer2.innerHTML=''
+   // inputContainer2.innerHTML=''
+   createFont.style.display='none'
+   Sizedropdown.style.display='none'
+   textalign.style.display='none'
+   Spacingdropdown.style.display='none'
     AngleFunction()
+
 svgElements.forEach(svg => {
-  svg.addEventListener("click", () => {
+  svg.addEventListener('click',()=>{
     inputContainer.innerHTML ='';
-    inputContainer2.innerHTML = '';
+   // inputContainer2.innerHTML = '';
     const paths = svg.querySelectorAll('path, polygon');
 
     const uniqueFillIds = Array.from(new Set(Array.from(paths).map(path => path.getAttribute('fill-id'))));
@@ -596,10 +635,11 @@ svgElements.forEach(svg => {
       });
 
      inputContainer.appendChild(colorInput);
-      
+    })
     });
-  });
+  
 });
+
 }else{
     inputContainer.innerHTML=''
     inputContainer.appendChild(colorInput)
@@ -627,25 +667,13 @@ colorInput.addEventListener('input', colorInput.handleColorChange);
    }
    
    AngleFunction =() =>{
-    const angleSlider = document.createElement("input");
-    angleSlider.classList.add('slider')
-    angleSlider.type = "range";
-    angleSlider.min = "0";
-    angleSlider.max = "360";
-    angleSlider.value = "0";
-
-    const angleInput = document.createElement("input");
-    angleInput.classList.add("angle")
-    angleInput.type = "number";
-    angleInput.min = "0";
-    angleInput.max = "360";
-    angleInput.value = "0";
-    angleInput.style.marginLeft = "10px";
+    Rotatedropdown.style.display ='inline-block'
+    const angleSlider = document.querySelector('#angleSlider')
+    const angleInput = document.querySelector('#angle')
 
     const currentAngle = window.getComputedStyle(selectedElement.firstChild).transform;
     const matrix = currentAngle.match(/matrix\(([^)]+)\)/);
     if (matrix) {
-     
       const values = matrix[1].split(', ');
       const angle = Math.round(Math.atan2(values[1], values[0]) * (180 / Math.PI));
       const initialAngle = angle < 0 ? 360 + angle : angle;
@@ -667,10 +695,124 @@ colorInput.addEventListener('input', colorInput.handleColorChange);
       angleSlider.value = angleValue;
     });
 
-    inputContainer2.appendChild(angleSlider);
-    inputContainer2.appendChild(angleInput);
-
+  //  inputContainer2.appendChild(angleSlider);
+    //inputContainer2.appendChild(angleInput);
+    
    }
+
+   spacingFunction = () => {
+    Spacingdropdown.style.display='inline-block'
+    const spacingSlider = document.querySelector('#spacingSlider')
+
+    const spacingInput = document.querySelector("#spacingInput");
+    
+    const computedSpacing = window.getComputedStyle(selectedElement.querySelector('.spacing')).letterSpacing;
+    const currentSpacing = parseFloat(computedSpacing) || 0;
+
+    spacingSlider.value = currentSpacing;
+    spacingInput.value = currentSpacing;
+
+    spacingSlider.addEventListener("input", (e) => {
+      const spacingValue = e.target.value;
+      spacingInput.value = spacingValue;
+      selectedElement.querySelector('.spacing').style.letterSpacing = `${spacingValue}px`;
+    });
+
+    spacingInput.addEventListener("input", (e) => {
+      let spacingValue = e.target.value;
+      if (spacingValue < -10) spacingValue = -10;
+      if (spacingValue > 20) spacingValue = 20;
+      spacingSlider.value = spacingValue;
+      selectedElement.querySelector('.spacing').style.letterSpacing = `${spacingValue}px`;
+    });
+
+  }
+
+  function createFontSelector() {
+    const fonts = [
+		{
+		  name: 'Arial',
+		  css: "@font-face { font-family: 'Arial'; font-weight: normal; font-style: normal; }"
+		},
+       {
+         name: 'BagelFatOne-Regular',
+         css: "@font-face { font-family: 'BagelFatOne-Regular'; src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_JAMO@1.0/BagelFatOne-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }"
+       },
+	   {
+		name: 'ChosunCentennial',
+		css: "@font-face { font-family: 'ChosunCentennial'; src: url('https://gcore.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/ChosunCentennial.woff2') format('woff2'); font-weight: normal; font-style: normal;}"
+	   },
+	   {
+		name: 'SF_IceLemon',
+		css: "@font-face {font-family: 'SF_IceLemon';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2106@1.1/SF_IceLemon.woff') format('woff');    font-weight: normal;    font-style: normal;}"
+	   },
+	   {
+		name: 'GowunDodum-Regular',
+		css: "@font-face {    font-family: 'GowunDodum-Regular';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunDodum-Regular.woff') format('woff');    font-weight: normal;    font-style: normal;}"
+	   },	{
+		name: 'GowunBatang-Regular',
+		css: "@font-face {    font-family: 'GowunBatang-Regular';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunBatang-Regular.woff') format('woff');    font-weight: normal;    font-style: normal;}"
+		},
+	   {
+		name: 'SF_HambakSnow',
+		css: "@font-face {    font-family: 'SF_HambakSnow';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2106@1.1/SF_HambakSnow.woff') format('woff');    font-weight: normal;    font-style: normal;}"
+	   },
+	   {
+	   name: 'PyeongChangPeace-Bold',
+	   css: "@font-face {    font-family: 'PyeongChangPeace-Bold';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/PyeongChangPeace-Bold.woff2') format('woff2');    font-weight: 700;    font-style: normal;}"
+	   },
+	   {
+	   name: 'Pretendard-Regular',
+	   css: "@font-face {    font-family: 'Pretendard-Regular';    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');    font-weight: 400;    font-style: normal;}"
+	   },
+	   {
+	   name: 'ChosunKg',
+	   css: "@font-face {    font-family: 'ChosunKg';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunKg.woff') format('woff');    font-weight: normal;    font-style: normal;}"
+	   },
+       // 여기에 폰트 추가
+     ];
+
+    const styleElement = document.createElement('style');
+    fonts.forEach(font => {
+      styleElement.appendChild(document.createTextNode(font.css));
+    });
+    document.head.appendChild(styleElement);
+
+    const fontSelect = document.createElement('select');
+    fontSelect.classList.add('font-selector');
+
+    fonts.forEach(font => {
+      const option = document.createElement('option');
+      option.value = font.name;
+      option.textContent = font.name;
+      option.style.fontFamily = font.name;
+      fontSelect.appendChild(option);
+    });
+
+    let currentFont = window.getComputedStyle(selectedElement.querySelector('svg')).fontFamily;
+
+       if (currentFont.includes(',')) {
+         currentFont = currentFont.split(',')[0].replace(/['"]+/g, '').trim();
+       }
+
+       const matchingOption = Array.from(fontSelect.options).find(option => option.value === currentFont);
+       if (matchingOption) {
+         matchingOption.selected = true;
+       } else {
+         fontSelect.value = 'Arial';
+       }
+
+    
+    fontSelect.addEventListener('change', (e) => {
+      const selectedFont = e.target.value;
+      if (selectedElement) {
+        selectedElement.querySelector('svg').style.fontFamily = selectedFont;
+      }
+    });
+
+    fontSelect.classList.add('fontselect')
+    createFont.appendChild(fontSelect);
+  }
 
    dropArea.addEventListener('focusout', function(e) {
        if (selectedElement) {
@@ -1257,6 +1399,12 @@ function createZIndexControls(element) {
 
     deleteButton.addEventListener('mousedown', function(e) {
         e.preventDefault()
+        inputContainer.innerHTML=''
+        createFont.style.display='none'
+        Rotatedropdown.style.display='none'
+        Sizedropdown.style.display='none'
+        textalign.style.display='none'
+        Spacingdropdown.style.display='none'
         element.remove();
     });
 
@@ -1407,26 +1555,44 @@ addTextButton.addEventListener('click', () => {
     textBox.style.top = '10px';
     textBox.style.width = '150px';
     textBox.style.height = '25px';
-    
+
+    const svgContainer = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svgContainer.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    svgContainer.setAttribute('width', '100%');
+    svgContainer.setAttribute('height', '100%');
+    svgContainer.style.position = 'absolute';
+    svgContainer.style.top = '0';
+    svgContainer.style.left = '0';
+
+    const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+    foreignObject.setAttribute('width', '100%');
+    foreignObject.setAttribute('height', '100%');
+	foreignObject.setAttribute('letter-spacing', 0);
+	foreignObject.classList.add('spacing');
+
+	const testDiv = document.createElement('div');
+	testDiv.style.width = '100%';
+	testDiv.style.height = '100%';
+		
     const editableArea = document.createElement('div');
     editableArea.classList.add('editable-area');
     editableArea.contentEditable = 'true';
     editableArea.style.position = 'relative';
     editableArea.innerText = 'Edit Text';
-    editableArea.style.height = '100%';
     editableArea.style.fontSize = '20px';
-
     editableArea.style.border = 'none';
     editableArea.style.outline = 'none';
     editableArea.style.textAlign = 'center';
-    editableArea.style.height = 'auto';
     editableArea.style.width = '100%';
     editableArea.style.height = '100%';
+	editableArea.spellcheck = false;
+
+    foreignObject.appendChild(editableArea);
+    svgContainer.appendChild(foreignObject);
+	testDiv.appendChild(svgContainer);
+    textBox.appendChild(testDiv);
     
-    
-    textBox.appendChild(editableArea);
     addResizers(textBox);
-    
     makeElementDraggable(textBox);
     textBox.id = `item-${itemCounter++}`;
 
@@ -1435,11 +1601,11 @@ addTextButton.addEventListener('click', () => {
         e.stopPropagation();
     });
 
-
-    elements.push(textBox)
+    elements.push(textBox);
     dropArea.appendChild(textBox);
     saveState();
 });
+
 
 circleTextButton.addEventListener('click', () => {
     const circleTextBox = document.createElement('div');
@@ -1479,6 +1645,7 @@ circleTextButton.addEventListener('click', () => {
     const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text.setAttribute("text-anchor", "middle");
     text.setAttribute("letter-spacing", "0");
+	text.classList.add('spacing');
 
     const textPath = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
     textPath.setAttribute("href", `#circlePath-${itemCounter}`);
@@ -1503,7 +1670,7 @@ circleTextButton.addEventListener('click', () => {
         e.stopPropagation();
     });
 
-    elements.push(circleTextBox)
+    elements.push(circleTextBox);
     dropArea.appendChild(circleTextBox);
     saveState();
 });
@@ -1546,6 +1713,7 @@ reverseCircleTextButton.addEventListener('click', () => {
 	const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
 	text.setAttribute("text-anchor", "middle");
 	text.setAttribute("letter-spacing", "0");
+	text.classList.add('spacing');
 
 	const textPath = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
 	textPath.setAttribute("href", `#circlePath-${itemCounter}`);
@@ -1573,7 +1741,14 @@ reverseCircleTextButton.addEventListener('click', () => {
     saveState();
 });
 
-    document.getElementById("removebtn").addEventListener('click', () => {dropArea.replaceChildren();
+    document.getElementById("removebtn").addEventListener('click', () => {
+        inputContainer.innerHTML=''
+        createFont.style.display='none'
+        Rotatedropdown.style.display='none'
+        Sizedropdown.style.display='none'
+        textalign.style.display='none'
+        Spacingdropdown.style.display='none'
+        dropArea.replaceChildren();
         saveState();
 
     });
@@ -1722,7 +1897,6 @@ QRcloseModalBtn.onclick = function() {
 QRmodal.onclick = function(event) {
     if (event.target === QRmodal) {
         QRContainer.style.border = "dashed 3px gray"
-    
         card.removeEventListener("click",rotateCard)
         card.style.transform = "rotateY(0deg)"
         QRmodal.style.display = "none";
@@ -1982,3 +2156,46 @@ function rotateCard() {
     }
 }
 
+document.querySelector('.dropbtn').addEventListener('click', function() {
+    document.querySelector('.dropdown-content').classList.toggle('show');
+});
+
+const rotateDropdown = document.querySelector('.Rotatedropdown-content');
+const sizeDropdown = document.querySelector('.Sizedropdown-content');
+const spacingDropdown = document.querySelector('.Spacingdropdown-content'); // 새로운 드롭다운 추가
+
+document.querySelector('.Rotatedropbtn').addEventListener('click', function() {
+    // 다른 드롭다운 닫기
+    if (sizeDropdown.classList.contains('Sizeshow')) {
+        sizeDropdown.classList.remove('Sizeshow');
+    }
+    if (spacingDropdown.classList.contains('Spacingshow')) { // 새로운 드롭다운 닫기
+        spacingDropdown.classList.remove('Spacingshow');
+    }
+    // 현재 드롭다운 토글
+    rotateDropdown.classList.toggle('Rotateshow');
+});
+
+document.querySelector('.Sizedropbtn').addEventListener('click', function() {
+    // 다른 드롭다운 닫기
+    if (rotateDropdown.classList.contains('Rotateshow')) {
+        rotateDropdown.classList.remove('Rotateshow');
+    }
+    if (spacingDropdown.classList.contains('Spacingshow')) { // 새로운 드롭다운 닫기
+        spacingDropdown.classList.remove('Spacingshow');
+    }
+    // 현재 드롭다운 토글
+    sizeDropdown.classList.toggle('Sizeshow');
+});
+
+document.querySelector('.Spacingdropbtn').addEventListener('click', function() {
+    // 다른 드롭다운 닫기
+    if (rotateDropdown.classList.contains('Rotateshow')) {
+        rotateDropdown.classList.remove('Rotateshow');
+    }
+    if (sizeDropdown.classList.contains('Sizeshow')) { // 새로운 드롭다운 닫기
+        sizeDropdown.classList.remove('Sizeshow');
+    }
+    // 현재 드롭다운 토글
+    spacingDropdown.classList.toggle('Spacingshow');
+});

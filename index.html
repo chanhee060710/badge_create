@@ -1023,6 +1023,7 @@
                     <input type="file" id="folderInput" webkitdirectory directory multiple>
                     
                </section>
+               <section></section>
         </div>
         </div>
         <div class="container2">  
@@ -1038,9 +1039,41 @@
             <nav class="styleInput" id="textInput">
                 <div class="styleInputContainer"><button class="btns" id="redoBtn"><i class="fa-solid fa-rotate-left"></i></button>
                     <button class="btns" id="undoBtn"><i class="fa-solid fa-rotate-right"></i></button>
-                    <input type="range" id="opacity-slider" min="0" max="100" value="100" class="slider">
+                    <div class="dropdown">
+                        <button class="dropbtn">opacity</button>
+                        <div class="dropdown-content">
+                            <input type="range" id="opacity-slider" min="0" max="100" value="100" class="slider">
+                        </div>
                     </div>
-                <div class="inputContainer2"></div>
+                    
+                    </div>
+                <div class="inputContainer2">
+                    <div class="createFont"></div>
+                    <div class="textalign">
+
+                    </div>
+                    <div class="Rotatedropdown">
+                        <button class="Rotatedropbtn">Rotate</button>
+                        <div class="Rotatedropdown-content">
+                            <input type="range" id="angleSlider" min="0" max="360" value="0" class="slider" >
+                            <input type="number" id="angle" min="0" max="360" value="0" class="angle" >
+                        </div>
+                    </div>
+                    <div class="Sizedropdown">
+                        <button class="Sizedropbtn">Fontsize</button>
+                        <div class="Sizedropdown-content">
+                            <input type="range" id="sizeSlider" min="3" max="200" class="slider" >
+                            <input type="number" id="size" min="3" max="200" value="0" class="angle" >
+                        </div>
+                    </div>
+                    <div class="Spacingdropdown">
+                        <button class="Spacingdropbtn">Spacingdropdown</button>
+                        <div class="Spacingdropdown-content">
+                            <input type="range" id="spacingSlider" min="-10" max="20" class="slider">
+                            <input type="number" id="spacingInput" min="-10" max="20" value="0" class="angle">
+                        </div>
+                    </div>
+                </div>
             </nav>
             <div id="drop-area"></div>
             <div id="modal" class="modal">
