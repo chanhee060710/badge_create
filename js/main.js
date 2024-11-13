@@ -2191,3 +2191,14 @@ document.querySelector('.Sizedropbtn').addEventListener('click', function() {
 document.querySelector('.Spacingdropbtn').addEventListener('click', function() {
     spacingDropdown.classList.toggle('Spacingshow');
 });
+
+const links = document.querySelectorAll('.sidebar ul li a');
+
+links.forEach(link => {
+    link.addEventListener('click', function() {
+        // 모든 링크에서 active 클래스 제거
+        links.forEach(l => l.classList.remove('active'));
+        // 클릭된 링크에 active 클래스 추가
+        this.classList.add('active');
+    });
+});

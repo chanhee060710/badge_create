@@ -14,6 +14,7 @@ body {
 .container {
     z-index:4;
     flex-shrink: 1;
+    flex: 0;
     display: flex;
     width: 25vw;
     height: 100vh;
@@ -23,7 +24,7 @@ body {
     margin: 0;
     width: 100px;
     background-color: #243642;
-    height: 100vh; /* 사이드바 높이를 100vh로 설정 */
+    height: 100vh; 
     position: fixed;
 }
 
@@ -33,21 +34,30 @@ body {
     margin: 0;
 }
 
-.sidebar ul li {
-    padding: 18px;
-}
+/* .sidebar ul li {
+    
+} */
 
 .sidebar ul li a {
+    padding: 18px;
     font-size: 20px;
     text-align: center;
     font-family: "Protest Strike", sans-serif;
     color: white;
     text-decoration: none;
-
     display: block;
 }
 
+.sidebar ul li a:hover {
+    transition: 0.5s;
+    background-color: black;
+    color: #00AE68;
+}
 
+.sidebar ul li a.active {
+    background-color: black; 
+    color: #00AE68;
+}
 
 /* .sidebar ul li a:hover {
     transition: 0.5s;
@@ -363,7 +373,7 @@ body {
 }
 
 .container2{
-    position: sticky;
+    flex: 1;
     width: 100%;
     height: 100vh;
 }
@@ -592,6 +602,9 @@ section{
 }
 
 input[type=number] {
+    outline: #00AE68 2px;
+    width: 40px;
+    height: 40px;
     appearance: none;
     -moz-appearance: none;
     -webkit-appearance: none;
@@ -716,6 +729,7 @@ input[type=number] {
 .Rotatedropdown-content,.Sizedropdown-content,.Spacingdropdown-content{
     border-radius: 5px;
     display: flex;
+    align-items: center;
     position: absolute;
     background-color: #f9f9f9;
     min-width: 160px;
