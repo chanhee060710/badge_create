@@ -1770,8 +1770,7 @@ reverseCircleTextButton.addEventListener('click', () => {
             });
         }
     });
-
-    document.addEventListener('keydown', (event) => {
+document.addEventListener('keydown', (event) => {
         if(event.ctrlKey && event.key === 'y'){
             if (redoStack.length > 0) {
                 const state = redoStack.pop();
@@ -1782,9 +1781,7 @@ reverseCircleTextButton.addEventListener('click', () => {
         }else if(event.ctrlKey && event.key === 'z'){
             if (history.length > 1) {
                 redoStack.push(history.pop()); 
-                restoreState(history[history.length - 1]); 
-    
-                
+                restoreState(history[history.length - 1]);       
             }else{
                 dropArea.innerHTML = ""
             }
@@ -2107,11 +2104,10 @@ function saveAndRemoveImages(fileName, wrapper2, callback) {
         link.href = canvas.toDataURL('image/png');
         link.click();
         dropArea.style.border = "dashed #243642";
-
         dropArea.removeChild(wrapper2);
-
         if (callback) callback();
     });
+    
 }
 
 let isImageAdded = false; 
