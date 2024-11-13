@@ -540,7 +540,6 @@ input[type="file"] {
 }
 
 #colorInput{
-    border-radius: 5px;
     margin-right: 20px;
 }
 
@@ -586,6 +585,9 @@ section{
     margin: 5px;
 }
 
+.inputContainer{
+    margin-right: 20px;
+}
 
 .angle{
     display: inline-block;
@@ -660,6 +662,11 @@ input[type=number] {
     border: none;
     cursor: pointer;
 }
+.dropbtn:hover{
+    transition: 0.5s;
+    color: white;
+    background-color: #00AE68;
+}
 
 .dropdown-content {
     border-radius: 5px;
@@ -682,15 +689,10 @@ input[type=number] {
     display: block;
 }
 
-.dropdown-content .item:hover {
-    background-color: #f1f1f1;
-}
-
 .show {
-    max-height: 100px; /* 최대 높이를 설정하여 애니메이션 효과를 줍니다. */
-    opacity: 1; /* 완전 불투명으로 변경 */
+    max-height: 100px; 
+    opacity: 1; 
 }
-
 
 .Rotatedropdown ,.Sizedropdown,.Spacingdropdown{
     margin-left: 10px;
@@ -754,3 +756,4 @@ input[type=number] {
     border: 1px solid #00AE68;
     outline: 2px solid #08f596;
 }
+

@@ -415,7 +415,7 @@ svgs.forEach(element =>{
         addResizers(newItem);
             elements.push(newItem)
             dropArea.appendChild(newItem);
-            newItem.addEventListener('click', function(e) {
+            newItem.addEventListener('focus', function(e) {
                 toggleSelectedElement(newItem, e);
                 
             });
@@ -479,6 +479,7 @@ showResizers(selectedElement);
                selectedElement.remove()
                 
             }
+            
         });
            
 		   if (isText) {
@@ -623,6 +624,7 @@ svgElements.forEach(svg => {
       const colorInput = document.createElement("input");
       colorInput.type = "color";
       colorInput.id = `color-${fillId}`;
+      colorInput.classList.add('colordesign')
       const firstPath = svg.querySelector(`[fill-id='${fillId}']`);
       colorInput.value = firstPath.getAttribute("fill"); 
       colorInput.addEventListener("input", (event) => {
@@ -1750,10 +1752,8 @@ reverseCircleTextButton.addEventListener('click', () => {
         Spacingdropdown.style.display='none'
         dropArea.replaceChildren();
         saveState();
-
     });
     
-
     saveButton.addEventListener('click', () => {
         const saveName = prompt("이미지의 이름을 정해주세요")
         if(saveName==null || saveName==""){
@@ -1873,45 +1873,45 @@ window.onclick = function(event) {
         modal.style.display = "none";
     }
 }
-const QRInput = document.getElementById("QRFile");
-const QRContainer = document.getElementById("card-front");
-const card = document.querySelector('.card');
-const QRBack = document.getElementById("card-back")
+// const QRInput = document.getElementById("QRFile");
+// const QRContainer = document.getElementById("card-front");
+// const card = document.querySelector('.card');
+// const QRBack = document.getElementById("card-back")
 
-const QRmodal = document.getElementById("QRmodal");
-const QRopenModalBtn = document.getElementById("qrSave");
-const QRcloseModalBtn = document.getElementById("QRcloseModal");
-QRopenModalBtn.onclick = function() {
-    QRContainer.innerHTML =""
-    QRmodal.style.display = "block";
-}
+// const QRmodal = document.getElementById("QRmodal");
+// const QRopenModalBtn = document.getElementById("qrSave");
+// const QRcloseModalBtn = document.getElementById("QRcloseModal");
+// QRopenModalBtn.onclick = function() {
+//     QRContainer.innerHTML =""
+//     QRmodal.style.display = "block";
+// }
 
-QRcloseModalBtn.onclick = function() {
-    QRContainer.style.border = "dashed 3px gray"
+// QRcloseModalBtn.onclick = function() {
+//     QRContainer.style.border = "dashed 3px gray"
     
-    card.removeEventListener("click",rotateCard)
-    card.style.transform = "rotateY(0deg)"
-    QRmodal.style.display = "none";
-}
+//     card.removeEventListener("click",rotateCard)
+//     card.style.transform = "rotateY(0deg)"
+//     QRmodal.style.display = "none";
+// }
 
-QRmodal.onclick = function(event) {
-    if (event.target === QRmodal) {
-        QRContainer.style.border = "dashed 3px gray"
-        card.removeEventListener("click",rotateCard)
-        card.style.transform = "rotateY(0deg)"
-        QRmodal.style.display = "none";
-    }
-}
+// QRmodal.onclick = function(event) {
+//     if (event.target === QRmodal) {
+//         QRContainer.style.border = "dashed 3px gray"
+//         card.removeEventListener("click",rotateCard)
+//         card.style.transform = "rotateY(0deg)"
+//         QRmodal.style.display = "none";
+//     }
+// }
 
-window.onclick = function(event) {
-    if (event.target === QRmodal) {
-QRContainer.style.transform = "rotateY(0deg)"
-        card.removeEventListener("click",rotateCard)
-        QRContainer.style.border = "dashed 3px gray"
+// window.onclick = function(event) {
+//     if (event.target === QRmodal) {
+// QRContainer.style.transform = "rotateY(0deg)"
+//         card.removeEventListener("click",rotateCard)
+//         QRContainer.style.border = "dashed 3px gray"
     
-        QRmodal.style.display = "none";
-    }
-}
+//         QRmodal.style.display = "none";
+//     }
+// }
 
    function unionMakeElementDraggable(element) {
     let offsetX = 0, offsetY = 0;
@@ -2116,86 +2116,78 @@ function saveAndRemoveImages(fileName, wrapper2, callback) {
 
 let isImageAdded = false; 
 
-QRInput.addEventListener('change', function(event) {
+// QRInput.addEventListener('change', function(event) {
     
-    const file = event.target.files[0];
+//     const file = event.target.files[0];
     
-    if (file) {
-        console.log(file[0])
-        QRContainer.style.border = "none";
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const QRImage = document.createElement('img')
-            QRContainer.innerHTML = "";
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.style.width = "400px";
-            img.style.height = "400px";
-            img.style.objectFit = "contain";
-            QRContainer.appendChild(img);
-            console.log(img.src)
-            console.log(window.btoa(img.src))
-            var ccc = window.btoa(img.src)
-            console.log(ccc)
-            var ccc2 = window.atob(ccc)
+//     if (file) {
+//         console.log(file[0])
+//         QRContainer.style.border = "none";
+//         const reader = new FileReader();
+//         reader.onload = function(e) {
+//             const QRImage = document.createElement('img')
+//             QRContainer.innerHTML = "";
+//             const img = document.createElement('img');
+//             img.src = e.target.result;
+//             img.style.width = "400px";
+//             img.style.height = "400px";
+//             img.style.objectFit = "contain";
+//             QRContainer.appendChild(img);
+//             console.log(img.src)
+//             console.log(window.btoa(img.src))
+//             var ccc = window.btoa(img.src)
+//             console.log(ccc)
+//             var ccc2 = window.atob(ccc)
             
-            isImageAdded = true;
-            card.addEventListener('click', rotateCard);
-        }
-        reader.readAsDataURL(file);
-        console.log(file)
-    } else {
-        QRContainer.innerHTML = '이미지를 선택하세요';
+//             isImageAdded = true;
+//             card.addEventListener('click', rotateCard);
+//         }
+//         reader.readAsDataURL(file);
+//         console.log(file)
+//     } else {
+//         QRContainer.innerHTML = '이미지를 선택하세요';
         
-    }
+//     }
    
-});
+// });
 function rotateCard() {
     if (isImageAdded) {
         card.style.transform = card.style.transform === 'rotateY(180deg)' ? 'rotateY(0deg)' : 'rotateY(180deg)';
     }
 }
 
-document.querySelector('.dropbtn').addEventListener('click', function() {
-    document.querySelector('.dropdown-content').classList.toggle('show');
-});
-
 const rotateDropdown = document.querySelector('.Rotatedropdown-content');
 const sizeDropdown = document.querySelector('.Sizedropdown-content');
-const spacingDropdown = document.querySelector('.Spacingdropdown-content'); // 새로운 드롭다운 추가
+const spacingDropdown = document.querySelector('.Spacingdropdown-content');
+const dropbtngDropdown = document.querySelector('.dropdown-content');
 
-document.querySelector('.Rotatedropbtn').addEventListener('click', function() {
-    // 다른 드롭다운 닫기
-    if (sizeDropdown.classList.contains('Sizeshow')) {
+document.addEventListener('click', function(e) {
+	if (!document.querySelector('.dropbtn').contains(e.target) && !rotateDropdown.contains(e.target)) {
+    dropbtngDropdown.classList.remove('Rotateshow');
+}
+    if (!document.querySelector('.Rotatedropbtn').contains(e.target) && !rotateDropdown.contains(e.target)) {
+        rotateDropdown.classList.remove('Rotateshow');
+    }
+    if (!document.querySelector('.Sizedropbtn').contains(e.target) && !sizeDropdown.contains(e.target)) {
         sizeDropdown.classList.remove('Sizeshow');
     }
-    if (spacingDropdown.classList.contains('Spacingshow')) { // 새로운 드롭다운 닫기
+    if (!document.querySelector('.Spacingdropbtn').contains(e.target) && !spacingDropdown.contains(e.target)) {
         spacingDropdown.classList.remove('Spacingshow');
     }
-    // 현재 드롭다운 토글
+});
+
+document.querySelector('.dropbtn').addEventListener('click', function() {
+    dropbtngDropdown.classList.toggle('Rotateshow');
+});
+
+document.querySelector('.Rotatedropbtn').addEventListener('click', function() {
     rotateDropdown.classList.toggle('Rotateshow');
 });
 
 document.querySelector('.Sizedropbtn').addEventListener('click', function() {
-    // 다른 드롭다운 닫기
-    if (rotateDropdown.classList.contains('Rotateshow')) {
-        rotateDropdown.classList.remove('Rotateshow');
-    }
-    if (spacingDropdown.classList.contains('Spacingshow')) { // 새로운 드롭다운 닫기
-        spacingDropdown.classList.remove('Spacingshow');
-    }
-    // 현재 드롭다운 토글
     sizeDropdown.classList.toggle('Sizeshow');
 });
 
 document.querySelector('.Spacingdropbtn').addEventListener('click', function() {
-    // 다른 드롭다운 닫기
-    if (rotateDropdown.classList.contains('Rotateshow')) {
-        rotateDropdown.classList.remove('Rotateshow');
-    }
-    if (sizeDropdown.classList.contains('Sizeshow')) { // 새로운 드롭다운 닫기
-        sizeDropdown.classList.remove('Sizeshow');
-    }
-    // 현재 드롭다운 토글
     spacingDropdown.classList.toggle('Spacingshow');
 });
