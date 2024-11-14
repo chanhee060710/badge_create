@@ -36,7 +36,7 @@ const svgs = document.querySelectorAll("section > svg")
 const svgPath = document.querySelector('#svgImages path');
 function showResizers(element) {
     const resizerClasses = [
-        '.resizer','.resizerLB', '.resizerLT', '.resizerRT', 
+        '.resizerRB','.resizerLB', '.resizerLT', '.resizerRT', 
         '.z-index-controls'
     ];
 
@@ -68,7 +68,7 @@ svgs.forEach(svg => {
 
 function blindResizers(element) {
     const resizerClasses = [
-        '.resizer', '.resizerLB', '.resizerLT', '.resizerRT', 
+        '.resizerRB', '.resizerLB', '.resizerLT', '.resizerRT', 
         '.z-index-controls'
     ];
 
@@ -347,7 +347,6 @@ function setPositionAndAlignment(element, item) {
     element.style.top = `${item.top}px`;
     element.style.left = `${item.left}px`;
     element.style.position = 'absolute';
-    
     if (item.array === 'left') {
         element.classList.add('left');
     } else if (item.array === 'center') {
@@ -824,121 +823,122 @@ blindResizers(selectedElement);
        element.style.top = `${y - dropArea.getBoundingClientRect().top}px`;
    }
    function addResizers(newItem) {
-    newItem.appendChild(createResizer());
-    newItem.appendChild(createResizerLB());
-    newItem.appendChild(createResizerLT());
-    newItem.appendChild(createResizerRT());
+	['RB', 'LB', 'LT', 'RT'].forEach(type => {
+	    newItem.appendChild(createResizer(type));
+	});
     newItem.appendChild(createZIndexControls(newItem));
 }
-function createResizer() {
+function createResizer(type) {
     const resizer = document.createElement('div');
-    resizer.classList.add('resizer');
+    resizer.classList.add(`resizer${type}`);
     resizer.style.zIndex = 999;
     resizer.addEventListener('mousedown', function (e) {
-        initResize(e, parent);
+        initResize(e, type);
     });
     return resizer;
 }
-function initResize(e) {
+
+function initResize(e, type) {
     e.preventDefault();
     const resizableElement = e.target.parentElement;
-
     const isTextBox = resizableElement.classList.contains('text-box');
     const isCircleText = resizableElement.classList.contains('circle-text');
 
-
+    const startX = e.pageX;
+    const startY = e.pageY;
     const startWidth = resizableElement.offsetWidth;
     const startHeight = resizableElement.offsetHeight;
-    const aspectRatio = startWidth / startHeight;
-
-    isResizing = true;
-    window.addEventListener('mousemove', startResize);
-    window.addEventListener('mouseup', stopResize);
-
-    function startResize(e) {
-        const newWidth = e.clientX - resizableElement.getBoundingClientRect().left;
-        const newHeight = newWidth / aspectRatio;
-
-        if (newHeight > 0) {
-            if (isTextBox&&!isCircleText) {
-               resizableElement.style.width = `${e.clientX - resizableElement.getBoundingClientRect().left}px`;
-               resizableElement.style.height = `${e.clientY - resizableElement.getBoundingClientRect().top}px`;
-            } else {
-               resizableElement.style.width = `${newWidth}px`;
-               resizableElement.style.height = `${newHeight}px`;
-            }
-        }
-    }
-
-
-   function stopResize() {
-        isResizing = false;
-       window.removeEventListener('mousemove', startResize);
-       window.removeEventListener('mouseup', stopResize);
-       saveState();
-   }
-}
-
-function createResizerR() {
-   const resizer = document.createElement('div');
-   resizer.classList.add('resizerR');
-   resizer.style.zIndex = 999;
-   resizer.addEventListener('mousedown', function (e) {
-       initResizeR(e, parent);
-   });
-   return resizer;
-}
-
-function initResizeR(e) {
-   e.preventDefault();	
-   const resizableElement = e.target.parentElement;
-   isResizing = true;
-   window.addEventListener('mousemove', startResize);
-   window.addEventListener('mouseup', stopResize);
-
-   function startResize(e) {
-       const rect = resizableElement.getBoundingClientRect();
-       let newWidth = e.clientX - rect.left;
-       if (newWidth > 0) {
-            resizableElement.style.width = `${newWidth}px`;
-        }
-   }
-
-   function stopResize() {
-       isResizing = false;
-       window.removeEventListener('mousemove', startResize);
-       window.removeEventListener('mouseup', stopResize);
-       saveState();
-   }
-}
-
-function createResizerL() {
-    const resizer = document.createElement('div');
-    resizer.classList.add('resizerL');
-    resizer.style.zIndex = 999;    
-    resizer.addEventListener('mousedown', function (e) {
-        initResizeL(e);
-    });
-    return resizer;
-}
-
-function initResizeL(e) {
-    e.preventDefault();
-    const resizableElement = e.target.parentElement;
-    const startX = e.clientX;
-    const startWidth = resizableElement.offsetWidth;
     const startLeft = resizableElement.offsetLeft;
+    const startTop = resizableElement.offsetTop;
+    const aspectRatio = startWidth / startHeight;
     isResizing = true;
+
     window.addEventListener('mousemove', startResize);
     window.addEventListener('mouseup', stopResize);
 
     function startResize(e) {
-        const newWidth = startWidth - (e.clientX - startX);
-        const newLeft = startLeft + (e.clientX - startX);
+        let newWidth, newHeight, newLeft, newTop;
 
-        if (newWidth > 0) {
-            resizableElement.style.width = `${newWidth}px`;
-            resizableElement.style.left = `${newLeft}px`;
+        switch (type) {
+			case 'RB':
+				 newWidth = e.clientX - resizableElement.getBoundingClientRect().left;
+				          newHeight = newWidth / aspectRatio;
+
+				         if (newHeight > 0) {
+				             if (isTextBox&&!isCircleText) {
+								resizableElement.style.width = `${e.clientX - resizableElement.getBoundingClientRect().left}px`;
+								resizableElement.style.height = `${e.clientY - resizableElement.getBoundingClientRect().top}px`;
+				             } else {
+								resizableElement.style.width = `${newWidth}px`;
+								resizableElement.style.height = `${newHeight}px`;
+							 }
+				         }
+
+			    break;
+			case 'LB':
+				 newWidth = startWidth - (e.clientX - startX);
+				                 newLeft = startLeft + (e.clientX - startX);
+				                 newHeight = newWidth / aspectRatio;
+
+				                if (newWidth > 0 && newHeight > 0) {
+				                    if (isTextBox&&!isCircleText) {
+									resizableElement.style.width = `${newWidth}px`;
+									resizableElement.style.height = `${startHeight + (e.clientY - startY)}px`;
+									resizableElement.style.left = `${newLeft}px`;
+				                    } else {
+									resizableElement.style.width = `${newWidth}px`;
+									resizableElement.style.height = `${newHeight}px`;
+									resizableElement.style.left = `${newLeft}px`;						
+								 }
+				                }
+
+			    break;
+				case 'LT':
+				const deltX = startX - e.pageX;
+				const deltY = startY - e.pageY;
+				    newWidth = startWidth + deltX;
+				    newHeight = newWidth / aspectRatio;
+				    newLeft = startLeft - deltX;
+				    newTop = startTop - (newHeight - startHeight);
+
+				    if (newWidth > 0 && newHeight > 0) {
+				        if (isTextBox && !isCircleText) {
+				            resizableElement.style.width = `${startWidth + deltX}px`;
+				            resizableElement.style.height = `${startHeight + deltY}px`;
+				            resizableElement.style.left = `${newLeft}px`;
+				            resizableElement.style.top = `${startTop - ((startHeight + deltY) - startHeight)}px`;
+				        } else {
+				            resizableElement.style.width = `${newWidth}px`;
+				            resizableElement.style.height = `${newHeight}px`;
+				            resizableElement.style.left = `${newLeft}px`;
+				            resizableElement.style.top = `${newTop}px`;
+				        }
+				    }
+
+                break;
+
+            case 'RT':
+				const deltaX = e.clientX - startX;
+							 const deltaY = e.clientY - startY;
+				                 newWidth = startWidth + deltaX;
+				                 newHeight = newWidth / aspectRatio;
+				                 newTop = startTop + (startHeight - newHeight);
+
+				                if (newWidth > 0 && newHeight > 0) {
+				                    if (isTextBox&&!isCircleText) {
+								resizableElement.style.width = `${newWidth}px`;
+								resizableElement.style.height = `${startHeight - deltaY}px`;
+								resizableElement.style.top = `${startTop + deltaY}px`;
+				                    } else {
+									resizableElement.style.width = `${newWidth}px`;
+									resizableElement.style.height = `${newHeight}px`;
+									resizableElement.style.top = `${newTop}px`;
+								 }
+				                }
+
+                break;
+            default:
+                return;
         }
     }
 
@@ -949,276 +949,6 @@ function initResizeL(e) {
         saveState();
     }
 }
-
-   function createResizerB() {
-        const resizer = document.createElement('div');
-        resizer.classList.add('resizerB');
-        resizer.style.zIndex = 999;
-        resizer.addEventListener('mousedown', function (e) {
-            initResizeB(e);
-        });
-        return resizer;
-    }
-
-   function initResizeB(e) {
-        e.preventDefault();
-        const resizableElement = e.target.parentElement;
-        const isTextBox = resizableElement.classList.contains('text-box');
-        let editableArea, originalFontSize, originalHeight;
-
-        if (isTextBox&&!isCircleText) {
-            editableArea = resizableElement.querySelector('.editable-area');
-            originalFontSize = parseFloat(getComputedStyle(editableArea).fontSize);
-            originalHeight = resizableElement.offsetHeight;
-        }
-
-        const startY = e.clientY;
-        const startHeight = resizableElement.offsetHeight;
-        isResizing = true;
-
-        window.addEventListener('mousemove', startResize);
-        window.addEventListener('mouseup', stopResize);
-
-        function startResize(e) {
-            let newHeight = startHeight + (e.clientY - startY);
-
-            if (newHeight > 0) {
-                resizableElement.style.height = `${newHeight}px`;
-                if (isTextBox&&!isCircleText) {
-                    const heightRatio = newHeight / originalHeight;
-                    const newFontSize = originalFontSize * heightRatio;
-                    editableArea.style.fontSize = `${newFontSize}px`;
-                }
-            }
-        }
-
-        function stopResize() {
-            isResizing = false;
-            window.removeEventListener('mousemove', startResize);
-            window.removeEventListener('mouseup', stopResize);
-            saveState();
-        }
-    }
-    function createResizerT() {
-        const resizer = document.createElement('div');
-        resizer.classList.add('resizerT');
-        resizer.style.zIndex = 999;
-        resizer.addEventListener('mousedown', function (e) {
-            initResizeT(e);
-        });
-        return resizer;
-    }
-
-    function initResizeT(e) {
-        e.preventDefault();
-        const resizableElement = e.target.parentElement;
-        const isTextBox = resizableElement.classList.contains('text-box');
-        let editableArea, originalFontSize, originalHeight;
-
-        if (isTextBox&&!isCircleText) {
-            editableArea = resizableElement.querySelector('.editable-area');
-            originalFontSize = parseFloat(getComputedStyle(editableArea).fontSize);
-            originalHeight = resizableElement.offsetHeight;
-        }
-
-        const startY = e.clientY;
-        const startHeight = resizableElement.offsetHeight;
-        const startTop = resizableElement.offsetTop;
-        isResizing = true;
-
-        window.addEventListener('mousemove', startResize);
-        window.addEventListener('mouseup', stopResize);
-
-        function startResize(e) {
-            const newHeight = startHeight - (e.clientY - startY);
-            const newTop = startTop + (e.clientY - startY);
-
-            if (newHeight > 0) {
-                resizableElement.style.height = `${newHeight}px`;
-                resizableElement.style.top = `${newTop}px`;
-                if (isTextBox&&!isCircleText) {
-                    const heightRatio = newHeight / originalHeight;
-                    const newFontSize = originalFontSize * heightRatio;
-                    editableArea.style.fontSize = `${newFontSize}px`;
-                }
-            }
-        }
-
-        function stopResize() {
-            isResizing = false;
-            window.removeEventListener('mousemove', startResize);
-            window.removeEventListener('mouseup', stopResize);
-            saveState();
-        }
-    }
-
-       function createResizerLB() {
-            const resizer = document.createElement('div');
-            resizer.classList.add('resizerLB');
-            resizer.style.zIndex = 999;
-            resizer.addEventListener('mousedown', function (e) {
-                initResizeLB(e);
-            });
-            return resizer;
-        }
-       function initResizeLB(e) {
-            e.preventDefault();
-            const resizableElement = e.target.parentElement;
-            const isTextBox = resizableElement.classList.contains('text-box');
-            const isCircleText = resizableElement.classList.contains('circle-text');
-
-
-            const startX = e.clientX;
-            const startY = e.clientY;
-            const startWidth = resizableElement.offsetWidth;
-            const startLeft = resizableElement.offsetLeft;
-            const startHeight = resizableElement.offsetHeight;
-            const aspectRatio = startWidth / startHeight;
-            isResizing = true;
-
-            window.addEventListener('mousemove', startResize);
-            window.addEventListener('mouseup', stopResize);
-
-            function startResize(e) {
-                const newWidth = startWidth - (e.clientX - startX);
-                const newLeft = startLeft + (e.clientX - startX);
-                let newHeight = newWidth / aspectRatio;
-
-                if (newWidth > 0 && newHeight > 0) {
-                    if (isTextBox&&!isCircleText) {
-                       resizableElement.style.width = `${newWidth}px`;
-                       resizableElement.style.height = `${startHeight + (e.clientY - startY)}px`;
-                       resizableElement.style.left = `${newLeft}px`;
-                    } else {
-                       resizableElement.style.width = `${newWidth}px`;
-                       resizableElement.style.height = `${newHeight}px`;
-                       resizableElement.style.left = `${newLeft}px`;						
-                    }
-                }
-            }
-
-            function stopResize() {
-                isResizing = false;
-                window.removeEventListener('mousemove', startResize);
-                window.removeEventListener('mouseup', stopResize);
-                saveState()
-            }
-        }
-
-        function createResizerLT() {
-            const resizer = document.createElement('div');
-            resizer.classList.add('resizerLT');
-            resizer.style.zIndex = 999;
-            resizer.addEventListener('mousedown', function (e) {
-                initResizeLT(e);
-            });
-            return resizer;
-        }
-        function initResizeLT(e) {
-            e.preventDefault();
-            const resizableElement = e.target.parentElement;
-            const isTextBox = resizableElement.classList.contains('text-box');
-            const isCircleText = resizableElement.classList.contains('circle-text');
-
-
-            const startX = e.pageX;
-            const startY = e.pageY;
-            const startWidth = resizableElement.offsetWidth;
-            const startHeight = resizableElement.offsetHeight;
-            const startLeft = resizableElement.offsetLeft;
-            const startTop = resizableElement.offsetTop;
-            const aspectRatio = startWidth / startHeight;
-            isResizing = true;
-
-            window.addEventListener('mousemove', startResize);
-            window.addEventListener('mouseup', stopResize);
-
-            function startResize(e) {
-                const deltaX = startX - e.pageX;
-                const deltaY = startY - e.pageY;
-                let newWidth = startWidth + deltaX;
-                let newHeight = newWidth / aspectRatio;
-                let newLeft = startLeft - deltaX;
-                let newTop = startTop - (newHeight - startHeight);
-
-                if (newWidth > 0 && newHeight > 0) {
-                    if (isTextBox&&!isCircleText) {
-                   resizableElement.style.width = `${startWidth + deltaX}px`;
-                   resizableElement.style.height = `${startHeight + deltaY}px`;
-                   resizableElement.style.left = `${newLeft}px`;
-                   resizableElement.style.top = `${startTop - ((startHeight + deltaY) - startHeight)}px`;
-                    } else {
-                       resizableElement.style.width = `${newWidth}px`;
-                       resizableElement.style.height = `${newHeight}px`;
-                       resizableElement.style.left = `${newLeft}px`;
-                       resizableElement.style.top = `${newTop}px`;
-                    }
-                }
-            }
-
-            function stopResize() {
-                isResizing = false;
-                window.removeEventListener('mousemove', startResize);
-                window.removeEventListener('mouseup', stopResize);
-                saveState();
-            }
-        }
-
-
-        function createResizerRT() {
-            const resizer = document.createElement('div');
-            resizer.classList.add('resizerRT');
-            resizer.style.zIndex = 999;
-            resizer.addEventListener('mousedown', function (e) {
-                initResizeRT(e);
-            });
-            return resizer;
-        }
-
-        function initResizeRT(e) {
-            e.preventDefault();
-            const resizableElement = e.target.parentElement;
-            const isTextBox = resizableElement.classList.contains('text-box');
-            const isCircleText = resizableElement.classList.contains('circle-text');
-
-            const startX = e.pageX;
-            const startY = e.pageY;
-            const startWidth = resizableElement.offsetWidth;
-            const startHeight = resizableElement.offsetHeight;
-            const startTop = resizableElement.offsetTop;
-            const aspectRatio = startWidth / startHeight;
-            isResizing = true;
-
-            window.addEventListener('mousemove', startResize);
-            window.addEventListener('mouseup', stopResize);
-
-            function startResize(e) {
-                const deltaX = e.clientX - startX;
-                const deltaY = e.clientY - startY;
-                let newWidth = startWidth + deltaX;
-                let newHeight = newWidth / aspectRatio;
-                let newTop = startTop + (startHeight - newHeight);
-
-                if (newWidth > 0 && newHeight > 0) {
-                    if (isTextBox&&!isCircleText) {
-                   resizableElement.style.width = `${newWidth}px`;
-                   resizableElement.style.height = `${startHeight - deltaY}px`;
-                   resizableElement.style.top = `${startTop + deltaY}px`;
-                    } else {
-                       resizableElement.style.width = `${newWidth}px`;
-                       resizableElement.style.height = `${newHeight}px`;
-                       resizableElement.style.top = `${newTop}px`;
-                    }
-                }
-            }
-
-            function stopResize() {
-                isResizing = false;
-                window.removeEventListener('mousemove', startResize);
-                window.removeEventListener('mouseup', stopResize);
-                saveState();
-            }
-        }
          fileInput.setAttribute('multiple','multiple')
          fileInput.addEventListener('change', handleFileUpload);
          function handleFileUpload() {
@@ -1886,10 +1616,7 @@ function handleFolder1Upload() {
         const item = createWrapper(300, newHeight);
         item.id = 'folder1-item'; 
         item.appendChild(img);
-        item.appendChild(createResizer());
-        item.appendChild(createResizerLB());
-        item.appendChild(createResizerLT());
-        item.appendChild(createResizerRT());
+        addResizers(item)
         union.appendChild(item);
 
         item.addEventListener('click', function(e) {
@@ -1917,11 +1644,7 @@ function handleFolder2Upload() {
         item.id = 'folder2-item';
         img.style.zIndex = "999";
         item.appendChild(img);
-        item.appendChild(createResizer());
-        item.appendChild(createResizerLB());
-        item.appendChild(createResizerLT());
-        item.appendChild(createResizerRT());
-        
+        addResizers(item)
         union.appendChild(item);
 
         item.addEventListener('click', function(e) {

@@ -96,7 +96,7 @@ body {
             position: absolute;
             display: inline-block;
         }
-        .resizer {
+        .resizerRB {
             width: 10px;
             height: 10px;
             background: #000;
@@ -107,50 +107,7 @@ body {
             border-radius: 50%;
             display: none;
         }
-        .resizerR {
-            width: 10px;
-            height: 10px;
-            background: #000;
-            position: absolute;
-            right: -5px;
-            top: 47%;
-            cursor: e-resize;
-            border-radius: 50%;
-            display: none;
-        } 
-        .resizerL {
-            width: 10px;
-            height: 10px;
-            background: #000;
-            position: absolute;
-            left: -5px;
-            top: 47%;
-            cursor: w-resize;
-            border-radius: 50%;
-            display: none;
-        }
-        .resizerB {
-            width: 10px;
-            height: 10px;
-            background: #000;
-            position: absolute;
-            left: 47%;
-            bottom: -5px;
-            cursor: s-resize;
-            border-radius: 50%;
-            display: none;
-        }
-        .resizerT {
-            width: 10px;
-            height: 10px;
-            background: #000;
-            position: absolute;
-            left: 47%;
-            top: -5px;
-            cursor: n-resize;
-            border-radius: 50%;
-            display: none;
-        }    
+
         .resizerLB {
             width: 10px;
             height: 10px;
