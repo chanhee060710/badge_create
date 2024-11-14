@@ -28,21 +28,12 @@ let selectionRectangle = null;
 let startX, startY;
 let isDragging = false;
 let isSelected = false;
-
-
 const union = document.querySelector('.union')
 const folderInput1 = document.getElementById('filebg');
 const folderInput2 = document.getElementById('filebadge');
 const startButton = document.getElementById('startButton');
-
-const section1 = document.querySelector("#section1")
-const section2 = document.querySelector("#section2")
-const section3 = document.querySelector("#section3")
-const section4 = document.querySelector("#section4")
-const section5 = document.querySelector("#section5")
 const svgs = document.querySelectorAll("section > svg")
 const svgPath = document.querySelector('#svgImages path');
-
 function showResizers(element) {
     const resizerClasses = [
         '.resizer','.resizerLB', '.resizerLT', '.resizerRT', 
@@ -322,75 +313,79 @@ function restoreState(state) {
         const newItem = document.createElement('div');
         newItem.classList.add('resizable');
         newItem.id = item.id;
-		if(item.selected){
-			newItem.style.width = `${item.width - 2}px`;
-			newItem.style.height = `${item.height - 2}px`;
-		} else {
-			newItem.style.width = `${item.width}px`;
-			newItem.style.height = `${item.height}px`;
-		}
-        newItem.style.top = `${item.top}px`;
-        newItem.style.left = `${item.left}px`;
-        newItem.style.position = 'absolute';
+        
+        // 기본 스타일 설정
+        setElementDimensions(newItem, item);
+        setPositionAndAlignment(newItem, item);
 
         if (item.type === 'textbox') {
-            newItem.classList.add('text-box');
+            setupTextBox(newItem, item);
+        } else if (item.type === 'circleText') {
+            setupCircleText(newItem, item);
+        } else if (item.type === 'image') {
+            setupImage(newItem, item);
+        }
 
-            const editableArea = item.innerHTML;
-            newItem.appendChild(editableArea);
-			if (item.array === 'left') {
-				editableArea.style.textAlign = 'left';
-				newItem.classList.add('left');
-			} else if (item.array === 'center') {
-				editableArea.style.textAlign = 'center';
-				newItem.classList.add('center');
-			} else if (item.array === 'right') {
-				editableArea.style.textAlign = 'right';
-				newItem.classList.add('right');
-			}
-
-		} else if (item.type === 'circleText') {
-			newItem.classList.add('text-box', 'circle-text');
-			newItem.style.position = 'absolute';
-			newItem.style.borderRadius = '50%';
-			newItem.style.display = 'flex';
-			newItem.style.alignItems = 'center';
-			newItem.style.justifyContent = 'center';
-			newItem.tabIndex = 0;
-			if(item.reverse){
-				newItem.classList.add('reverse');
-			}
-			if (item.array === 'left') {
-				newItem.classList.add('left');
-			} else if (item.array === 'center') {
-				newItem.classList.add('center');
-			} else if (item.array === 'right') {
-				newItem.classList.add('right');
-			}
-            const textPath = item.innerHTML.querySelector('textPath');
-			addEditText(textPath, newItem);
-
-			    newItem.appendChild(item.innerHTML);
-		}else if (item.type==='image'){
-                const svg = item.innerHTML
-                svg.style.width = '100%';
-                svg.style.height = '100%';
-                svg.style.position = "relative";
-                newItem.tabIndex = 0;
-                newItem.appendChild(svg);
-            }
-
-            addResizers(newItem);
-
+        addResizers(newItem);
         makeElementDraggable(newItem);
-
 
         newItem.addEventListener('click', function(e) {
             toggleSelectedElement(newItem, e);
         });
-        elements.push(newItem)
+
+        elements.push(newItem);
         dropArea.appendChild(newItem);
     });
+}
+
+function setElementDimensions(element, item) {
+    element.style.width = `${item.selected ? item.width - 2 : item.width}px`;
+    element.style.height = `${item.selected ? item.height - 2 : item.height}px`;
+}
+
+function setPositionAndAlignment(element, item) {
+    element.style.top = `${item.top}px`;
+    element.style.left = `${item.left}px`;
+    element.style.position = 'absolute';
+    
+    if (item.array === 'left') {
+        element.classList.add('left');
+    } else if (item.array === 'center') {
+        element.classList.add('center');
+    } else if (item.array === 'right') {
+        element.classList.add('right');
+    }
+}
+
+function setupTextBox(element, item) {
+    element.classList.add('text-box');
+    const editableArea = item.innerHTML;
+    editableArea.style.textAlign = item.array || 'center';
+    element.appendChild(editableArea);
+}
+
+function setupCircleText(element, item) {
+    element.classList.add('text-box', 'circle-text');
+    element.style.borderRadius = '50%';
+    element.style.display = 'flex';
+    element.style.alignItems = 'center';
+    element.style.justifyContent = 'center';
+    element.tabIndex = 0;
+    
+    if (item.reverse) element.classList.add('reverse');
+    
+    const textPath = item.innerHTML.querySelector('textPath');
+    addEditText(textPath, element);
+    element.appendChild(item.innerHTML);
+}
+
+function setupImage(element, item) {
+    const svg = item.innerHTML;
+    svg.style.width = '100%';
+    svg.style.height = '100%';
+    svg.style.position = 'relative';
+    element.tabIndex = 0;
+    element.appendChild(svg);
 }
 
 
@@ -406,7 +401,6 @@ svgs.forEach(element =>{
         newItem.style.width = '100px';
         newItem.style.height = `100px`;
         createSvg.style.position ="absolute";
-        console.log(createSvg.firstChild)
         createSvg.firstChild.style.margin ="0"
         createSvg.firstChild.style.width= "100%";
         createSvg.firstChild.style.height= "100%";
@@ -456,7 +450,6 @@ function createImage(src) {
 
        if (dropArea.children) {
         updateButtonStates(selectedElement);
-        console.log(dropArea.children.firstChild)
 showResizers(selectedElement);
 
         const isText = selectedElement.classList.contains('text-box');
@@ -495,7 +488,6 @@ showResizers(selectedElement);
                 '/rmimg/align-right-solid.svg'   
             ];
 		       alignments.forEach((alignment,index) => {
-                console.log(alignment)
 		           const button = document.createElement('button');
                    button.style.backgroundColor = 'white'
                    button.style.margin='5px'
@@ -539,7 +531,6 @@ showResizers(selectedElement);
 					           }
 					       }
 					   } else {
-                        console.log(alignment)
 					       selectedElement.querySelector('.editable-area').style.textAlign = alignment;
 					   }
 		               alignments.forEach(align => {
@@ -1293,7 +1284,6 @@ function initResizeL(e) {
    function releaseDraggedImage() {
        if (draggedImage) {
            draggedImage = null;
-           console.log("1")
        }
    }
    function bringToFront(element) {
@@ -1607,11 +1597,10 @@ addTextButton.addEventListener('click', () => {
     dropArea.appendChild(textBox);
     saveState();
 });
-
-
-circleTextButton.addEventListener('click', () => {
+function createCircleTextBox(isReverse = false) {
     const circleTextBox = document.createElement('div');
     circleTextBox.classList.add('text-box', 'resizable', 'circle-text', 'center');
+    if (isReverse) circleTextBox.classList.add('reverse');
     circleTextBox.style.position = 'absolute';
     circleTextBox.style.left = '10px';
     circleTextBox.style.top = '10px';
@@ -1621,24 +1610,26 @@ circleTextButton.addEventListener('click', () => {
     circleTextBox.style.display = 'flex';
     circleTextBox.style.alignItems = 'center';
     circleTextBox.style.justifyContent = 'center';
-	circleTextBox.tabIndex = 0;
-	
-	const testDiv = document.createElement('div');
-	testDiv.style.width = '100%';
-	testDiv.style.height = '100%';
+    circleTextBox.tabIndex = 0;
+
+    const testDiv = document.createElement('div');
+    testDiv.style.width = '100%';
+    testDiv.style.height = '100%';
 
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-	svg.setAttribute("viewBox", "-85 -85 270 270");
+    svg.setAttribute("viewBox", isReverse ? "37 137 225 225" : "-85 -85 270 270");
     svg.setAttribute("width", "100%");
     svg.setAttribute("height", "100%");
-    svg.style.fontSize = "35px";
+    svg.style.fontSize = isReverse ? "30px" : "35px";
     svg.style.fontFamily = "Arial";
     svg.style.fontWeight = "400";
 
     const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("id", `circlePath-${itemCounter}`);
-	path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,1 0,-200 a 100,100 0 1,1 0,200");
+    path.setAttribute("d", isReverse
+        ? "M 150, 150 m 0, 0 a 100,100 0 1,0 0,200 a 100,100 0 1,0 0,-200"
+        : "M 150, 150 m -100, 0 a 100,100 0 1,1 0,-200 a 100,100 0 1,1 0,200");
     path.setAttribute("stroke-dasharray", "5, 5");
     path.style.stroke = "#737373";
     defs.appendChild(path);
@@ -1647,23 +1638,21 @@ circleTextButton.addEventListener('click', () => {
     const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text.setAttribute("text-anchor", "middle");
     text.setAttribute("letter-spacing", "0");
-	text.classList.add('spacing');
+    text.classList.add('spacing');
 
     const textPath = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
     textPath.setAttribute("href", `#circlePath-${itemCounter}`);
     textPath.setAttribute("startOffset", "50%");
     textPath.textContent = "Edit Text Here";
-	textPath.setAttribute("fill", "#000");
+    textPath.setAttribute("fill", "#000");
 
     text.appendChild(textPath);
     svg.appendChild(text);
-	testDiv.appendChild(svg);
+    testDiv.appendChild(svg);
     circleTextBox.appendChild(testDiv);
 
     addEditText(textPath, circleTextBox);
-
     addResizers(circleTextBox);
-
     makeElementDraggable(circleTextBox);
     circleTextBox.id = `item-${itemCounter++}`;
 
@@ -1675,73 +1664,10 @@ circleTextButton.addEventListener('click', () => {
     elements.push(circleTextBox);
     dropArea.appendChild(circleTextBox);
     saveState();
-});
+}
 
-reverseCircleTextButton.addEventListener('click', () => {
-    const circleTextBox = document.createElement('div');
-    circleTextBox.classList.add('text-box', 'resizable', 'circle-text', 'reverse', 'center');
-    circleTextBox.style.position = 'absolute';
-    circleTextBox.style.left = '10px';
-    circleTextBox.style.top = '10px';
-    circleTextBox.style.width = '200px';
-    circleTextBox.style.height = '200px';
-    circleTextBox.style.borderRadius = '50%';
-    circleTextBox.style.display = 'flex';
-    circleTextBox.style.alignItems = 'center';
-    circleTextBox.style.justifyContent = 'center';
-	circleTextBox.tabIndex = 0;
-
-	const testDiv = document.createElement('div');
-	testDiv.style.width = '100%';
-	testDiv.style.height = '100%';
-	
-	const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-	svg.setAttribute("viewBox", "37 137 225 225");
-	svg.setAttribute("width", "100%");
-	svg.setAttribute("height", "100%");
-	svg.style.fontSize = "30px";
-	svg.style.fontFamily = "Arial";
-	svg.style.fontWeight = "400";
-
-	const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-	const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-	path.setAttribute("id", `circlePath-${itemCounter}`);
-	path.setAttribute("d", "M 150, 150 m 0, 0 a 100,100 0 1,0 0,200 a 100,100 0 1,0 0,-200");
-	path.setAttribute("stroke-dasharray", "5, 5");
-	path.style.stroke = "#737373";
-	defs.appendChild(path);
-	svg.appendChild(defs);
-
-	const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-	text.setAttribute("text-anchor", "middle");
-	text.setAttribute("letter-spacing", "0");
-	text.classList.add('spacing');
-
-	const textPath = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
-	textPath.setAttribute("href", `#circlePath-${itemCounter}`);
-	textPath.setAttribute("startOffset", "50%");
-	textPath.textContent = "Edit Text Here";
-	textPath.setAttribute("fill", "#000");
-
-    text.appendChild(textPath);
-    svg.appendChild(text);
-	testDiv.appendChild(svg);
-    circleTextBox.appendChild(testDiv);
-
-    addEditText(textPath, circleTextBox);
-    addResizers(circleTextBox);
-    makeElementDraggable(circleTextBox);
-    circleTextBox.id = `item-${itemCounter++}`;
-
-    circleTextBox.addEventListener('click', function(e) {
-        toggleSelectedElement(circleTextBox);
-        e.stopPropagation();
-    });
-
-    elements.push(circleTextBox)
-    dropArea.appendChild(circleTextBox);
-    saveState();
-});
+circleTextButton.addEventListener('click', () => createCircleTextBox(false));
+reverseCircleTextButton.addEventListener('click', () => createCircleTextBox(true));
 
     document.getElementById("removebtn").addEventListener('click', () => {
         inputContainer.innerHTML=''
@@ -1776,7 +1702,6 @@ document.addEventListener('keydown', (event) => {
                 const state = redoStack.pop();
                 history.push(state); 
                 restoreState(state); 
-               console.log(state)
             } 
         }else if(event.ctrlKey && event.key === 'z'){
             if (history.length > 1) {
@@ -1794,7 +1719,6 @@ document.addEventListener('keydown', (event) => {
             const state = redoStack.pop();
             history.push(state); 
             restoreState(state); 
-           console.log(state)
         }
     });
     document.getElementById('redoBtn').addEventListener('click', () => {
@@ -1835,13 +1759,10 @@ folderInput.setAttribute('multiple','multiple')
     const files = folderInput.files; 
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        console.log(11)
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
-            reader.onload = e => addUploadedImage(e.target.result);
-            
+            reader.onload = e => addUploadedImage(e.target.result);     
             reader.readAsDataURL(file);
-            console.log(reader)
         } else {
             alert('이미지 파일만 업로드할 수 있습니다.');
         }
