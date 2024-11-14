@@ -239,7 +239,7 @@ function checkIfCentered(element) {
     const elementCenterX = element.offsetLeft + element.offsetWidth / 2;
     const elementCenterY = element.offsetTop + element.offsetHeight / 2;
 
-    const tolerance = 5; 
+    const tolerance = 3; 
     if (Math.abs(elementCenterY - containerCenterY) < tolerance) {
         horizontalLine.style.display = "block"; 
     } else {
