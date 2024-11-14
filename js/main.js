@@ -239,7 +239,7 @@ function checkIfCentered(element) {
     const elementCenterX = element.offsetLeft + element.offsetWidth / 2;
     const elementCenterY = element.offsetTop + element.offsetHeight / 2;
 
-    const tolerance = 1; 
+    const tolerance = 5; 
     if (Math.abs(elementCenterY - containerCenterY) < tolerance) {
         horizontalLine.style.display = "block"; 
     } else {
@@ -1774,6 +1774,7 @@ function processImages() {
             img1.style.width = '100%';
             img1.style.height = '100%';
             currentWrapper1.appendChild(img1);
+            dropArea.innerHTML=''
             dropArea.appendChild(currentWrapper1);
 
             function processSingleImage(index2) {
