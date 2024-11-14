@@ -442,8 +442,8 @@ body {
     margin: 40px;
     border-radius: 40px;
     border: dashed #243642;
-    width: 42rem;
-    height: 42rem;
+    width: 672px;
+    height: 672px;
     position: relative;
     overflow: hidden;
     z-index: 1;
@@ -724,3 +724,26 @@ input[type=number] {
     outline: 2px solid #08f596;
 }
 
+.guide-line {
+    position: absolute;
+    z-index: 0;
+    display: none; /* 기본적으로 가이드라인 숨김 */
+}
+
+.horizontal {
+    width: 100%;
+    height: 0; /* 높이를 0으로 설정 */
+    top: 50%;
+    left: 0;
+    border-top: 2px dashed #00AE68; /* 점선 스타일 */
+    transform: translateY(-50%);
+}
+
+.vertical {
+    width: 0; /* 너비를 0으로 설정 */
+    height: 100%;
+    top: 0;
+    left: 50%;
+    border-left: 2px dashed #00AE68; /* 점선 스타일 */
+    transform: translateX(-50%);
+}

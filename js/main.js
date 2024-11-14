@@ -182,37 +182,79 @@ function blindResizers(element) {
 // }
 
 
-  function makeElementDraggable(element) {
-    let offsetX = 0,
-      offsetY = 0;
-  
+
+const horizontalLine = document.getElementById("horizontal-line");
+const verticalLine = document.getElementById("vertical-line");
+
+
+let isDraggingElement = false;
+
+
+function makeElementDraggable(element) {
     element.addEventListener("mousedown", (e) => {
-      if (isResizing) return;
-  
-      isDraggingElement = true;
-      offsetX = e.clientX - element.getBoundingClientRect().left;
-      offsetY = e.clientY - element.getBoundingClientRect().top;
-  
-      function onMouseMove(e) {
-        if (isDraggingElement) {
-          element.style.left =
-            e.clientX - dropArea.getBoundingClientRect().left - offsetX + "px";
-          element.style.top =
-            e.clientY - dropArea.getBoundingClientRect().top - offsetY + "px";
+        if (isResizing) return;
+
+        isDraggingElement = true;
+        offsetX = e.clientX - element.getBoundingClientRect().left;
+        offsetY = e.clientY - element.getBoundingClientRect().top;
+
+        function onMouseMove(e) {
+            if (isDraggingElement) {
+                const containerRect = dropArea.getBoundingClientRect();
+                let x = e.clientX - containerRect.left - offsetX;
+                let y = e.clientY - containerRect.top - offsetY;
+                if (x < 0) x = 0;
+                if (x + element.offsetWidth > containerRect.width) {
+                    x = containerRect.width - element.offsetWidth;
+                }
+                if (y < 0) y = 0;
+                if (y + element.offsetHeight > containerRect.height) {
+                    y = containerRect.height - element.offsetHeight;
+                }
+
+                element.style.left = x + "px";
+                element.style.top = y + "px";
+
+                checkIfCentered(element);
+            }
         }
-      }
-  
-      function onMouseUp() {
-        window.removeEventListener("mousemove", onMouseMove);
-        window.removeEventListener("mouseup", onMouseUp);
-        isDraggingElement = false;
-        saveState();
-      }
-  
-      window.addEventListener("mousemove", onMouseMove);
-      window.addEventListener("mouseup", onMouseUp);
+
+        function onMouseUp() {
+            window.removeEventListener("mousemove", onMouseMove);
+            window.removeEventListener("mouseup", onMouseUp);
+            isDraggingElement = false;
+            horizontalLine.style.display = "none"; 
+            verticalLine.style.display = "none";
+        }
+
+        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("mouseup", onMouseUp);
     });
-  }
+}
+
+function checkIfCentered(element) {
+    const container = dropArea;
+    const containerCenterX = container.clientWidth / 2;
+    const containerCenterY = container.clientHeight / 2;
+    const elementCenterX = element.offsetLeft + element.offsetWidth / 2;
+    const elementCenterY = element.offsetTop + element.offsetHeight / 2;
+
+    const tolerance = 1; 
+    if (Math.abs(elementCenterY - containerCenterY) < tolerance) {
+        horizontalLine.style.display = "block"; 
+    } else {
+        horizontalLine.style.display = "none"; 
+    }
+
+    if (Math.abs(elementCenterX - containerCenterX) < tolerance) {
+        verticalLine.style.display = "block"; 
+    } else {
+        verticalLine.style.display = "none"; 
+    }
+}
+
+
+
   
 //   dropArea.addEventListener("mouseup", endDrag);
 //   dropArea.addEventListener("mouseleave", endDrag);
@@ -460,6 +502,7 @@ showResizers(selectedElement);
 
 
            document.addEventListener("keydown", function(event) {
+            let step = 10;
 
             if (event.key === "Delete") {
                 inputContainer.innerHTML=''
@@ -470,8 +513,36 @@ showResizers(selectedElement);
         Spacingdropdown.style.display='none'
                selectedElement.remove()
                 
+            }else if(event.ctrlKey){
+                switch (event.key) {
+                    case 'ArrowUp':
+                       selectedElement.style.top = (selectedElement.offsetTop -step)+'px'
+                        break;
+                    case 'ArrowDown':
+                        selectedElement.style.top = (selectedElement.offsetTop +step)+'px'
+                        break;
+                    case 'ArrowLeft':
+                       selectedElement.style.left = (selectedElement.offsetLeft -step)+'px'
+                        break;
+                    case 'ArrowRight':
+                       selectedElement.style.left = (selectedElement.offsetLeft +step)+'px'
+                        break;
+                }
             }
-            
+            switch (event.key) {
+                case 'ArrowUp':
+                   selectedElement.style.top = (selectedElement.offsetTop -1)+'px'
+                    break;
+                case 'ArrowDown':
+                    selectedElement.style.top = (selectedElement.offsetTop +1)+'px'
+                    break;
+                case 'ArrowLeft':
+                   selectedElement.style.left = (selectedElement.offsetLeft -1)+'px'
+                    break;
+                case 'ArrowRight':
+                   selectedElement.style.left = (selectedElement.offsetLeft +1)+'px'
+                    break;
+            }
         });
            
 		   if (isText) {
@@ -1571,6 +1642,7 @@ window.onclick = function(event) {
         offsetY = e.clientY - element.getBoundingClientRect().top;
 
         function onMouseMove(e) {
+
             element.style.left = (e.clientX - union.getBoundingClientRect().left - offsetX) + 'px';
             element.style.top = (e.clientY - union.getBoundingClientRect().top - offsetY) + 'px';
         }
