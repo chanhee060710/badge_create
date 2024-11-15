@@ -306,28 +306,16 @@ function makeElementDraggable(element) {
         isDraggingElement = true;
         offsetX = e.clientX - element.getBoundingClientRect().left;
         offsetY = e.clientY - element.getBoundingClientRect().top;
-
         function onMouseMove(e) {
             if (isDraggingElement) {
-                const containerRect = dropArea.getBoundingClientRect();
-                let x = e.clientX - containerRect.left - offsetX;
-                let y = e.clientY - containerRect.top - offsetY;
-                if (x < 0) x = 0;
-                if (x + element.offsetWidth > containerRect.width) {
-                    x = containerRect.width - element.offsetWidth;
-                }
-                if (y < 0) y = 0;
-                if (y + element.offsetHeight > containerRect.height) {
-                    y = containerRect.height - element.offsetHeight;
-                }
-
-                element.style.left = x + "px";
-                element.style.top = y + "px";
-
-                checkIfCentered(element);
-            }
+                element.style.left =
+                  e.clientX - dropArea.getBoundingClientRect().left - offsetX + "px";
+                element.style.top =
+                  e.clientY - dropArea.getBoundingClientRect().top - offsetY + "px";
+            
+            checkIfCentered(element);
+              }
         }
-
         function onMouseUp() {
             window.removeEventListener("mousemove", onMouseMove);
             window.removeEventListener("mouseup", onMouseUp);
