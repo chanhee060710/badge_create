@@ -1867,7 +1867,7 @@ function saveAndRemoveImages(fileName, wrapper2, callback) {
     });
     
 }
-let isImageAdded = false; 
+let isImageAdded = false;
 // QRInput.addEventListener('change', function(event) {
     
 //     const file = event.target.files[0];
