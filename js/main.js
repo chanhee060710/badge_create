@@ -114,7 +114,6 @@ function isElementInRect(element, rect) {
       const dropAreaRect = dropArea.getBoundingClientRect();
       startX = e.clientX - dropAreaRect.left;
       startY = e.clientY - dropAreaRect.top;
-      
       selectionRectangle = document.createElement("div");
       selectionRectangle.classList.add("selection-rectangle");
       selectionRectangle.style.width = `0px`;
@@ -130,12 +129,10 @@ function isElementInRect(element, rect) {
     const dropAreaRect = dropArea.getBoundingClientRect();
     const currentX = e.clientX - dropAreaRect.left;
     const currentY = e.clientY - dropAreaRect.top;
-  
     const width = Math.abs(currentX - startX);
     const height = Math.abs(currentY - startY);
     const left = Math.min(currentX, startX);
     const top = Math.min(currentY, startY);
-  
     selectionRectangle.style.width = `${width}px`;
     selectionRectangle.style.height = `${height}px`;
     selectionRectangle.style.transform = `translate(${left}px, ${top}px)`;
@@ -168,8 +165,6 @@ function isElementInRect(element, rect) {
   document.addEventListener("mouseup", endDrag);
   dropArea.addEventListener("focusout", endDrag);
   dropArea.addEventListener("error", endDrag);
-  
-  
   
   
   function calculateBoundingBox(selectedElements) {
@@ -237,16 +232,13 @@ function isElementInRect(element, rect) {
       
       const resizeObserver = new ResizeObserver(() => {
           const groupRect = groupDiv.getBoundingClientRect();
-  
           selectedElements.forEach((element) => {
             const initialWidth = parseFloat(element.dataset.initialWidth);
             const initialHeight = parseFloat(element.dataset.initialHeight);
             const initialLeft = parseFloat(element.dataset.initialLeft);
             const initialTop = parseFloat(element.dataset.initialTop);
-  
             const widthRatio = groupRect.width / boundingBox.width;
             const heightRatio = groupRect.height / boundingBox.height;
-  
             element.style.width = `${initialWidth * widthRatio}px`;
             element.style.height = `${initialHeight * heightRatio}px`;
             element.style.left = `${initialLeft * widthRatio}px`;
@@ -358,58 +350,6 @@ function checkIfCentered(element) {
         verticalLine.style.display = "none"; 
     }
 }
-
-
-
-  
-//   dropArea.addEventListener("mouseup", endDrag);
-//   dropArea.addEventListener("mouseleave", endDrag);
-
-//   let groupContainer = null;
-
-//   function groupSelectedElements() {
-//     const selectedElements = elements.filter((element) => element.classList.contains("selected"));
-//     if (selectedElements.length === 0) return;
-  
-//     const groupContainer = document.createElement("div");
-//     groupContainer.classList.add("group-container");
-//     groupContainer.style.position = "absolute";
-  
-//     let minX = Infinity, minY = Infinity, maxX = 0, maxY = 0;
-//     selectedElements.forEach((element) => {
-//       const rect = element.getBoundingClientRect();
-//       const offsetX = rect.left - dropArea.getBoundingClientRect().left;
-//       const offsetY = rect.top - dropArea.getBoundingClientRect().top;
-  
-//       minX = Math.min(minX, offsetX);
-//       minY = Math.min(minY, offsetY);
-//       maxX = Math.max(maxX, offsetX + rect.width);
-//       maxY = Math.max(maxY, offsetY + rect.height);
-//     });
-//     groupContainer.style.left = `${minX}px`;
-//     groupContainer.style.top = `${minY}px`;
-//     groupContainer.style.width = `${maxX - minX}px`;
-//     groupContainer.style.height = `${maxY - minY}px`;
-//     selectedElements.forEach((element) => {
-//       const rect = element.getBoundingClientRect();
-//       const offsetX = rect.left - dropArea.getBoundingClientRect().left - minX;
-//       const offsetY = rect.top - dropArea.getBoundingClientRect().top - minY;
-  
-//       element.style.position = "absolute";
-//       element.style.left = `${offsetX}px`;
-//       element.style.top = `${offsetY}px`;
-        
-//       groupContainer.appendChild(element);
-      
-//     });
-//     dropArea.appendChild(groupContainer);
-//     makeElementDraggable(groupContainer);
-//   }
-//   document.addEventListener("keydown", (e) => {
-//     if (e.key === "g" && e.ctrlKey) {
-//       groupSelectedElements();
-//     }
-//   });
 function saveState() {
     const elementsState = [];
     
@@ -461,8 +401,6 @@ function restoreState(state) {
         const newItem = document.createElement('div');
         newItem.classList.add('resizable');
         newItem.id = item.id;
-        
-        // 기본 스타일 설정
         setElementDimensions(newItem, item);
         setPositionAndAlignment(newItem, item);
 
@@ -620,7 +558,7 @@ showResizers(selectedElement);
                 selectedElement.replaceChildren();
                 selectedElement.remove();
             } else {
-                let movement = event.ctrlKey ? step : 1; // Ctrl 키가 눌렸으면 10픽셀, 아니면 1픽셀 이동
+                let movement = event.ctrlKey ? step : 1; 
         
                 switch (event.key) {
                     case 'ArrowUp':
@@ -761,7 +699,6 @@ spacingFunction()
             
 if(!isText){
     const svgElements = document.querySelectorAll('div > svg');
-   // inputContainer2.innerHTML=''
    createFont.style.display='none'
    Sizedropdown.style.display='none'
    textalign.style.display='none'
@@ -771,7 +708,6 @@ if(!isText){
 svgElements.forEach(svg => {
   svg.addEventListener('click',()=>{
     inputContainer.innerHTML ='';
-   // inputContainer2.innerHTML = '';
     const paths = svg.querySelectorAll('path, polygon');
 
     const uniqueFillIds = Array.from(new Set(Array.from(paths).map(path => path.getAttribute('fill-id'))));
@@ -852,10 +788,6 @@ colorInput.addEventListener('input', colorInput.handleColorChange);
       selectedElement.firstChild.style.transform = `rotate(${angleValue}deg)`;
       angleSlider.value = angleValue;
     });
-
-  //  inputContainer2.appendChild(angleSlider);
-    //inputContainer2.appendChild(angleInput);
-    
    }
 
    spacingFunction = () => {
@@ -927,7 +859,6 @@ colorInput.addEventListener('input', colorInput.handleColorChange);
 	   name: 'ChosunKg',
 	   css: "@font-face {    font-family: 'ChosunKg';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunKg.woff') format('woff');    font-weight: normal;    font-style: normal;}"
 	   },
-       // 여기에 폰트 추가
      ];
 
     const styleElement = document.createElement('style');
@@ -1295,7 +1226,6 @@ function createZIndexControls(element) {
         Spacingdropdown.style.display='none'
         element.replaceChildren()
         element.remove()
-        console.log(element)
     });
 
     copyButton.addEventListener('mousedown', function(e) {
@@ -1907,9 +1837,7 @@ function saveAndRemoveImages(fileName, wrapper2, callback) {
     });
     
 }
-
 let isImageAdded = false; 
-
 // QRInput.addEventListener('change', function(event) {
     
 //     const file = event.target.files[0];
@@ -1990,9 +1918,7 @@ const links = document.querySelectorAll('.sidebar ul li a');
 
 links.forEach(link => {
     link.addEventListener('click', function() {
-        // 모든 링크에서 active 클래스 제거
         links.forEach(l => l.classList.remove('active'));
-        // 클릭된 링크에 active 클래스 추가
         this.classList.add('active');
     });
 });
