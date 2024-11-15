@@ -89,108 +89,204 @@ function blindResizers(element) {
     element.classList.remove('selected');
 }
 
-
-//   function isElementInRect(element, rect) {
-//     const elRect = element.getBoundingClientRect();
-//     return !(
-//       elRect.right < rect.left ||
-//       elRect.left > rect.right ||
-//       elRect.bottom < rect.top ||
-//       elRect.top > rect.bottom
-//     );
-//   }
+function isElementInRect(element, rect) {
+    const elRect = element.getBoundingClientRect();
+    return !(
+      elRect.right < rect.left ||
+      elRect.left > rect.right ||
+      elRect.bottom < rect.top ||
+      elRect.top > rect.bottom
+    );
+  }
   
-//   function deselectAll() {
-//     elements.forEach((element) => {
-//         blindResizers(element);
-//     });
-//   }
+  function deselectAll() {
+    elements.forEach((element) => blindResizers(element));
+  }
   
-//   let isDraggingElement = false;
-//   dropArea.addEventListener("mousedown", (e) => {
-//     if (isResizing) return;
-//     if (e.target.classList.contains("element") || e.target.closest(".element")) {
-//       isDraggingElement = true;
-//     } else {
-//       isDragging = true;
-//       const dropAreaRect = dropArea.getBoundingClientRect();
-//       startX = e.clientX - dropAreaRect.left;
-//       startY = e.clientY - dropAreaRect.top;
-//       deselectAll();
+  let isDraggingElement = false;
+  dropArea.addEventListener("mousedown", (e) => {
+    
+    if (isResizing || isDraggingElement) return;
+    
+    if (e.target.classList.contains("element") || e.target.closest(".element")) {
+      isDraggingElement = true;
+    } else {
+      isDragging = true;
+      const dropAreaRect = dropArea.getBoundingClientRect();
+      startX = e.clientX - dropAreaRect.left;
+      startY = e.clientY - dropAreaRect.top;
+      
+      selectionRectangle = document.createElement("div");
+      selectionRectangle.classList.add("selection-rectangle");
+      selectionRectangle.style.width = `0px`;
+      selectionRectangle.style.height = `0px`;
+      selectionRectangle.style.transform = `translate(${startX}px, ${startY}px)`;
+      dropArea.appendChild(selectionRectangle);
+    }
+  });
   
-//       selectionRectangle = document.createElement("div");
-//       selectionRectangle.classList.add("selection-rectangle");
-//       selectionRectangle.style.width = `0px`;
-//       selectionRectangle.style.height = `0px`;
-//       selectionRectangle.style.transform = `translate(${startX}px, ${startY}px)`;
-//       dropArea.appendChild(selectionRectangle);
-//     }
-//   });
+  dropArea.addEventListener("mousemove", (e) => {
+    if (!isDragging || isDraggingElement) return;
   
-//   dropArea.addEventListener("mousemove", (e) => {
-//     if (!isDragging || isDraggingElement) return;
+    const dropAreaRect = dropArea.getBoundingClientRect();
+    const currentX = e.clientX - dropAreaRect.left;
+    const currentY = e.clientY - dropAreaRect.top;
   
-//     const dropAreaRect = dropArea.getBoundingClientRect();
-//     const currentX = e.clientX - dropAreaRect.left;
-//     const currentY = e.clientY - dropAreaRect.top;
-//     const width = Math.abs(currentX - startX);
-//     const height = Math.abs(currentY - startY);
-//     const left = Math.min(currentX, startX);
-//     const top = Math.min(currentY, startY);
+    const width = Math.abs(currentX - startX);
+    const height = Math.abs(currentY - startY);
+    const left = Math.min(currentX, startX);
+    const top = Math.min(currentY, startY);
   
-//     selectionRectangle.style.width = `${width}px`;
-//     selectionRectangle.style.height = `${height}px`;
-//     selectionRectangle.style.transform = `translate(${left}px, ${top}px)`;
-//   });
+    selectionRectangle.style.width = `${width}px`;
+    selectionRectangle.style.height = `${height}px`;
+    selectionRectangle.style.transform = `translate(${left}px, ${top}px)`;
+  });
   
-//   function endDrag() {
-//     if (isDragging) {
-//         isDragging = false;
-//         const rect = selectionRectangle.getBoundingClientRect();
-//         const boxWidth = rect.width;
-//         const boxHeight = rect.height;
-//         let anySelected = false;
-
-//         deselectAll();
-//         const minDragBoxSize = 10; 
-//         if (boxWidth > minDragBoxSize && boxHeight > minDragBoxSize) {
-
-//             elements.forEach((element) => {
-//                 const isInRect = isElementInRect(element, rect);
-//                 if (isInRect) {
-//                     anySelected = true; 
-
-//                     showResizers(element);
-//                 }
-//             });
-//         } else {
-//             dropArea.removeChild(selectionRectangle)  
-//             showResizers(rect);
-//         }
-
-//         if (selectionRectangle) {
-//             selectionRectangle.style.display = 'none'; 
-//             dropArea.removeChild(selectionRectangle); 
-//             selectionRectangle = null; 
-//         }
-
-//         if (!anySelected) {
-//             deselectAll();
-//         }
-//     }
-//     isDraggingElement = false;
-// }
-
-
-
+  function endDrag() {
+    if (!isDragging) return;
+  
+    isDragging = false;
+    const rect = selectionRectangle.getBoundingClientRect();
+    const minDragBoxSize = 10;
+    let selectedElements = [];
+  
+    if (rect.width > minDragBoxSize && rect.height > minDragBoxSize) {
+      selectedElements = elements.filter((element) => isElementInRect(element, rect));
+        
+      if (selectedElements.length > 0) {
+        groupSelectedElements(selectedElements);
+      }
+    }
+  
+    if (selectionRectangle) {
+      selectionRectangle.remove();
+      selectionRectangle = null;
+    }
+  
+    isDraggingElement = false;
+  }
+  
+  dropArea.addEventListener("mouseup", endDrag);
+  dropArea.addEventListener("focusout", endDrag);
+  dropArea.addEventListener("error", endDrag);
+  
+  
+  
+  
+  function calculateBoundingBox(selectedElements) {
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  
+    selectedElements.forEach((element) => {
+      const rect = element.getBoundingClientRect();
+      minX = Math.min(minX, rect.left);
+      minY = Math.min(minY, rect.top);
+      maxX = Math.max(maxX, rect.right);
+      maxY = Math.max(maxY, rect.bottom);
+    });
+  
+    return {
+      left: minX,
+      top: minY,
+      width: maxX - minX,
+      height: maxY - minY
+    };
+  }
+  
+  function groupSelectedElements(selectedElements) {
+    if (selectedElements.length >= 2){
+        
+      const boundingBox = calculateBoundingBox(selectedElements);
+      const dropAreaRect = dropArea.getBoundingClientRect();
+  
+      const groupDiv = document.createElement('div');
+      addResizers(groupDiv);
+      groupDiv.classList.add('group-container');
+      groupDiv.style.border = "1px solid";
+      groupDiv.style.position = 'absolute';
+      groupDiv.style.left = `${boundingBox.left - dropAreaRect.left}px`;
+      groupDiv.style.top = `${boundingBox.top - dropAreaRect.top}px`;
+      groupDiv.style.width = `${boundingBox.width}px`;
+      groupDiv.style.height = `${boundingBox.height}px`;
+  
+      selectedElements.forEach((element) => {
+        const elementRect = element.getBoundingClientRect();
+        const offsetX = elementRect.left - boundingBox.left;
+        const offsetY = elementRect.top - boundingBox.top;
+  
+        element.dataset.initialWidth = elementRect.width;
+        element.dataset.initialHeight = elementRect.height;
+        element.dataset.initialLeft = offsetX;
+        element.dataset.initialTop = offsetY;
+  
+        element.style.position = 'absolute';
+        element.style.left = `${offsetX}px`;
+        element.style.top = `${offsetY}px`;
+  
+        groupDiv.appendChild(element);
+      });
+  
+      groupDiv.tabIndex = 0;
+      groupDiv.addEventListener('click', function(e) {
+          toggleSelectedElement(groupDiv, e);
+      });
+      dropArea.appendChild(groupDiv);
+      
+      const resizeObserver = new ResizeObserver(() => {
+          const groupRect = groupDiv.getBoundingClientRect();
+  
+          selectedElements.forEach((element) => {
+            const initialWidth = parseFloat(element.dataset.initialWidth);
+            const initialHeight = parseFloat(element.dataset.initialHeight);
+            const initialLeft = parseFloat(element.dataset.initialLeft);
+            const initialTop = parseFloat(element.dataset.initialTop);
+  
+            const widthRatio = groupRect.width / boundingBox.width;
+            const heightRatio = groupRect.height / boundingBox.height;
+  
+            element.style.width = `${initialWidth * widthRatio}px`;
+            element.style.height = `${initialHeight * heightRatio}px`;
+            element.style.left = `${initialLeft * widthRatio}px`;
+            element.style.top = `${initialTop * heightRatio}px`;
+          });
+        });
+  
+        resizeObserver.observe(groupDiv);
+  
+        groupDiv.addEventListener('focusout', () => {
+          resizeObserver.unobserve(groupDiv);
+  
+          const groupLeft = parseFloat(groupDiv.style.left);
+          const groupTop = parseFloat(groupDiv.style.top);
+  
+          const children = Array.from(groupDiv.children);
+          children.forEach((child) => {
+            const computedStyle = window.getComputedStyle(child);
+            const childWidth = computedStyle.width;
+            const childHeight = computedStyle.height;
+  
+            const offsetX = groupLeft + parseFloat(child.style.left);
+            const offsetY = groupTop + parseFloat(child.style.top);
+  
+            child.style.width = childWidth;
+            child.style.height = childHeight;
+            child.style.left = `${offsetX}px`;
+            child.style.top = `${offsetY}px`;
+            dropArea.appendChild(child);
+          });
+          groupDiv.remove();
+        });
+  
+      }
+  }
+  
 const horizontalLine = document.getElementById("horizontal-line");
 const verticalLine = document.getElementById("vertical-line");
 
 
-let isDraggingElement = false;
 
 
 function makeElementDraggable(element) {
+    
     element.addEventListener("mousedown", (e) => {
         if (isResizing) return;
 
