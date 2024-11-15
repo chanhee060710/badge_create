@@ -1714,7 +1714,6 @@ let width2 = 0;
 let height2 = 0;
 let top2 = 0;
 let left2 = 0;
-
 function handleFolder1Upload() {
     folder1Files = [...folderInput1.files].filter(file => file.type.startsWith('image/'));
     const backgroundReader = new FileReader();
@@ -1797,7 +1796,6 @@ function startProcessing() {
         processImages(); 
     }
 }
-
 function processImages() {
     let currentWrapper1 = null;
 
@@ -1865,9 +1863,8 @@ function saveAndRemoveImages(fileName, wrapper2, callback) {
         dropArea.removeChild(wrapper2);
         if (callback) callback();
     });
-    
 }
-let isImageAdded = false;
+let isImageAdded = false; 
 // QRInput.addEventListener('change', function(event) {
     
 //     const file = event.target.files[0];
