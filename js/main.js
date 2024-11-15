@@ -105,7 +105,6 @@ function isElementInRect(element, rect) {
   
   let isDraggingElement = false;
   dropArea.addEventListener("mousedown", (e) => {
-    
     if (isResizing || isDraggingElement) return;
     
     if (e.target.classList.contains("element") || e.target.closest(".element")) {
@@ -152,7 +151,7 @@ function isElementInRect(element, rect) {
   
     if (rect.width > minDragBoxSize && rect.height > minDragBoxSize) {
       selectedElements = elements.filter((element) => isElementInRect(element, rect));
-        
+  
       if (selectedElements.length > 0) {
         groupSelectedElements(selectedElements);
       }
@@ -166,7 +165,7 @@ function isElementInRect(element, rect) {
     isDraggingElement = false;
   }
   
-  dropArea.addEventListener("mouseup", endDrag);
+  document.addEventListener("mouseup", endDrag);
   dropArea.addEventListener("focusout", endDrag);
   dropArea.addEventListener("error", endDrag);
   
@@ -193,8 +192,7 @@ function isElementInRect(element, rect) {
   }
   
   function groupSelectedElements(selectedElements) {
-    if (selectedElements.length >= 2){
-        
+    if (selectedElements.length >= 2) {
       const boundingBox = calculateBoundingBox(selectedElements);
       const dropAreaRect = dropArea.getBoundingClientRect();
   
@@ -213,23 +211,29 @@ function isElementInRect(element, rect) {
         const offsetX = elementRect.left - boundingBox.left;
         const offsetY = elementRect.top - boundingBox.top;
   
-        element.dataset.initialWidth = elementRect.width;
-        element.dataset.initialHeight = elementRect.height;
+        element.dataset.initialWidth = elementRect.width - 2;
+        element.dataset.initialHeight = elementRect.height - 2;
         element.dataset.initialLeft = offsetX;
         element.dataset.initialTop = offsetY;
   
         element.style.position = 'absolute';
+        element.style.border = "1px solid";
         element.style.left = `${offsetX}px`;
         element.style.top = `${offsetY}px`;
+  
+        element.style.pointerEvents = 'none';
   
         groupDiv.appendChild(element);
       });
   
       groupDiv.tabIndex = 0;
+      makeElementDraggable(groupDiv);
       groupDiv.addEventListener('click', function(e) {
-          toggleSelectedElement(groupDiv, e);
+        toggleSelectedElement(groupDiv, e);
       });
       dropArea.appendChild(groupDiv);
+  
+      groupDiv.focus();
       
       const resizeObserver = new ResizeObserver(() => {
           const groupRect = groupDiv.getBoundingClientRect();
@@ -260,24 +264,30 @@ function isElementInRect(element, rect) {
   
           const children = Array.from(groupDiv.children);
           children.forEach((child) => {
-            const computedStyle = window.getComputedStyle(child);
-            const childWidth = computedStyle.width;
-            const childHeight = computedStyle.height;
+            if (child.classList.contains('resizable')) {
+              const computedStyle = window.getComputedStyle(child);
+              const childWidth = computedStyle.width;
+              const childHeight = computedStyle.height;
   
-            const offsetX = groupLeft + parseFloat(child.style.left);
-            const offsetY = groupTop + parseFloat(child.style.top);
+              const offsetX = groupLeft + parseFloat(child.style.left);
+              const offsetY = groupTop + parseFloat(child.style.top);
   
-            child.style.width = childWidth;
-            child.style.height = childHeight;
-            child.style.left = `${offsetX}px`;
-            child.style.top = `${offsetY}px`;
-            dropArea.appendChild(child);
+              child.style.width = childWidth;
+              child.style.height = childHeight;
+              child.style.left = `${offsetX}px`;
+              child.style.top = `${offsetY}px`;
+              child.style.border = "none";
+  
+              child.style.pointerEvents = '';
+  
+              dropArea.appendChild(child);
+            }
           });
+  
           groupDiv.remove();
         });
-  
-      }
-  }
+          }
+        }
   
 const horizontalLine = document.getElementById("horizontal-line");
 const verticalLine = document.getElementById("vertical-line");
@@ -599,47 +609,36 @@ showResizers(selectedElement);
 
            document.addEventListener("keydown", function(event) {
             let step = 10;
-
+        
             if (event.key === "Delete") {
-                inputContainer.innerHTML=''
-        createFont.style.display='none'
-        Rotatedropdown.style.display='none'
-        Sizedropdown.style.display='none'
-        textalign.style.display='none'
-        Spacingdropdown.style.display='none'
-               selectedElement.remove()
-                
-            }else if(event.ctrlKey){
+                inputContainer.innerHTML = '';
+                createFont.style.display = 'none';
+                Rotatedropdown.style.display = 'none';
+                Sizedropdown.style.display = 'none';
+                textalign.style.display = 'none';
+                Spacingdropdown.style.display = 'none';
+                selectedElement.replaceChildren();
+                selectedElement.remove();
+            } else {
+                let movement = event.ctrlKey ? step : 1; // Ctrl 키가 눌렸으면 10픽셀, 아니면 1픽셀 이동
+        
                 switch (event.key) {
                     case 'ArrowUp':
-                       selectedElement.style.top = (selectedElement.offsetTop -step)+'px'
+                        selectedElement.style.top = (selectedElement.offsetTop - movement) + 'px';
                         break;
                     case 'ArrowDown':
-                        selectedElement.style.top = (selectedElement.offsetTop +step)+'px'
+                        selectedElement.style.top = (selectedElement.offsetTop + movement) + 'px';
                         break;
                     case 'ArrowLeft':
-                       selectedElement.style.left = (selectedElement.offsetLeft -step)+'px'
+                        selectedElement.style.left = (selectedElement.offsetLeft - movement) + 'px';
                         break;
                     case 'ArrowRight':
-                       selectedElement.style.left = (selectedElement.offsetLeft +step)+'px'
+                        selectedElement.style.left = (selectedElement.offsetLeft + movement) + 'px';
                         break;
                 }
             }
-            switch (event.key) {
-                case 'ArrowUp':
-                   selectedElement.style.top = (selectedElement.offsetTop -1)+'px'
-                    break;
-                case 'ArrowDown':
-                    selectedElement.style.top = (selectedElement.offsetTop +1)+'px'
-                    break;
-                case 'ArrowLeft':
-                   selectedElement.style.left = (selectedElement.offsetLeft -1)+'px'
-                    break;
-                case 'ArrowRight':
-                   selectedElement.style.left = (selectedElement.offsetLeft +1)+'px'
-                    break;
-            }
         });
+        
            
 		   if (isText) {
             textalign.innerHTML=''
@@ -1294,7 +1293,9 @@ function createZIndexControls(element) {
         Sizedropdown.style.display='none'
         textalign.style.display='none'
         Spacingdropdown.style.display='none'
-        element.remove();
+        element.replaceChildren()
+        element.remove()
+        console.log(element)
     });
 
     copyButton.addEventListener('mousedown', function(e) {
@@ -1629,22 +1630,6 @@ document.addEventListener('keydown', (event) => {
         }
         
     });
-
-    
-   
-
-// document.querySelectorAll('.sidebar a').forEach(anchor => {
-//     anchor.addEventListener('click', function(e) {
-//         e.preventDefault(); 
-//         const targetId = this.getAttribute('href'); 
-//         const targetElement = document.querySelector(targetId); 
-
-//         // 부드러운 스크롤 애니메이션
-//         targetElement.scrollIntoView({
-//             behavior: 'smooth'
-//         });
-//     });
-// });
 
 const folderInput = document.getElementById('folderInput');
 

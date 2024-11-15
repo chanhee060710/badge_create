@@ -724,6 +724,10 @@ input[type=number] {
     outline: 2px solid #08f596;
 }
 
+.fontselect:hover{
+    cursor: pointer;
+}
+
 .guide-line {
     position: absolute;
     z-index: 0;
@@ -735,7 +739,7 @@ input[type=number] {
     height: 0; /* 높이를 0으로 설정 */
     top: 50%;
     left: 0;
-    border-top: 2px dashed #00AE68; /* 점선 스타일 */
+    border-top: 3px dashed #00AE68; /* 점선 스타일 */
     transform: translateY(-50%);
 }
 
@@ -744,6 +748,6 @@ input[type=number] {
     height: 100%;
     top: 0;
     left: 50%;
-    border-left: 2px dashed #00AE68; /* 점선 스타일 */
+    border-left: 3px dashed #00AE68; /* 점선 스타일 */
     transform: translateX(-50%);
 }
