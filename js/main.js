@@ -13,6 +13,7 @@ const Sizedropdown = document.querySelector('.Sizedropdown')
 const textalign = document.querySelector('.textalign')
 const createFont = document.querySelector('.createFont')
 const Spacingdropdown =document.querySelector('.Spacingdropdown')
+let isZindex = false;
 colorInput.type = 'color'
 colorInput.id = 'colorInput'
 let selectedElement = null;
@@ -114,6 +115,7 @@ function isElementInRect(element, rect) {
       const dropAreaRect = dropArea.getBoundingClientRect();
       startX = e.clientX - dropAreaRect.left;
       startY = e.clientY - dropAreaRect.top;
+      
       selectionRectangle = document.createElement("div");
       selectionRectangle.classList.add("selection-rectangle");
       selectionRectangle.style.width = `0px`;
@@ -129,10 +131,12 @@ function isElementInRect(element, rect) {
     const dropAreaRect = dropArea.getBoundingClientRect();
     const currentX = e.clientX - dropAreaRect.left;
     const currentY = e.clientY - dropAreaRect.top;
+  
     const width = Math.abs(currentX - startX);
     const height = Math.abs(currentY - startY);
     const left = Math.min(currentX, startX);
     const top = Math.min(currentY, startY);
+  
     selectionRectangle.style.width = `${width}px`;
     selectionRectangle.style.height = `${height}px`;
     selectionRectangle.style.transform = `translate(${left}px, ${top}px)`;
@@ -143,7 +147,7 @@ function isElementInRect(element, rect) {
   
     isDragging = false;
     const rect = selectionRectangle.getBoundingClientRect();
-    const minDragBoxSize = 10;
+    const minDragBoxSize = 1;
     let selectedElements = [];
   
     if (rect.width > minDragBoxSize && rect.height > minDragBoxSize) {
@@ -167,6 +171,8 @@ function isElementInRect(element, rect) {
   dropArea.addEventListener("error", endDrag);
   
   
+  
+  
   function calculateBoundingBox(selectedElements) {
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   
@@ -187,7 +193,7 @@ function isElementInRect(element, rect) {
   }
   
   function groupSelectedElements(selectedElements) {
-    if (selectedElements.length >= 2) {
+    if (selectedElements.length >= 2 && !dropArea.querySelector('.group-container')) {
       const boundingBox = calculateBoundingBox(selectedElements);
       const dropAreaRect = dropArea.getBoundingClientRect();
   
@@ -206,8 +212,8 @@ function isElementInRect(element, rect) {
         const offsetX = elementRect.left - boundingBox.left;
         const offsetY = elementRect.top - boundingBox.top;
   
-        element.dataset.initialWidth = elementRect.width - 2;
-        element.dataset.initialHeight = elementRect.height - 2;
+        element.dataset.initialWidth = elementRect.width - 1;
+        element.dataset.initialHeight = elementRect.height - 1;
         element.dataset.initialLeft = offsetX;
         element.dataset.initialTop = offsetY;
   
@@ -223,63 +229,68 @@ function isElementInRect(element, rect) {
   
       groupDiv.tabIndex = 0;
       makeElementDraggable(groupDiv);
-      groupDiv.addEventListener('click', function(e) {
+      groupDiv.addEventListener('focus', (e) => {
         toggleSelectedElement(groupDiv, e);
       });
       dropArea.appendChild(groupDiv);
   
       groupDiv.focus();
-      
+  
       const resizeObserver = new ResizeObserver(() => {
-          const groupRect = groupDiv.getBoundingClientRect();
-          selectedElements.forEach((element) => {
-            const initialWidth = parseFloat(element.dataset.initialWidth);
-            const initialHeight = parseFloat(element.dataset.initialHeight);
-            const initialLeft = parseFloat(element.dataset.initialLeft);
-            const initialTop = parseFloat(element.dataset.initialTop);
-            const widthRatio = groupRect.width / boundingBox.width;
-            const heightRatio = groupRect.height / boundingBox.height;
-            element.style.width = `${initialWidth * widthRatio}px`;
-            element.style.height = `${initialHeight * heightRatio}px`;
-            element.style.left = `${initialLeft * widthRatio}px`;
-            element.style.top = `${initialTop * heightRatio}px`;
-          });
+        const groupRect = groupDiv.getBoundingClientRect();
+  
+        selectedElements.forEach((element) => {
+          const initialWidth = parseFloat(element.dataset.initialWidth);
+          const initialHeight = parseFloat(element.dataset.initialHeight);
+          const initialLeft = parseFloat(element.dataset.initialLeft);
+          const initialTop = parseFloat(element.dataset.initialTop);
+  
+          const widthRatio = groupRect.width / boundingBox.width;
+          const heightRatio = groupRect.height / boundingBox.height;
+  
+          element.style.width = `${initialWidth * widthRatio}px`;
+          element.style.height = `${initialHeight * heightRatio}px`;
+          element.style.left = `${initialLeft * widthRatio}px`;
+          element.style.top = `${initialTop * heightRatio}px`;
         });
+      });
   
-        resizeObserver.observe(groupDiv);
+      resizeObserver.observe(groupDiv);
   
-        groupDiv.addEventListener('focusout', () => {
-          resizeObserver.unobserve(groupDiv);
+      groupDiv.addEventListener('focusout', () => {
+          if(!isZindex){
+              resizeObserver.unobserve(groupDiv);
   
-          const groupLeft = parseFloat(groupDiv.style.left);
-          const groupTop = parseFloat(groupDiv.style.top);
+              const groupLeft = parseFloat(groupDiv.style.left);
+              const groupTop = parseFloat(groupDiv.style.top);
   
-          const children = Array.from(groupDiv.children);
-          children.forEach((child) => {
-            if (child.classList.contains('resizable')) {
-              const computedStyle = window.getComputedStyle(child);
-              const childWidth = computedStyle.width;
-              const childHeight = computedStyle.height;
+              const children = Array.from(groupDiv.children);
+              children.forEach((child) => {
+                if (child.classList.contains('resizable')) {
+                  const computedStyle = window.getComputedStyle(child);
+                  const childWidth = computedStyle.width;
+                  const childHeight = computedStyle.height;
   
-              const offsetX = groupLeft + parseFloat(child.style.left);
-              const offsetY = groupTop + parseFloat(child.style.top);
+                  const offsetX = groupLeft + parseFloat(child.style.left);
+                  const offsetY = groupTop + parseFloat(child.style.top);
   
-              child.style.width = childWidth;
-              child.style.height = childHeight;
-              child.style.left = `${offsetX}px`;
-              child.style.top = `${offsetY}px`;
-              child.style.border = "none";
+                  child.style.width = childWidth;
+                  child.style.height = childHeight;
+                  child.style.left = `${offsetX}px`;
+                  child.style.top = `${offsetY}px`;
+                  child.style.border = "none";
+                  child.style.pointerEvents = '';
   
-              child.style.pointerEvents = '';
+                  dropArea.insertBefore(child, groupDiv);
+                }
+              });
   
-              dropArea.appendChild(child);
-            }
-          });
-  
-          groupDiv.remove();
-        });
+              groupDiv.remove();
           }
-        }
+      });
+    }
+  }
+  
   
 const horizontalLine = document.getElementById("horizontal-line");
 const verticalLine = document.getElementById("vertical-line");
@@ -1122,6 +1133,7 @@ function initResize(e, type) {
     saveState();
 }
 
+
 function sendToBack(element) {
     const currentIndex = Array.from(dropArea.children).indexOf(element);
     if (currentIndex > 0) {
@@ -1133,10 +1145,12 @@ function sendToBack(element) {
         } else {
             element.focus();
         }
+		isZindex = false;
         updateButtonStates(element);
         saveState();
     }
 }
+
 
 function updateButtonStates(element) {
        const currentIndex = Array.from(dropArea.children).indexOf(element);
@@ -1209,12 +1223,16 @@ function createZIndexControls(element) {
         saveState();
     });
 
+
     zIndexDown.addEventListener('mousedown', function(e) {
         e.preventDefault();
+		isZindex = true;
         sendToBack(element);
 		element.focus();
         saveState();
     });
+    
+    
 
     deleteButton.addEventListener('mousedown', function(e) {
         e.preventDefault()
@@ -1228,13 +1246,37 @@ function createZIndexControls(element) {
         element.remove()
     });
 
+    
     copyButton.addEventListener('mousedown', function(e) {
-        e.preventDefault()
-        const newElement = copyElement(element);
-        
-        dropArea.appendChild(newElement);
-    });
+	    e.preventDefault();
+	    const resizableElements = Array.from(element.querySelectorAll('.resizable'));
+	    if (resizableElements.length > 0) {
+	        const elementStyle = window.getComputedStyle(element);
+	        const elementLeft = parseFloat(elementStyle.left) || 0;
+	        const elementTop = parseFloat(elementStyle.top) || 0;
 
+	        resizableElements.forEach((resizableElement) => {
+	            const resizableStyle = window.getComputedStyle(resizableElement);
+	            const resizableLeft = parseFloat(resizableStyle.left) || 0;
+	            const resizableTop = parseFloat(resizableStyle.top) || 0;
+
+	            const newLeft = resizableLeft + elementLeft;
+	            const newTop = resizableTop + elementTop;
+
+	            const newElement = copyElement(resizableElement);
+	            newElement.style.position = 'absolute';
+	            newElement.style.left = `${newLeft + 20}px`;
+	            newElement.style.top = `${newTop + 20}px`;
+
+	            elements.push(newElement);
+	            dropArea.appendChild(newElement);
+	        });
+	    } else {
+	        const newElement = copyElement(element);
+	        elements.push(newElement);
+	        dropArea.appendChild(newElement);
+	    }
+	});
     zIndexControls.appendChild(zIndexUp);
     zIndexControls.appendChild(zIndexDown);
     zIndexControls.appendChild(deleteButton);
