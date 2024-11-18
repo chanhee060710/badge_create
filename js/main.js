@@ -347,7 +347,7 @@ function checkIfCentered(element) {
     const elementCenterX = element.offsetLeft + element.offsetWidth / 2;
     const elementCenterY = element.offsetTop + element.offsetHeight / 2;
 
-    const tolerance = 1;
+    const tolerance = 2;
     let isCentered = false;
 
     if (Math.abs(elementCenterY - containerCenterY) < tolerance) {
@@ -561,10 +561,9 @@ function toggleSelectedElement(newElement) {
         const svg = selectedElement.querySelector('svg');
         const path = selectedElement.querySelector('path');
 
-
-        document.addEventListener("keydown", function(event) {
+        document.addEventListener("keydown", function (event) {
             let step = 10;
-
+        
             if (event.key === "Delete") {
                 inputContainer.innerHTML = '';
                 createFont.style.display = 'none';
@@ -574,13 +573,20 @@ function toggleSelectedElement(newElement) {
                 Spacingdropdown.style.display = 'none';
                 selectedElement.replaceChildren();
                 selectedElement.remove();
-            }else if(event.ctrlKey && event.key==='g'){
-                event.preventDefault()
+            } else if (event.ctrlKey && event.key === 'g') {
+                event.preventDefault();
+                console.log(1);
+            } else if (event.ctrlKey && event.key === 'd') {
+                event.preventDefault();
                 
-            console.log(1)
-            }else {
+                const copykey = copyElement(selectedElement);
+                elements.push(copykey);
+                setTimeout(()=>{
+                    dropArea.appendChild(copykey);
+                },100)
+            } else {
                 let movement = event.ctrlKey ? step : 1;
-
+        
                 switch (event.key) {
                     case 'ArrowUp':
                         selectedElement.style.top = (selectedElement.offsetTop - movement) + 'px';
@@ -597,6 +603,7 @@ function toggleSelectedElement(newElement) {
                 }
             }
         });
+        
 
 
         if (isText) {
