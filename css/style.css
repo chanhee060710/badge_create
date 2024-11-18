@@ -241,13 +241,9 @@ body {
 }
 
 
-body {
-    font-family: Arial, sans-serif;
-}
 
-body {
-    font-family: Arial, sans-serif;
-}
+
+
 
 .modal {
 
@@ -751,7 +747,7 @@ input[type=number] {
     height: 0;
     top: 50%;
     left: 0;
-    border-top: 3px dashed #00AE68;
+    border-top: 2px dashed #00AE68;
     transform: translateY(-50%);
 }
 
@@ -760,7 +756,7 @@ input[type=number] {
     height: 100%;
     top: 0;
     left: 50%;
-    border-left: 3px dashed #00AE68;
+    border-left: 2px dashed #00AE68;
     transform: translateX(-50%);
 }
 

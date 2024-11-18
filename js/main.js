@@ -222,7 +222,6 @@ function groupSelectedElements(selectedElements) {
             element.dataset.initialTop = offsetY;
 
             element.style.position = 'absolute';
-            element.style.border = "1px solid";
             element.style.left = `${offsetX}px`;
             element.style.top = `${offsetY}px`;
 
@@ -303,7 +302,6 @@ const verticalLine = document.getElementById("vertical-line");
 
 
 function makeElementDraggable(element) {
-
     element.addEventListener("mousedown", (e) => {
         if (isResizing) return;
 
@@ -313,12 +311,19 @@ function makeElementDraggable(element) {
 
         function onMouseMove(e) {
             if (isDraggingElement) {
-                element.style.left =
-                    e.clientX - dropArea.getBoundingClientRect().left - offsetX + "px";
-                element.style.top =
-                    e.clientY - dropArea.getBoundingClientRect().top - offsetY + "px";
+                const newLeft = e.clientX - dropArea.getBoundingClientRect().left - offsetX;
+                const newTop = e.clientY - dropArea.getBoundingClientRect().top - offsetY;
 
-                checkIfCentered(element);
+                element.style.left = newLeft + "px";
+                element.style.top = newTop + "px";
+
+                const isCentered = checkIfCentered(element);
+                if (isCentered) {
+                    isDraggingElement = false;
+                    setTimeout(() => {
+                        isDraggingElement = true;
+                    }, 60);
+                }
             }
         }
 
@@ -342,18 +347,24 @@ function checkIfCentered(element) {
     const elementCenterX = element.offsetLeft + element.offsetWidth / 2;
     const elementCenterY = element.offsetTop + element.offsetHeight / 2;
 
-    const tolerance = 3;
+    const tolerance = 1;
+    let isCentered = false;
+
     if (Math.abs(elementCenterY - containerCenterY) < tolerance) {
         horizontalLine.style.display = "block";
+        isCentered = true;
     } else {
         horizontalLine.style.display = "none";
     }
 
     if (Math.abs(elementCenterX - containerCenterX) < tolerance) {
         verticalLine.style.display = "block";
+        isCentered = true;
     } else {
         verticalLine.style.display = "none";
     }
+
+    return isCentered;
 }
 
 function saveState() {
@@ -563,7 +574,11 @@ function toggleSelectedElement(newElement) {
                 Spacingdropdown.style.display = 'none';
                 selectedElement.replaceChildren();
                 selectedElement.remove();
-            } else {
+            }else if(event.ctrlKey && event.key==='g'){
+                event.preventDefault()
+                
+            console.log(1)
+            }else {
                 let movement = event.ctrlKey ? step : 1;
 
                 switch (event.key) {
@@ -1090,8 +1105,8 @@ function addUploadedImage(src) {
 
     wrapper.id = `item-${itemCounter++}`;
     makeElementDraggable(wrapper);
-    wrapper.style.left = '10px';
-    wrapper.style.top = '10px';
+    wrapper.style.left = '50px';
+    wrapper.style.top = '50px';
 
     wrapper.addEventListener('click', function(e) {
         toggleSelectedElement(wrapper, e);
@@ -2021,7 +2036,7 @@ const translations = {
         badgeCreate: "배지 만들기",
         spacing: "글씨 간격",
         fontsize: "글씨 크기",
-        rotate: "회전",
+        rotate: "회전도",
         file: "파일 불러오기",
         folderInput: "폴더 불러오기",
         reverseCircle: "거꾸로된 굽은 글씨",
