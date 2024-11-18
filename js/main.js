@@ -12,7 +12,7 @@ const Rotatedropdown = document.querySelector('.Rotatedropdown')
 const Sizedropdown = document.querySelector('.Sizedropdown')
 const textalign = document.querySelector('.textalign')
 const createFont = document.querySelector('.createFont')
-const Spacingdropdown =document.querySelector('.Spacingdropdown')
+const Spacingdropdown = document.querySelector('.Spacingdropdown')
 let isZindex = false;
 colorInput.type = 'color'
 colorInput.id = 'colorInput'
@@ -35,9 +35,10 @@ const folderInput2 = document.getElementById('filebadge');
 const startButton = document.getElementById('startButton');
 const svgs = document.querySelectorAll("section > svg")
 const svgPath = document.querySelector('#svgImages path');
+
 function showResizers(element) {
     const resizerClasses = [
-        '.resizerRB','.resizerLB', '.resizerLT', '.resizerRT', 
+        '.resizerRB', '.resizerLB', '.resizerLT', '.resizerRT',
         '.z-index-controls'
     ];
 
@@ -47,12 +48,12 @@ function showResizers(element) {
             resizer.style.display = className === '.z-index-controls' ? 'flex' : 'block';
         }
     });
-    
-	if(!isSelected){
-	element.style.top = `${element.offsetTop - 1}px`;
-	element.style.left = `${element.offsetLeft - 1}px`;
-	isSelected = true;
-	}
+
+    if (!isSelected) {
+        element.style.top = `${element.offsetTop - 1}px`;
+        element.style.left = `${element.offsetLeft - 1}px`;
+        isSelected = true;
+    }
 
     element.style.border = "1px solid";
     element.classList.add('selected');
@@ -61,7 +62,7 @@ svgs.forEach(svg => {
     svg.style.margin = '5px'
     svg.removeAttribute('class')
     svg.removeAttribute('id')
-    svg.style.opacity ="1"
+    svg.style.opacity = "1"
     svg.id = 'svgImages'
     svg.classList.add('draggable');
 
@@ -69,7 +70,7 @@ svgs.forEach(svg => {
 
 function blindResizers(element) {
     const resizerClasses = [
-        '.resizerRB', '.resizerLB', '.resizerLT', '.resizerRT', 
+        '.resizerRB', '.resizerLB', '.resizerLT', '.resizerRT',
         '.z-index-controls'
     ];
 
@@ -79,10 +80,10 @@ function blindResizers(element) {
             resizer.style.display = 'none';
         }
     });
-    if(isSelected){
-		element.style.top = `${element.offsetTop + 1}px`;
-		element.style.left = `${element.offsetLeft + 1}px`;
-	isSelected = false;
+    if (isSelected) {
+        element.style.top = `${element.offsetTop + 1}px`;
+        element.style.left = `${element.offsetLeft + 1}px`;
+        isSelected = false;
     }
 
 
@@ -93,205 +94,208 @@ function blindResizers(element) {
 function isElementInRect(element, rect) {
     const elRect = element.getBoundingClientRect();
     return !(
-      elRect.right < rect.left ||
-      elRect.left > rect.right ||
-      elRect.bottom < rect.top ||
-      elRect.top > rect.bottom
+        elRect.right < rect.left ||
+        elRect.left > rect.right ||
+        elRect.bottom < rect.top ||
+        elRect.top > rect.bottom
     );
-  }
-  
-  function deselectAll() {
+}
+
+function deselectAll() {
     elements.forEach((element) => blindResizers(element));
-  }
-  
-  let isDraggingElement = false;
-  dropArea.addEventListener("mousedown", (e) => {
+}
+
+let isDraggingElement = false;
+dropArea.addEventListener("mousedown", (e) => {
     if (isResizing || isDraggingElement) return;
-    
+
     if (e.target.classList.contains("element") || e.target.closest(".element")) {
-      isDraggingElement = true;
+        isDraggingElement = true;
     } else {
-      isDragging = true;
-      const dropAreaRect = dropArea.getBoundingClientRect();
-      startX = e.clientX - dropAreaRect.left;
-      startY = e.clientY - dropAreaRect.top;
-      
-      selectionRectangle = document.createElement("div");
-      selectionRectangle.classList.add("selection-rectangle");
-      selectionRectangle.style.width = `0px`;
-      selectionRectangle.style.height = `0px`;
-      selectionRectangle.style.transform = `translate(${startX}px, ${startY}px)`;
-      dropArea.appendChild(selectionRectangle);
+        isDragging = true;
+        const dropAreaRect = dropArea.getBoundingClientRect();
+        startX = e.clientX - dropAreaRect.left;
+        startY = e.clientY - dropAreaRect.top;
+
+        selectionRectangle = document.createElement("div");
+        selectionRectangle.classList.add("selection-rectangle");
+        selectionRectangle.style.width = `0px`;
+        selectionRectangle.style.height = `0px`;
+        selectionRectangle.style.transform = `translate(${startX}px, ${startY}px)`;
+        dropArea.appendChild(selectionRectangle);
     }
-  });
-  
-  dropArea.addEventListener("mousemove", (e) => {
+});
+
+dropArea.addEventListener("mousemove", (e) => {
     if (!isDragging || isDraggingElement) return;
-  
+
     const dropAreaRect = dropArea.getBoundingClientRect();
     const currentX = e.clientX - dropAreaRect.left;
     const currentY = e.clientY - dropAreaRect.top;
-  
+
     const width = Math.abs(currentX - startX);
     const height = Math.abs(currentY - startY);
     const left = Math.min(currentX, startX);
     const top = Math.min(currentY, startY);
-  
+
     selectionRectangle.style.width = `${width}px`;
     selectionRectangle.style.height = `${height}px`;
     selectionRectangle.style.transform = `translate(${left}px, ${top}px)`;
-  });
-  
-  function endDrag() {
+});
+
+function endDrag() {
     if (!isDragging) return;
-  
+
     isDragging = false;
     const rect = selectionRectangle.getBoundingClientRect();
     const minDragBoxSize = 1;
     let selectedElements = [];
-  
+
     if (rect.width > minDragBoxSize && rect.height > minDragBoxSize) {
-      selectedElements = elements.filter((element) => isElementInRect(element, rect));
-  
-      if (selectedElements.length > 0) {
-        groupSelectedElements(selectedElements);
-      }
+        selectedElements = elements.filter((element) => isElementInRect(element, rect));
+
+        if (selectedElements.length > 0) {
+            groupSelectedElements(selectedElements);
+        }
     }
-  
+
     if (selectionRectangle) {
-      selectionRectangle.remove();
-      selectionRectangle = null;
+        selectionRectangle.remove();
+        selectionRectangle = null;
     }
-  
+
     isDraggingElement = false;
-  }
-  
-  document.addEventListener("mouseup", endDrag);
-  dropArea.addEventListener("focusout", endDrag);
-  dropArea.addEventListener("error", endDrag);
-  
-  
-  
-  
-  function calculateBoundingBox(selectedElements) {
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  
+}
+
+document.addEventListener("mouseup", endDrag);
+dropArea.addEventListener("focusout", endDrag);
+dropArea.addEventListener("error", endDrag);
+
+
+
+
+function calculateBoundingBox(selectedElements) {
+    let minX = Infinity,
+        minY = Infinity,
+        maxX = -Infinity,
+        maxY = -Infinity;
+
     selectedElements.forEach((element) => {
-      const rect = element.getBoundingClientRect();
-      minX = Math.min(minX, rect.left);
-      minY = Math.min(minY, rect.top);
-      maxX = Math.max(maxX, rect.right);
-      maxY = Math.max(maxY, rect.bottom);
+        const rect = element.getBoundingClientRect();
+        minX = Math.min(minX, rect.left);
+        minY = Math.min(minY, rect.top);
+        maxX = Math.max(maxX, rect.right);
+        maxY = Math.max(maxY, rect.bottom);
     });
-  
+
     return {
-      left: minX,
-      top: minY,
-      width: maxX - minX,
-      height: maxY - minY
+        left: minX,
+        top: minY,
+        width: maxX - minX,
+        height: maxY - minY
     };
-  }
-  
-  function groupSelectedElements(selectedElements) {
+}
+
+function groupSelectedElements(selectedElements) {
     if (selectedElements.length >= 2 && !dropArea.querySelector('.group-container')) {
-      const boundingBox = calculateBoundingBox(selectedElements);
-      const dropAreaRect = dropArea.getBoundingClientRect();
-  
-      const groupDiv = document.createElement('div');
-      addResizers(groupDiv);
-      groupDiv.classList.add('group-container');
-      groupDiv.style.border = "1px solid";
-      groupDiv.style.position = 'absolute';
-      groupDiv.style.left = `${boundingBox.left - dropAreaRect.left}px`;
-      groupDiv.style.top = `${boundingBox.top - dropAreaRect.top}px`;
-      groupDiv.style.width = `${boundingBox.width}px`;
-      groupDiv.style.height = `${boundingBox.height}px`;
-  
-      selectedElements.forEach((element) => {
-        const elementRect = element.getBoundingClientRect();
-        const offsetX = elementRect.left - boundingBox.left;
-        const offsetY = elementRect.top - boundingBox.top;
-  
-        element.dataset.initialWidth = elementRect.width - 1;
-        element.dataset.initialHeight = elementRect.height - 1;
-        element.dataset.initialLeft = offsetX;
-        element.dataset.initialTop = offsetY;
-  
-        element.style.position = 'absolute';
-        element.style.border = "1px solid";
-        element.style.left = `${offsetX}px`;
-        element.style.top = `${offsetY}px`;
-  
-        element.style.pointerEvents = 'none';
-  
-        groupDiv.appendChild(element);
-      });
-  
-      groupDiv.tabIndex = 0;
-      makeElementDraggable(groupDiv);
-      groupDiv.addEventListener('focus', (e) => {
-        toggleSelectedElement(groupDiv, e);
-      });
-      dropArea.appendChild(groupDiv);
-  
-      groupDiv.focus();
-  
-      const resizeObserver = new ResizeObserver(() => {
-        const groupRect = groupDiv.getBoundingClientRect();
-  
+        const boundingBox = calculateBoundingBox(selectedElements);
+        const dropAreaRect = dropArea.getBoundingClientRect();
+
+        const groupDiv = document.createElement('div');
+        addResizers(groupDiv);
+        groupDiv.classList.add('group-container');
+        groupDiv.style.border = "1px solid";
+        groupDiv.style.position = 'absolute';
+        groupDiv.style.left = `${boundingBox.left - dropAreaRect.left}px`;
+        groupDiv.style.top = `${boundingBox.top - dropAreaRect.top}px`;
+        groupDiv.style.width = `${boundingBox.width}px`;
+        groupDiv.style.height = `${boundingBox.height}px`;
+
         selectedElements.forEach((element) => {
-          const initialWidth = parseFloat(element.dataset.initialWidth);
-          const initialHeight = parseFloat(element.dataset.initialHeight);
-          const initialLeft = parseFloat(element.dataset.initialLeft);
-          const initialTop = parseFloat(element.dataset.initialTop);
-  
-          const widthRatio = groupRect.width / boundingBox.width;
-          const heightRatio = groupRect.height / boundingBox.height;
-  
-          element.style.width = `${initialWidth * widthRatio}px`;
-          element.style.height = `${initialHeight * heightRatio}px`;
-          element.style.left = `${initialLeft * widthRatio}px`;
-          element.style.top = `${initialTop * heightRatio}px`;
+            const elementRect = element.getBoundingClientRect();
+            const offsetX = elementRect.left - boundingBox.left;
+            const offsetY = elementRect.top - boundingBox.top;
+
+            element.dataset.initialWidth = elementRect.width - 1;
+            element.dataset.initialHeight = elementRect.height - 1;
+            element.dataset.initialLeft = offsetX;
+            element.dataset.initialTop = offsetY;
+
+            element.style.position = 'absolute';
+            element.style.border = "1px solid";
+            element.style.left = `${offsetX}px`;
+            element.style.top = `${offsetY}px`;
+
+            element.style.pointerEvents = 'none';
+
+            groupDiv.appendChild(element);
         });
-      });
-  
-      resizeObserver.observe(groupDiv);
-  
-      groupDiv.addEventListener('focusout', () => {
-          if(!isZindex){
-              resizeObserver.unobserve(groupDiv);
-  
-              const groupLeft = parseFloat(groupDiv.style.left);
-              const groupTop = parseFloat(groupDiv.style.top);
-  
-              const children = Array.from(groupDiv.children);
-              children.forEach((child) => {
-                if (child.classList.contains('resizable')) {
-                  const computedStyle = window.getComputedStyle(child);
-                  const childWidth = computedStyle.width;
-                  const childHeight = computedStyle.height;
-  
-                  const offsetX = groupLeft + parseFloat(child.style.left);
-                  const offsetY = groupTop + parseFloat(child.style.top);
-  
-                  child.style.width = childWidth;
-                  child.style.height = childHeight;
-                  child.style.left = `${offsetX}px`;
-                  child.style.top = `${offsetY}px`;
-                  child.style.border = "none";
-                  child.style.pointerEvents = '';
-  
-                  dropArea.insertBefore(child, groupDiv);
-                }
-              });
-  
-              groupDiv.remove();
-          }
-      });
+
+        groupDiv.tabIndex = 0;
+        makeElementDraggable(groupDiv);
+        groupDiv.addEventListener('focus', (e) => {
+            toggleSelectedElement(groupDiv, e);
+        });
+        dropArea.appendChild(groupDiv);
+
+        groupDiv.focus();
+
+        const resizeObserver = new ResizeObserver(() => {
+            const groupRect = groupDiv.getBoundingClientRect();
+
+            selectedElements.forEach((element) => {
+                const initialWidth = parseFloat(element.dataset.initialWidth);
+                const initialHeight = parseFloat(element.dataset.initialHeight);
+                const initialLeft = parseFloat(element.dataset.initialLeft);
+                const initialTop = parseFloat(element.dataset.initialTop);
+
+                const widthRatio = groupRect.width / boundingBox.width;
+                const heightRatio = groupRect.height / boundingBox.height;
+
+                element.style.width = `${initialWidth * widthRatio}px`;
+                element.style.height = `${initialHeight * heightRatio}px`;
+                element.style.left = `${initialLeft * widthRatio}px`;
+                element.style.top = `${initialTop * heightRatio}px`;
+            });
+        });
+
+        resizeObserver.observe(groupDiv);
+
+        groupDiv.addEventListener('focusout', () => {
+            if (!isZindex) {
+                resizeObserver.unobserve(groupDiv);
+
+                const groupLeft = parseFloat(groupDiv.style.left);
+                const groupTop = parseFloat(groupDiv.style.top);
+
+                const children = Array.from(groupDiv.children);
+                children.forEach((child) => {
+                    if (child.classList.contains('resizable')) {
+                        const computedStyle = window.getComputedStyle(child);
+                        const childWidth = computedStyle.width;
+                        const childHeight = computedStyle.height;
+
+                        const offsetX = groupLeft + parseFloat(child.style.left);
+                        const offsetY = groupTop + parseFloat(child.style.top);
+
+                        child.style.width = childWidth;
+                        child.style.height = childHeight;
+                        child.style.left = `${offsetX}px`;
+                        child.style.top = `${offsetY}px`;
+                        child.style.border = "none";
+                        child.style.pointerEvents = '';
+
+                        dropArea.insertBefore(child, groupDiv);
+                    }
+                });
+
+                groupDiv.remove();
+            }
+        });
     }
-  }
-  
-  
+}
+
+
 const horizontalLine = document.getElementById("horizontal-line");
 const verticalLine = document.getElementById("vertical-line");
 
@@ -299,28 +303,30 @@ const verticalLine = document.getElementById("vertical-line");
 
 
 function makeElementDraggable(element) {
-    
+
     element.addEventListener("mousedown", (e) => {
         if (isResizing) return;
 
         isDraggingElement = true;
         offsetX = e.clientX - element.getBoundingClientRect().left;
         offsetY = e.clientY - element.getBoundingClientRect().top;
+
         function onMouseMove(e) {
             if (isDraggingElement) {
                 element.style.left =
-                  e.clientX - dropArea.getBoundingClientRect().left - offsetX + "px";
+                    e.clientX - dropArea.getBoundingClientRect().left - offsetX + "px";
                 element.style.top =
-                  e.clientY - dropArea.getBoundingClientRect().top - offsetY + "px";
-            
-            checkIfCentered(element);
-              }
+                    e.clientY - dropArea.getBoundingClientRect().top - offsetY + "px";
+
+                checkIfCentered(element);
+            }
         }
+
         function onMouseUp() {
             window.removeEventListener("mousemove", onMouseMove);
             window.removeEventListener("mouseup", onMouseUp);
             isDraggingElement = false;
-            horizontalLine.style.display = "none"; 
+            horizontalLine.style.display = "none";
             verticalLine.style.display = "none";
         }
 
@@ -336,22 +342,23 @@ function checkIfCentered(element) {
     const elementCenterX = element.offsetLeft + element.offsetWidth / 2;
     const elementCenterY = element.offsetTop + element.offsetHeight / 2;
 
-    const tolerance = 3; 
+    const tolerance = 3;
     if (Math.abs(elementCenterY - containerCenterY) < tolerance) {
-        horizontalLine.style.display = "block"; 
+        horizontalLine.style.display = "block";
     } else {
-        horizontalLine.style.display = "none"; 
+        horizontalLine.style.display = "none";
     }
 
     if (Math.abs(elementCenterX - containerCenterX) < tolerance) {
-        verticalLine.style.display = "block"; 
+        verticalLine.style.display = "block";
     } else {
-        verticalLine.style.display = "none"; 
+        verticalLine.style.display = "none";
     }
 }
+
 function saveState() {
     const elementsState = [];
-    
+
     const allElements = document.querySelectorAll('.resizable');
     allElements.forEach(el => {
         const Svgcontainer = document.createElement("div")
@@ -359,15 +366,15 @@ function saveState() {
         const contentElement = el.firstElementChild;
         const isTextBox = el.classList.contains('text-box');
         const isCircleText = el.classList.contains('circle-text');
-		const isReverseCircle = el.classList.contains('reverse');	
-        const isSvg =  new XMLSerializer().serializeToString(contentElement);
-		const isLeft = el.classList.contains('left');
-		const isCenter = el.classList.contains('center');
-		const isRight = el.classList.contains('right');
-		const isSelected = el.classList.contains('selected');
+        const isReverseCircle = el.classList.contains('reverse');
+        const isSvg = new XMLSerializer().serializeToString(contentElement);
+        const isLeft = el.classList.contains('left');
+        const isCenter = el.classList.contains('center');
+        const isRight = el.classList.contains('right');
+        const isSelected = el.classList.contains('selected');
         Svgcontainer.innerHTML = isSvg
         let childColor = window.getComputedStyle(contentElement).color;
-		let childFill = el.querySelector('textPath')?.getAttribute('fill');
+        let childFill = el.querySelector('textPath')?.getAttribute('fill');
         let childOpacity = window.getComputedStyle(contentElement).opacity;
 
         let state = {
@@ -376,15 +383,15 @@ function saveState() {
             height: rect.height,
             top: rect.top - dropArea.getBoundingClientRect().top - 3,
             left: rect.left - dropArea.getBoundingClientRect().left - 3,
-            color: isCircleText? childFill : childColor,
+            color: isCircleText ? childFill : childColor,
             opacity: childOpacity,
-			reverse: isReverseCircle? true : false,
-			array: isLeft? 'left' : isCenter? 'center' : isRight? 'right' : null,
-			selected: isSelected,
+            reverse: isReverseCircle ? true : false,
+            array: isLeft ? 'left' : isCenter ? 'center' : isRight ? 'right' : null,
+            selected: isSelected,
             type: isCircleText ? 'circleText' : isTextBox ? 'textbox' : 'image',
             fontSize: isTextBox ? window.getComputedStyle(contentElement).fontSize : null
         };
-			state.innerHTML = Svgcontainer.firstChild;
+        state.innerHTML = Svgcontainer.firstChild;
 
         elementsState.push(state);
     });
@@ -455,9 +462,9 @@ function setupCircleText(element, item) {
     element.style.alignItems = 'center';
     element.style.justifyContent = 'center';
     element.tabIndex = 0;
-    
+
     if (item.reverse) element.classList.add('reverse');
-    
+
     const textPath = item.innerHTML.querySelector('textPath');
     addEditText(textPath, element);
     element.appendChild(item.innerHTML);
@@ -473,34 +480,34 @@ function setupImage(element, item) {
 }
 
 
-svgs.forEach(element =>{
-    element.addEventListener("click",()=>{
+svgs.forEach(element => {
+    element.addEventListener("click", () => {
         const newSvg = new XMLSerializer().serializeToString(element);
         const createSvg = document.createElement('div');
-		const testDiv = document.createElement('div');
+        const testDiv = document.createElement('div');
         createSvg.innerHTML = newSvg;
         let newItem = createWrapper(100, 100);
-		testDiv.style.width = '100%';
-		testDiv.style.height = '100%';
+        testDiv.style.width = '100%';
+        testDiv.style.height = '100%';
         newItem.style.width = '100px';
         newItem.style.height = `100px`;
-        createSvg.style.position ="absolute";
-        createSvg.firstChild.style.margin ="0"
-        createSvg.firstChild.style.width= "100%";
-        createSvg.firstChild.style.height= "100%";
-	  	testDiv.appendChild(createSvg.firstChild);
+        createSvg.style.position = "absolute";
+        createSvg.firstChild.style.margin = "0"
+        createSvg.firstChild.style.width = "100%";
+        createSvg.firstChild.style.height = "100%";
+        testDiv.appendChild(createSvg.firstChild);
         newItem.appendChild(testDiv);
         addResizers(newItem);
-            elements.push(newItem)
-            dropArea.appendChild(newItem);
-            newItem.addEventListener('focus', function(e) {
-                toggleSelectedElement(newItem, e);
-                
-            });
-            makeElementDraggable(newItem);
-            newItem.id = `item-${itemCounter++}`;
+        elements.push(newItem)
+        dropArea.appendChild(newItem);
+        newItem.addEventListener('focus', function(e) {
+            toggleSelectedElement(newItem, e);
 
-			saveState();
+        });
+        makeElementDraggable(newItem);
+        newItem.id = `item-${itemCounter++}`;
+
+        saveState();
     })
 })
 
@@ -527,26 +534,26 @@ function createImage(src) {
     return img;
 }
 
-   function toggleSelectedElement(newElement) {
-       selectedElement = newElement;
-       
-       
+function toggleSelectedElement(newElement) {
+    selectedElement = newElement;
 
-       if (dropArea.children) {
+
+
+    if (dropArea.children) {
         updateButtonStates(selectedElement);
-showResizers(selectedElement);
+        showResizers(selectedElement);
 
         const isText = selectedElement.classList.contains('text-box');
-		   const isCircleText = selectedElement.classList.contains('circle-text');
-		   const isReverse = selectedElement.classList.contains('reverse');
-		   const inputContainer = document.querySelector(".inputContainer");
-		   const svg = selectedElement.querySelector('svg');
-		   const path = selectedElement.querySelector('path');
+        const isCircleText = selectedElement.classList.contains('circle-text');
+        const isReverse = selectedElement.classList.contains('reverse');
+        const inputContainer = document.querySelector(".inputContainer");
+        const svg = selectedElement.querySelector('svg');
+        const path = selectedElement.querySelector('path');
 
 
-           document.addEventListener("keydown", function(event) {
+        document.addEventListener("keydown", function(event) {
             let step = 10;
-        
+
             if (event.key === "Delete") {
                 inputContainer.innerHTML = '';
                 createFont.style.display = 'none';
@@ -557,8 +564,8 @@ showResizers(selectedElement);
                 selectedElement.replaceChildren();
                 selectedElement.remove();
             } else {
-                let movement = event.ctrlKey ? step : 1; 
-        
+                let movement = event.ctrlKey ? step : 1;
+
                 switch (event.key) {
                     case 'ArrowUp':
                         selectedElement.style.top = (selectedElement.offsetTop - movement) + 'px';
@@ -575,226 +582,226 @@ showResizers(selectedElement);
                 }
             }
         });
-        
-           
-		   if (isText) {
-            textalign.innerHTML=''
-            createFont.innerHTML=''
-            Sizedropdown.style.display='inline-block'
-            createFont.style.display='block'
-            textalign.style.display='block'
-		       const alignments = ['left', 'center', 'right'];
-               const alignIcons = [
-                '/rmimg/align-left-solid.svg',   
-                '/rmimg/align-center-solid.svg', 
-                '/rmimg/align-right-solid.svg'   
+
+
+        if (isText) {
+            textalign.innerHTML = ''
+            createFont.innerHTML = ''
+            Sizedropdown.style.display = 'inline-block'
+            createFont.style.display = 'block'
+            textalign.style.display = 'block'
+            const alignments = ['left', 'center', 'right'];
+            const alignIcons = [
+                '/rmimg/align-left-solid.svg',
+                '/rmimg/align-center-solid.svg',
+                '/rmimg/align-right-solid.svg'
             ];
-		       alignments.forEach((alignment,index) => {
-		           const button = document.createElement('button');
-                   button.style.backgroundColor = 'white'
-                   button.style.margin='5px'
-                   button.style.border = "none"
-                   button.style.borderRadius="3px"
-                   button.style.width ='30px'
-                   button.style.height='30px'
-                   const Alignicon = document.createElement('img')
-                   Alignicon.src = alignIcons[index];
-		           button.appendChild(Alignicon)
+            alignments.forEach((alignment, index) => {
+                const button = document.createElement('button');
+                button.style.backgroundColor = 'white'
+                button.style.margin = '5px'
+                button.style.border = "none"
+                button.style.borderRadius = "3px"
+                button.style.width = '30px'
+                button.style.height = '30px'
+                const Alignicon = document.createElement('img')
+                Alignicon.src = alignIcons[index];
+                button.appendChild(Alignicon)
 
-		           button.disabled = selectedElement.firstChild.style.textAlign === alignment;
+                button.disabled = selectedElement.firstChild.style.textAlign === alignment;
 
-		           button.addEventListener('click', () => {
-		               selectedElement.classList.remove('left', 'center', 'right');
-		               selectedElement.classList.add(alignment);
-					   if (isCircleText) {
-					       if (alignment === 'left') {
-					           if (isReverse) {
-					               svg.setAttribute("viewBox", "37 37 225 225");
-					               path.setAttribute("d", "M 150, 150 m 100, 0 a 100,100 0 1,0 -200,0 a 100,100 0 1,0 200,0");
-					           } else {
-					               svg.setAttribute("viewBox", "-185 15 270 270");
-					               path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,1 -200,0 a 100,100 0 1,1 200,0");
-					           }
-					       } else if (alignment === 'center') {
-					           if (isReverse) {
-									svg.setAttribute("viewBox", "37 137 225 225");
-									path.setAttribute("d", "M 150, 150 m 0, 0 a 100,100 0 1,0 0,200 a 100,100 0 1,0 0,-200");
-					           } else {
-					               svg.setAttribute("viewBox", "-85 -85 270 270");
-					               path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,1 0,-200 a 100,100 0 1,1 0,200");
-					           }
-					       } else if (alignment === 'right') {
-					           if (isReverse) {
-					               svg.setAttribute("viewBox", "37 37 225 225");
-					               path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,0 200,0 a 100,100 0 1,0 -200,0");
-					           } else {
-					               svg.setAttribute("viewBox", "15 15 270 270");
-					               path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0");
-					           }
-					       }
-					   } else {
-					       selectedElement.querySelector('.editable-area').style.textAlign = alignment;
-					   }
-		               alignments.forEach(align => {
-		                   const alignButton = inputContainer2.querySelector(`button:nth-child(${alignments.indexOf(align) + 1})`);
-		                   alignButton.disabled = (align === alignment);
-		               });
-		           });
-		           textalign.appendChild(button);
-                   
-		       });
+                button.addEventListener('click', () => {
+                    selectedElement.classList.remove('left', 'center', 'right');
+                    selectedElement.classList.add(alignment);
+                    if (isCircleText) {
+                        if (alignment === 'left') {
+                            if (isReverse) {
+                                svg.setAttribute("viewBox", "37 37 225 225");
+                                path.setAttribute("d", "M 150, 150 m 100, 0 a 100,100 0 1,0 -200,0 a 100,100 0 1,0 200,0");
+                            } else {
+                                svg.setAttribute("viewBox", "-185 15 270 270");
+                                path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,1 -200,0 a 100,100 0 1,1 200,0");
+                            }
+                        } else if (alignment === 'center') {
+                            if (isReverse) {
+                                svg.setAttribute("viewBox", "37 137 225 225");
+                                path.setAttribute("d", "M 150, 150 m 0, 0 a 100,100 0 1,0 0,200 a 100,100 0 1,0 0,-200");
+                            } else {
+                                svg.setAttribute("viewBox", "-85 -85 270 270");
+                                path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,1 0,-200 a 100,100 0 1,1 0,200");
+                            }
+                        } else if (alignment === 'right') {
+                            if (isReverse) {
+                                svg.setAttribute("viewBox", "37 37 225 225");
+                                path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,0 200,0 a 100,100 0 1,0 -200,0");
+                            } else {
+                                svg.setAttribute("viewBox", "15 15 270 270");
+                                path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0");
+                            }
+                        }
+                    } else {
+                        selectedElement.querySelector('.editable-area').style.textAlign = alignment;
+                    }
+                    alignments.forEach(align => {
+                        const alignButton = inputContainer2.querySelector(`button:nth-child(${alignments.indexOf(align) + 1})`);
+                        alignButton.disabled = (align === alignment);
+                    });
+                });
+                textalign.appendChild(button);
+
+            });
             createFontSelector()
-               
-               const sizeSlider = document.querySelector('#sizeSlider')
 
-const sizeInput = document.querySelector('#size')
+            const sizeSlider = document.querySelector('#sizeSlider')
 
-function updateFontSizeValues() {
-  const currentFontSize = parseInt(
-    !isCircleText
-      ? window.getComputedStyle(selectedElement.firstChild).fontSize
-      : window.getComputedStyle(selectedElement.querySelector('svg')).fontSize,
-    10
-  );
-  sizeSlider.value = currentFontSize;
-  sizeInput.value = currentFontSize;
-}
-updateFontSizeValues();
+            const sizeInput = document.querySelector('#size')
 
-sizeSlider.addEventListener("input", (e) => {
-  const sizeValue = e.target.value;
-  if (!isCircleText) {
-    selectedElement.querySelector('.editable-area').style.fontSize = `${sizeValue}px`;
-  } else {
-    selectedElement.querySelector('svg').style.fontSize = `${sizeValue}px`;
-  }
-  sizeInput.value = sizeValue;
-});
-
-sizeInput.addEventListener("input", (e) => {
-  let sizeValue = e.target.value;
-  if (sizeValue < 3) sizeValue = 3;
-  if (sizeValue > 200) sizeValue = 200;
-  if (!isCircleText) {
-    selectedElement.querySelector('.editable-area').style.fontSize = `${sizeValue}px`;
-  } else {
-    selectedElement.querySelector('svg').style.fontSize = `${sizeValue}px`;
-  }
-  sizeSlider.value = sizeValue;
-});
-
-AngleFunction()
-spacingFunction()
-
+            function updateFontSizeValues() {
+                const currentFontSize = parseInt(
+                    !isCircleText ?
+                    window.getComputedStyle(selectedElement.firstChild).fontSize :
+                    window.getComputedStyle(selectedElement.querySelector('svg')).fontSize,
+                    10
+                );
+                sizeSlider.value = currentFontSize;
+                sizeInput.value = currentFontSize;
             }
+            updateFontSizeValues();
 
-		  const currentOpacity = window.getComputedStyle(selectedElement.firstChild).opacity;
-          slider.value = currentOpacity*100;
-           slider.addEventListener('input', (e) => {
+            sizeSlider.addEventListener("input", (e) => {
+                const sizeValue = e.target.value;
+                if (!isCircleText) {
+                    selectedElement.querySelector('.editable-area').style.fontSize = `${sizeValue}px`;
+                } else {
+                    selectedElement.querySelector('svg').style.fontSize = `${sizeValue}px`;
+                }
+                sizeInput.value = sizeValue;
+            });
+
+            sizeInput.addEventListener("input", (e) => {
+                let sizeValue = e.target.value;
+                if (sizeValue < 3) sizeValue = 3;
+                if (sizeValue > 200) sizeValue = 200;
+                if (!isCircleText) {
+                    selectedElement.querySelector('.editable-area').style.fontSize = `${sizeValue}px`;
+                } else {
+                    selectedElement.querySelector('svg').style.fontSize = `${sizeValue}px`;
+                }
+                sizeSlider.value = sizeValue;
+            });
+
+            AngleFunction()
+            spacingFunction()
+
+        }
+
+        const currentOpacity = window.getComputedStyle(selectedElement.firstChild).opacity;
+        slider.value = currentOpacity * 100;
+        slider.addEventListener('input', (e) => {
             const opacityValue = e.target.value / 100;
 
             selectedElement.firstChild.style.opacity = opacityValue;
-       });
-            
-if(!isText){
-    const svgElements = document.querySelectorAll('div > svg');
-   createFont.style.display='none'
-   Sizedropdown.style.display='none'
-   textalign.style.display='none'
-   Spacingdropdown.style.display='none'
-    AngleFunction()
-
-svgElements.forEach(svg => {
-  svg.addEventListener('click',()=>{
-    inputContainer.innerHTML ='';
-    const paths = svg.querySelectorAll('path, polygon');
-
-    const uniqueFillIds = Array.from(new Set(Array.from(paths).map(path => path.getAttribute('fill-id'))));
-
-    uniqueFillIds.forEach(fillId => {
-      const colorInput = document.createElement("input");
-      colorInput.type = "color";
-      colorInput.id = `color-${fillId}`;
-      colorInput.classList.add('colordesign')
-      const firstPath = svg.querySelector(`[fill-id='${fillId}']`);
-      colorInput.value = firstPath.getAttribute("fill"); 
-      colorInput.addEventListener("input", (event) => {
-        const selectedColor = event.target.value;
-        const pathsWithFillId = svg.querySelectorAll(`[fill-id='${fillId}']`);
-        pathsWithFillId.forEach(path => {
-          path.setAttribute("fill", selectedColor); 
-          
         });
-      });
 
-     inputContainer.appendChild(colorInput);
-    })
-    });
-  
-});
+        if (!isText) {
+            const svgElements = document.querySelectorAll('div > svg');
+            createFont.style.display = 'none'
+            Sizedropdown.style.display = 'none'
+            textalign.style.display = 'none'
+            Spacingdropdown.style.display = 'none'
+            AngleFunction()
 
-}else{
-    inputContainer.innerHTML=''
-    inputContainer.appendChild(colorInput)
+            svgElements.forEach(svg => {
+                svg.addEventListener('click', () => {
+                    inputContainer.innerHTML = '';
+                    const paths = svg.querySelectorAll('path, polygon');
 
-    colorInput.removeEventListener('input', colorInput.handleColorChange);
-colorInput.handleColorChange = (e) => {
-    const selectedColor = e.target.value;
-    const isCircleText = selectedElement.classList.contains('circle-text');
-    const circletargetElement = isCircleText 
-        ? selectedElement.firstChild.querySelector("textPath") 
-        : selectedElement.firstChild;
+                    const uniqueFillIds = Array.from(new Set(Array.from(paths).map(path => path.getAttribute('fill-id'))));
 
-    if (isCircleText) {
-        circletargetElement.setAttribute("fill", selectedColor);
-    } else {
-        circletargetElement.style.color = selectedColor;
+                    uniqueFillIds.forEach(fillId => {
+                        const colorInput = document.createElement("input");
+                        colorInput.type = "color";
+                        colorInput.id = `color-${fillId}`;
+                        colorInput.classList.add('colordesign')
+                        const firstPath = svg.querySelector(`[fill-id='${fillId}']`);
+                        colorInput.value = firstPath.getAttribute("fill");
+                        colorInput.addEventListener("input", (event) => {
+                            const selectedColor = event.target.value;
+                            const pathsWithFillId = svg.querySelectorAll(`[fill-id='${fillId}']`);
+                            pathsWithFillId.forEach(path => {
+                                path.setAttribute("fill", selectedColor);
+
+                            });
+                        });
+
+                        inputContainer.appendChild(colorInput);
+                    })
+                });
+
+            });
+
+        } else {
+            inputContainer.innerHTML = ''
+            inputContainer.appendChild(colorInput)
+
+            colorInput.removeEventListener('input', colorInput.handleColorChange);
+            colorInput.handleColorChange = (e) => {
+                const selectedColor = e.target.value;
+                const isCircleText = selectedElement.classList.contains('circle-text');
+                const circletargetElement = isCircleText ?
+                    selectedElement.firstChild.querySelector("textPath") :
+                    selectedElement.firstChild;
+
+                if (isCircleText) {
+                    circletargetElement.setAttribute("fill", selectedColor);
+                } else {
+                    circletargetElement.style.color = selectedColor;
+                }
+            };
+            colorInput.addEventListener('input', colorInput.handleColorChange);
+
+        }
+        selectedElement.focus();
+
     }
-};
-colorInput.addEventListener('input', colorInput.handleColorChange);
-
 }
-           selectedElement.focus();
-           
-       }
-   }
-   
-   AngleFunction =() =>{
-    Rotatedropdown.style.display ='inline-block'
+
+AngleFunction = () => {
+    Rotatedropdown.style.display = 'inline-block'
     const angleSlider = document.querySelector('#angleSlider')
     const angleInput = document.querySelector('#angle')
 
     const currentAngle = window.getComputedStyle(selectedElement.firstChild).transform;
     const matrix = currentAngle.match(/matrix\(([^)]+)\)/);
     if (matrix) {
-      const values = matrix[1].split(', ');
-      const angle = Math.round(Math.atan2(values[1], values[0]) * (180 / Math.PI));
-      const initialAngle = angle < 0 ? 360 + angle : angle;
-      angleSlider.value = initialAngle;
-      angleInput.value = initialAngle;
+        const values = matrix[1].split(', ');
+        const angle = Math.round(Math.atan2(values[1], values[0]) * (180 / Math.PI));
+        const initialAngle = angle < 0 ? 360 + angle : angle;
+        angleSlider.value = initialAngle;
+        angleInput.value = initialAngle;
     }
 
     angleSlider.addEventListener("input", (e) => {
-      const angleValue = e.target.value;
-      selectedElement.firstChild.style.transform = `rotate(${angleValue}deg)`;
-      angleInput.value = angleValue;
+        const angleValue = e.target.value;
+        selectedElement.firstChild.style.transform = `rotate(${angleValue}deg)`;
+        angleInput.value = angleValue;
     });
 
     angleInput.addEventListener("input", (e) => {
-      let angleValue = e.target.value;
-      if (angleValue < 0) angleValue = 0;
-      if (angleValue > 360) angleValue = 360;
-      selectedElement.firstChild.style.transform = `rotate(${angleValue}deg)`;
-      angleSlider.value = angleValue;
+        let angleValue = e.target.value;
+        if (angleValue < 0) angleValue = 0;
+        if (angleValue > 360) angleValue = 360;
+        selectedElement.firstChild.style.transform = `rotate(${angleValue}deg)`;
+        angleSlider.value = angleValue;
     });
-   }
+}
 
-   spacingFunction = () => {
-    Spacingdropdown.style.display='inline-block'
+spacingFunction = () => {
+    Spacingdropdown.style.display = 'inline-block'
     const spacingSlider = document.querySelector('#spacingSlider')
 
     const spacingInput = document.querySelector("#spacingInput");
-    
+
     const computedSpacing = window.getComputedStyle(selectedElement.querySelector('.spacing')).letterSpacing;
     const currentSpacing = parseFloat(computedSpacing) || 0;
 
@@ -802,67 +809,66 @@ colorInput.addEventListener('input', colorInput.handleColorChange);
     spacingInput.value = currentSpacing;
 
     spacingSlider.addEventListener("input", (e) => {
-      const spacingValue = e.target.value;
-      spacingInput.value = spacingValue;
-      selectedElement.querySelector('.spacing').style.letterSpacing = `${spacingValue}px`;
+        const spacingValue = e.target.value;
+        spacingInput.value = spacingValue;
+        selectedElement.querySelector('.spacing').style.letterSpacing = `${spacingValue}px`;
     });
 
     spacingInput.addEventListener("input", (e) => {
-      let spacingValue = e.target.value;
-      if (spacingValue < -10) spacingValue = -10;
-      if (spacingValue > 20) spacingValue = 20;
-      spacingSlider.value = spacingValue;
-      selectedElement.querySelector('.spacing').style.letterSpacing = `${spacingValue}px`;
+        let spacingValue = e.target.value;
+        if (spacingValue < -10) spacingValue = -10;
+        if (spacingValue > 20) spacingValue = 20;
+        spacingSlider.value = spacingValue;
+        selectedElement.querySelector('.spacing').style.letterSpacing = `${spacingValue}px`;
     });
 
-  }
+}
 
-  function createFontSelector() {
-    const fonts = [
-		{
-		  name: 'Arial',
-		  css: "@font-face { font-family: 'Arial'; font-weight: normal; font-style: normal; }"
-		},
-       {
-         name: 'BagelFatOne-Regular',
-         css: "@font-face { font-family: 'BagelFatOne-Regular'; src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_JAMO@1.0/BagelFatOne-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }"
-       },
-	   {
-		name: 'ChosunCentennial',
-		css: "@font-face { font-family: 'ChosunCentennial'; src: url('https://gcore.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/ChosunCentennial.woff2') format('woff2'); font-weight: normal; font-style: normal;}"
-	   },
-	   {
-		name: 'SF_IceLemon',
-		css: "@font-face {font-family: 'SF_IceLemon';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2106@1.1/SF_IceLemon.woff') format('woff');    font-weight: normal;    font-style: normal;}"
-	   },
-	   {
-		name: 'GowunDodum-Regular',
-		css: "@font-face {    font-family: 'GowunDodum-Regular';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunDodum-Regular.woff') format('woff');    font-weight: normal;    font-style: normal;}"
-	   },	{
-		name: 'GowunBatang-Regular',
-		css: "@font-face {    font-family: 'GowunBatang-Regular';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunBatang-Regular.woff') format('woff');    font-weight: normal;    font-style: normal;}"
-		},
-	   {
-		name: 'SF_HambakSnow',
-		css: "@font-face {    font-family: 'SF_HambakSnow';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2106@1.1/SF_HambakSnow.woff') format('woff');    font-weight: normal;    font-style: normal;}"
-	   },
-	   {
-	   name: 'PyeongChangPeace-Bold',
-	   css: "@font-face {    font-family: 'PyeongChangPeace-Bold';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/PyeongChangPeace-Bold.woff2') format('woff2');    font-weight: 700;    font-style: normal;}"
-	   },
-	   {
-	   name: 'Pretendard-Regular',
-	   css: "@font-face {    font-family: 'Pretendard-Regular';    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');    font-weight: 400;    font-style: normal;}"
-	   },
-	   {
-	   name: 'ChosunKg',
-	   css: "@font-face {    font-family: 'ChosunKg';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunKg.woff') format('woff');    font-weight: normal;    font-style: normal;}"
-	   },
-     ];
+function createFontSelector() {
+    const fonts = [{
+            name: 'Arial',
+            css: "@font-face { font-family: 'Arial'; font-weight: normal; font-style: normal; }"
+        },
+        {
+            name: 'BagelFatOne-Regular',
+            css: "@font-face { font-family: 'BagelFatOne-Regular'; src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_JAMO@1.0/BagelFatOne-Regular.woff2') format('woff2'); font-weight: normal; font-style: normal; }"
+        },
+        {
+            name: 'ChosunCentennial',
+            css: "@font-face { font-family: 'ChosunCentennial'; src: url('https://gcore.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/ChosunCentennial.woff2') format('woff2'); font-weight: normal; font-style: normal;}"
+        },
+        {
+            name: 'SF_IceLemon',
+            css: "@font-face {font-family: 'SF_IceLemon';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2106@1.1/SF_IceLemon.woff') format('woff');    font-weight: normal;    font-style: normal;}"
+        },
+        {
+            name: 'GowunDodum-Regular',
+            css: "@font-face {    font-family: 'GowunDodum-Regular';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunDodum-Regular.woff') format('woff');    font-weight: normal;    font-style: normal;}"
+        }, {
+            name: 'GowunBatang-Regular',
+            css: "@font-face {    font-family: 'GowunBatang-Regular';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunBatang-Regular.woff') format('woff');    font-weight: normal;    font-style: normal;}"
+        },
+        {
+            name: 'SF_HambakSnow',
+            css: "@font-face {    font-family: 'SF_HambakSnow';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2106@1.1/SF_HambakSnow.woff') format('woff');    font-weight: normal;    font-style: normal;}"
+        },
+        {
+            name: 'PyeongChangPeace-Bold',
+            css: "@font-face {    font-family: 'PyeongChangPeace-Bold';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/PyeongChangPeace-Bold.woff2') format('woff2');    font-weight: 700;    font-style: normal;}"
+        },
+        {
+            name: 'Pretendard-Regular',
+            css: "@font-face {    font-family: 'Pretendard-Regular';    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');    font-weight: 400;    font-style: normal;}"
+        },
+        {
+            name: 'ChosunKg',
+            css: "@font-face {    font-family: 'ChosunKg';    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunKg.woff') format('woff');    font-weight: normal;    font-style: normal;}"
+        },
+    ];
 
     const styleElement = document.createElement('style');
     fonts.forEach(font => {
-      styleElement.appendChild(document.createTextNode(font.css));
+        styleElement.appendChild(document.createTextNode(font.css));
     });
     document.head.appendChild(styleElement);
 
@@ -870,65 +876,67 @@ colorInput.addEventListener('input', colorInput.handleColorChange);
     fontSelect.classList.add('font-selector');
 
     fonts.forEach(font => {
-      const option = document.createElement('option');
-      option.value = font.name;
-      option.textContent = font.name;
-      option.style.fontFamily = font.name;
-      fontSelect.appendChild(option);
+        const option = document.createElement('option');
+        option.value = font.name;
+        option.textContent = font.name;
+        option.style.fontFamily = font.name;
+        fontSelect.appendChild(option);
     });
 
     let currentFont = window.getComputedStyle(selectedElement.querySelector('svg')).fontFamily;
 
-       if (currentFont.includes(',')) {
-         currentFont = currentFont.split(',')[0].replace(/['"]+/g, '').trim();
-       }
+    if (currentFont.includes(',')) {
+        currentFont = currentFont.split(',')[0].replace(/['"]+/g, '').trim();
+    }
 
-       const matchingOption = Array.from(fontSelect.options).find(option => option.value === currentFont);
-       if (matchingOption) {
-         matchingOption.selected = true;
-       } else {
-         fontSelect.value = 'Arial';
-       }
+    const matchingOption = Array.from(fontSelect.options).find(option => option.value === currentFont);
+    if (matchingOption) {
+        matchingOption.selected = true;
+    } else {
+        fontSelect.value = 'Arial';
+    }
 
-    
+
     fontSelect.addEventListener('change', (e) => {
-      const selectedFont = e.target.value;
-      if (selectedElement) {
-        selectedElement.querySelector('svg').style.fontFamily = selectedFont;
-      }
+        const selectedFont = e.target.value;
+        if (selectedElement) {
+            selectedElement.querySelector('svg').style.fontFamily = selectedFont;
+        }
     });
 
     fontSelect.classList.add('fontselect')
     createFont.appendChild(fontSelect);
-  }
+}
 
-   dropArea.addEventListener('focusout', function(e) {
-       if (selectedElement) {
-       
-blindResizers(selectedElement);
-       }
-   });
-	union.addEventListener('focusout', function(e) {
-	       if (selectedElement) {
-blindResizers(selectedElement);
-	       }
-	   });
+dropArea.addEventListener('focusout', function(e) {
+    if (selectedElement) {
 
-   function positionElement(element, x, y) {
-       element.style.left = `${x - dropArea.getBoundingClientRect().left}px`;
-       element.style.top = `${y - dropArea.getBoundingClientRect().top}px`;
-   }
-   function addResizers(newItem) {
-	['RB', 'LB', 'LT', 'RT'].forEach(type => {
-	    newItem.appendChild(createResizer(type));
-	});
+        blindResizers(selectedElement);
+    }
+});
+union.addEventListener('focusout', function(e) {
+    if (selectedElement) {
+        blindResizers(selectedElement);
+    }
+});
+
+function positionElement(element, x, y) {
+    element.style.left = `${x - dropArea.getBoundingClientRect().left}px`;
+    element.style.top = `${y - dropArea.getBoundingClientRect().top}px`;
+}
+
+function addResizers(newItem) {
+    ['RB', 'LB', 'LT', 'RT'].forEach(type => {
+        newItem.appendChild(createResizer(type));
+    });
     newItem.appendChild(createZIndexControls(newItem));
 }
+
 function createResizer(type) {
     const resizer = document.createElement('div');
     resizer.classList.add(`resizer${type}`);
     resizer.style.zIndex = 999;
-    resizer.addEventListener('mousedown', function (e) {
+    resizer.addEventListener('mousedown', function(e) {
         initResize(e, type);
     });
     return resizer;
@@ -956,81 +964,81 @@ function initResize(e, type) {
         let newWidth, newHeight, newLeft, newTop;
 
         switch (type) {
-			case 'RB':
-				 newWidth = e.clientX - resizableElement.getBoundingClientRect().left;
-				          newHeight = newWidth / aspectRatio;
+            case 'RB':
+                newWidth = e.clientX - resizableElement.getBoundingClientRect().left;
+                newHeight = newWidth / aspectRatio;
 
-				         if (newHeight > 0) {
-				             if (isTextBox&&!isCircleText) {
-								resizableElement.style.width = `${e.clientX - resizableElement.getBoundingClientRect().left}px`;
-								resizableElement.style.height = `${e.clientY - resizableElement.getBoundingClientRect().top}px`;
-				             } else {
-								resizableElement.style.width = `${newWidth}px`;
-								resizableElement.style.height = `${newHeight}px`;
-							 }
-				         }
+                if (newHeight > 0) {
+                    if (isTextBox && !isCircleText) {
+                        resizableElement.style.width = `${e.clientX - resizableElement.getBoundingClientRect().left}px`;
+                        resizableElement.style.height = `${e.clientY - resizableElement.getBoundingClientRect().top}px`;
+                    } else {
+                        resizableElement.style.width = `${newWidth}px`;
+                        resizableElement.style.height = `${newHeight}px`;
+                    }
+                }
 
-			    break;
-			case 'LB':
-				 newWidth = startWidth - (e.clientX - startX);
-				                 newLeft = startLeft + (e.clientX - startX);
-				                 newHeight = newWidth / aspectRatio;
+                break;
+            case 'LB':
+                newWidth = startWidth - (e.clientX - startX);
+                newLeft = startLeft + (e.clientX - startX);
+                newHeight = newWidth / aspectRatio;
 
-				                if (newWidth > 0 && newHeight > 0) {
-				                    if (isTextBox&&!isCircleText) {
-									resizableElement.style.width = `${newWidth}px`;
-									resizableElement.style.height = `${startHeight + (e.clientY - startY)}px`;
-									resizableElement.style.left = `${newLeft}px`;
-				                    } else {
-									resizableElement.style.width = `${newWidth}px`;
-									resizableElement.style.height = `${newHeight}px`;
-									resizableElement.style.left = `${newLeft}px`;						
-								 }
-				                }
+                if (newWidth > 0 && newHeight > 0) {
+                    if (isTextBox && !isCircleText) {
+                        resizableElement.style.width = `${newWidth}px`;
+                        resizableElement.style.height = `${startHeight + (e.clientY - startY)}px`;
+                        resizableElement.style.left = `${newLeft}px`;
+                    } else {
+                        resizableElement.style.width = `${newWidth}px`;
+                        resizableElement.style.height = `${newHeight}px`;
+                        resizableElement.style.left = `${newLeft}px`;
+                    }
+                }
 
-			    break;
-				case 'LT':
-				const deltX = startX - e.pageX;
-				const deltY = startY - e.pageY;
-				    newWidth = startWidth + deltX;
-				    newHeight = newWidth / aspectRatio;
-				    newLeft = startLeft - deltX;
-				    newTop = startTop - (newHeight - startHeight);
+                break;
+            case 'LT':
+                const deltX = startX - e.pageX;
+                const deltY = startY - e.pageY;
+                newWidth = startWidth + deltX;
+                newHeight = newWidth / aspectRatio;
+                newLeft = startLeft - deltX;
+                newTop = startTop - (newHeight - startHeight);
 
-				    if (newWidth > 0 && newHeight > 0) {
-				        if (isTextBox && !isCircleText) {
-				            resizableElement.style.width = `${startWidth + deltX}px`;
-				            resizableElement.style.height = `${startHeight + deltY}px`;
-				            resizableElement.style.left = `${newLeft}px`;
-				            resizableElement.style.top = `${startTop - ((startHeight + deltY) - startHeight)}px`;
-				        } else {
-				            resizableElement.style.width = `${newWidth}px`;
-				            resizableElement.style.height = `${newHeight}px`;
-				            resizableElement.style.left = `${newLeft}px`;
-				            resizableElement.style.top = `${newTop}px`;
-				        }
-				    }
+                if (newWidth > 0 && newHeight > 0) {
+                    if (isTextBox && !isCircleText) {
+                        resizableElement.style.width = `${startWidth + deltX}px`;
+                        resizableElement.style.height = `${startHeight + deltY}px`;
+                        resizableElement.style.left = `${newLeft}px`;
+                        resizableElement.style.top = `${startTop - ((startHeight + deltY) - startHeight)}px`;
+                    } else {
+                        resizableElement.style.width = `${newWidth}px`;
+                        resizableElement.style.height = `${newHeight}px`;
+                        resizableElement.style.left = `${newLeft}px`;
+                        resizableElement.style.top = `${newTop}px`;
+                    }
+                }
 
                 break;
 
             case 'RT':
-				const deltaX = e.clientX - startX;
-							 const deltaY = e.clientY - startY;
-				                 newWidth = startWidth + deltaX;
-				                 newHeight = newWidth / aspectRatio;
-				                 newTop = startTop + (startHeight - newHeight);
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                newWidth = startWidth + deltaX;
+                newHeight = newWidth / aspectRatio;
+                newTop = startTop + (startHeight - newHeight);
 
-				                if (newWidth > 0 && newHeight > 0) {
-				                    if (isTextBox&&!isCircleText) {
-								resizableElement.style.width = `${newWidth}px`;
-								resizableElement.style.height = `${startHeight - deltaY}px`;
-								resizableElement.style.top = `${startTop + deltaY}px`;
-				                    } else {
-									resizableElement.style.width = `${newWidth}px`;
-									resizableElement.style.height = `${newHeight}px`;
-									resizableElement.style.top = `${newTop}px`;
-								 }
-				                }
+                if (newWidth > 0 && newHeight > 0) {
+                    if (isTextBox && !isCircleText) {
+                        resizableElement.style.width = `${newWidth}px`;
+                        resizableElement.style.height = `${startHeight - deltaY}px`;
+                        resizableElement.style.top = `${startTop + deltaY}px`;
+                    } else {
+                        resizableElement.style.width = `${newWidth}px`;
+                        resizableElement.style.height = `${newHeight}px`;
+                        resizableElement.style.top = `${newTop}px`;
+                    }
+                }
 
                 break;
             default:
@@ -1045,74 +1053,76 @@ function initResize(e, type) {
         saveState();
     }
 }
-         fileInput.setAttribute('multiple','multiple')
-         fileInput.addEventListener('change', handleFileUpload);
-         function handleFileUpload() {
-            const files = fileInput.files; 
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                if (file && file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = e => addUploadedImage(e.target.result);
-                    
-                    reader.readAsDataURL(file);
-                } else {
-                    alert('이미지 파일만 업로드할 수 있습니다.');
-                }
-            }
+fileInput.setAttribute('multiple', 'multiple')
+fileInput.addEventListener('change', handleFileUpload);
+
+function handleFileUpload() {
+    const files = fileInput.files;
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = e => addUploadedImage(e.target.result);
+
+            reader.readAsDataURL(file);
+        } else {
+            alert('이미지 파일만 업로드할 수 있습니다.');
         }
-      
+    }
+}
 
-   function addUploadedImage(src) {
-        const div = document.createElement('div');
-        const img = createImage(src);
-        const width = img.naturalWidth;
-        const height = img.naturalHeight;
-        const ratio = height / width;
-        const newHeight = 100 * ratio;
-        const wrapper = createWrapper(100, newHeight);
 
-        div.appendChild(img);
-	    wrapper.appendChild(div);
-        
-        addResizers(wrapper);
-        elements.push(wrapper)
-	    dropArea.appendChild(wrapper);
-	    
-	    wrapper.id = `item-${itemCounter++}`;
-        makeElementDraggable(wrapper);
-	    wrapper.style.left = '10px';
-	    wrapper.style.top = '10px';
+function addUploadedImage(src) {
+    const div = document.createElement('div');
+    const img = createImage(src);
+    const width = img.naturalWidth;
+    const height = img.naturalHeight;
+    const ratio = height / width;
+    const newHeight = 100 * ratio;
+    const wrapper = createWrapper(100, newHeight);
 
-	    wrapper.addEventListener('click', function(e) {
-	        toggleSelectedElement(wrapper, e);
-	    });
-        saveState()
-	}
+    div.appendChild(img);
+    wrapper.appendChild(div);
 
-   function makeImageDraggable(img) {
-       img.addEventListener('mousedown', function(e) {
-           draggedImage = img;
-           offsetX = e.clientX - img.getBoundingClientRect().left;
-           offsetY = e.clientY - img.getBoundingClientRect().top;
-       });
+    addResizers(wrapper);
+    elements.push(wrapper)
+    dropArea.appendChild(wrapper);
 
-       document.addEventListener('mousemove', moveDraggedImage);
-       document.addEventListener('mouseup', releaseDraggedImage);
-   }
+    wrapper.id = `item-${itemCounter++}`;
+    makeElementDraggable(wrapper);
+    wrapper.style.left = '10px';
+    wrapper.style.top = '10px';
 
-   function moveDraggedImage(e) {
-       if (draggedImage) {
-           positionElement(draggedImage, e.clientX - offsetX, e.clientY - offsetY);
-       }
-   }
+    wrapper.addEventListener('click', function(e) {
+        toggleSelectedElement(wrapper, e);
+    });
+    saveState()
+}
 
-   function releaseDraggedImage() {
-       if (draggedImage) {
-           draggedImage = null;
-       }
-   }
-   function bringToFront(element) {
+function makeImageDraggable(img) {
+    img.addEventListener('mousedown', function(e) {
+        draggedImage = img;
+        offsetX = e.clientX - img.getBoundingClientRect().left;
+        offsetY = e.clientY - img.getBoundingClientRect().top;
+    });
+
+    document.addEventListener('mousemove', moveDraggedImage);
+    document.addEventListener('mouseup', releaseDraggedImage);
+}
+
+function moveDraggedImage(e) {
+    if (draggedImage) {
+        positionElement(draggedImage, e.clientX - offsetX, e.clientY - offsetY);
+    }
+}
+
+function releaseDraggedImage() {
+    if (draggedImage) {
+        draggedImage = null;
+    }
+}
+
+function bringToFront(element) {
     const currentIndex = Array.from(dropArea.children).indexOf(element);
     if (currentIndex < dropArea.children.length - 1) {
         dropArea.insertBefore(dropArea.children[currentIndex + 1], element);
@@ -1133,7 +1143,7 @@ function sendToBack(element) {
         } else {
             element.focus();
         }
-		isZindex = false;
+        isZindex = false;
         updateButtonStates(element);
         saveState();
     }
@@ -1141,26 +1151,26 @@ function sendToBack(element) {
 
 
 function updateButtonStates(element) {
-       const currentIndex = Array.from(dropArea.children).indexOf(element);
-     const zIndexUp = element.querySelector('.z-index-up');
-     const zIndexDown = element.querySelector('.z-index-down');
+    const currentIndex = Array.from(dropArea.children).indexOf(element);
+    const zIndexUp = element.querySelector('.z-index-up');
+    const zIndexDown = element.querySelector('.z-index-down');
 
-         if (currentIndex >= dropArea.children.length - 1) {
-             zIndexUp.disabled = true;
-             zIndexUp.style.pointerEvents = 'none';
-         } else {
-             zIndexUp.disabled = false;
-             zIndexUp.style.pointerEvents = 'auto';
-         }
+    if (currentIndex >= dropArea.children.length - 1) {
+        zIndexUp.disabled = true;
+        zIndexUp.style.pointerEvents = 'none';
+    } else {
+        zIndexUp.disabled = false;
+        zIndexUp.style.pointerEvents = 'auto';
+    }
 
-         if (currentIndex <= 0) {
-             zIndexDown.disabled = true;
-             zIndexDown.style.pointerEvents = 'none';
-         } else {
-             zIndexDown.disabled = false;
-             zIndexDown.style.pointerEvents = 'auto';
-         }
-     }
+    if (currentIndex <= 0) {
+        zIndexDown.disabled = true;
+        zIndexDown.style.pointerEvents = 'none';
+    } else {
+        zIndexDown.disabled = false;
+        zIndexDown.style.pointerEvents = 'auto';
+    }
+}
 
 
 function createZIndexControls(element) {
@@ -1188,7 +1198,7 @@ function createZIndexControls(element) {
     zIndexUp.classList.add('z-index-up');
     zIndexUp.append(up)
     zIndexUp.style.zIndex = 999;
-    
+
     const deleteButton = document.createElement('button');
     deleteButton.classList.add('delete-button');
     deleteButton.append(trash)
@@ -1198,7 +1208,7 @@ function createZIndexControls(element) {
     zIndexDown.classList.add('z-index-down');
     zIndexDown.append(down)
     zIndexDown.style.zIndex = 999;
-   
+
     const copyButton = document.createElement('button');
     copyButton.classList.add('copy-button');
     copyButton.append(copy)
@@ -1214,57 +1224,57 @@ function createZIndexControls(element) {
 
     zIndexDown.addEventListener('mousedown', function(e) {
         e.preventDefault();
-		isZindex = true;
+        isZindex = true;
         sendToBack(element);
-		element.focus();
+        element.focus();
         saveState();
     });
-    
-    
+
+
 
     deleteButton.addEventListener('mousedown', function(e) {
         e.preventDefault()
-        inputContainer.innerHTML=''
-        createFont.style.display='none'
-        Rotatedropdown.style.display='none'
-        Sizedropdown.style.display='none'
-        textalign.style.display='none'
-        Spacingdropdown.style.display='none'
+        inputContainer.innerHTML = ''
+        createFont.style.display = 'none'
+        Rotatedropdown.style.display = 'none'
+        Sizedropdown.style.display = 'none'
+        textalign.style.display = 'none'
+        Spacingdropdown.style.display = 'none'
         element.replaceChildren()
         element.remove()
     });
 
-    
+
     copyButton.addEventListener('mousedown', function(e) {
-	    e.preventDefault();
-	    const resizableElements = Array.from(element.querySelectorAll('.resizable'));
-	    if (resizableElements.length > 0) {
-	        const elementStyle = window.getComputedStyle(element);
-	        const elementLeft = parseFloat(elementStyle.left) || 0;
-	        const elementTop = parseFloat(elementStyle.top) || 0;
+        e.preventDefault();
+        const resizableElements = Array.from(element.querySelectorAll('.resizable'));
+        if (resizableElements.length > 0) {
+            const elementStyle = window.getComputedStyle(element);
+            const elementLeft = parseFloat(elementStyle.left) || 0;
+            const elementTop = parseFloat(elementStyle.top) || 0;
 
-	        resizableElements.forEach((resizableElement) => {
-	            const resizableStyle = window.getComputedStyle(resizableElement);
-	            const resizableLeft = parseFloat(resizableStyle.left) || 0;
-	            const resizableTop = parseFloat(resizableStyle.top) || 0;
+            resizableElements.forEach((resizableElement) => {
+                const resizableStyle = window.getComputedStyle(resizableElement);
+                const resizableLeft = parseFloat(resizableStyle.left) || 0;
+                const resizableTop = parseFloat(resizableStyle.top) || 0;
 
-	            const newLeft = resizableLeft + elementLeft;
-	            const newTop = resizableTop + elementTop;
+                const newLeft = resizableLeft + elementLeft;
+                const newTop = resizableTop + elementTop;
 
-	            const newElement = copyElement(resizableElement);
-	            newElement.style.position = 'absolute';
-	            newElement.style.left = `${newLeft + 20}px`;
-	            newElement.style.top = `${newTop + 20}px`;
+                const newElement = copyElement(resizableElement);
+                newElement.style.position = 'absolute';
+                newElement.style.left = `${newLeft + 20}px`;
+                newElement.style.top = `${newTop + 20}px`;
 
-	            elements.push(newElement);
-	            dropArea.appendChild(newElement);
-	        });
-	    } else {
-	        const newElement = copyElement(element);
-	        elements.push(newElement);
-	        dropArea.appendChild(newElement);
-	    }
-	});
+                elements.push(newElement);
+                dropArea.appendChild(newElement);
+            });
+        } else {
+            const newElement = copyElement(element);
+            elements.push(newElement);
+            dropArea.appendChild(newElement);
+        }
+    });
     zIndexControls.appendChild(zIndexUp);
     zIndexControls.appendChild(zIndexDown);
     zIndexControls.appendChild(deleteButton);
@@ -1277,82 +1287,82 @@ function copyElement(element) {
     const height = element.offsetHeight;
 
     const isTextBox = element.classList.contains('text-box');
-	const isCircleText = element.classList.contains('circle-text');
-	const isReverseCircle = element.classList.contains('reverse');
-	const isLeft = element.classList.contains('left');
-	const isCenter = element.classList.contains('center');
-	const isRight = element.classList.contains('right');
+    const isCircleText = element.classList.contains('circle-text');
+    const isReverseCircle = element.classList.contains('reverse');
+    const isLeft = element.classList.contains('left');
+    const isCenter = element.classList.contains('center');
+    const isRight = element.classList.contains('right');
 
     const newItem = document.createElement('div');
     newItem.classList.add('resizable');
     newItem.style.position = 'absolute';
-    
+
     newItem.style.width = `${width-2}px`;
     newItem.style.height = `${height-2}px`;
-	    const svgElement = element.querySelector('div');
+    const svgElement = element.querySelector('div');
 
-	        const svgContent = document.createElement("div");
-	       const svgCopy = new XMLSerializer().serializeToString(svgElement);
-	        svgContent.innerHTML = svgCopy;
+    const svgContent = document.createElement("div");
+    const svgCopy = new XMLSerializer().serializeToString(svgElement);
+    svgContent.innerHTML = svgCopy;
 
-	        newItem.appendChild(svgContent.firstChild);
-	const currentLeft = element.offsetLeft;
-	const currentTop = element.offsetTop;
-	newItem.style.left = `${currentLeft + 20}px`;
-	newItem.style.top = `${currentTop + 20}px`;
+    newItem.appendChild(svgContent.firstChild);
+    const currentLeft = element.offsetLeft;
+    const currentTop = element.offsetTop;
+    newItem.style.left = `${currentLeft + 20}px`;
+    newItem.style.top = `${currentTop + 20}px`;
     addResizers(newItem);
-	if (isCircleText) {
-	newItem.classList.add('text-box', 'circle-text');
-				newItem.style.position = 'absolute';
-				newItem.style.borderRadius = '50%';
-				newItem.style.display = 'flex';
-				newItem.style.alignItems = 'center';
-				newItem.style.justifyContent = 'center';
-	    		newItem.classList.add('circle-text');
-				newItem.tabIndex = 0;
-				
-				const path = newItem.querySelector('path');
-				path.id = `circlePath-copy-${itemCounter}`;
+    if (isCircleText) {
+        newItem.classList.add('text-box', 'circle-text');
+        newItem.style.position = 'absolute';
+        newItem.style.borderRadius = '50%';
+        newItem.style.display = 'flex';
+        newItem.style.alignItems = 'center';
+        newItem.style.justifyContent = 'center';
+        newItem.classList.add('circle-text');
+        newItem.tabIndex = 0;
 
-				const textPath = newItem.querySelector('textPath');
-				textPath.setAttribute('href', `#circlePath-copy-${itemCounter}`);
-		if(isReverseCircle){
-			newItem.classList.add('reverse');
-		}
-		if (isLeft) {
-			newItem.classList.add('left');
-		} else if (isCenter) {
-			newItem.classList.add('center');
-		} else if (isRight) {
-			newItem.classList.add('right');
-		}
+        const path = newItem.querySelector('path');
+        path.id = `circlePath-copy-${itemCounter}`;
 
-	    addEditText(textPath, newItem);
+        const textPath = newItem.querySelector('textPath');
+        textPath.setAttribute('href', `#circlePath-copy-${itemCounter}`);
+        if (isReverseCircle) {
+            newItem.classList.add('reverse');
+        }
+        if (isLeft) {
+            newItem.classList.add('left');
+        } else if (isCenter) {
+            newItem.classList.add('center');
+        } else if (isRight) {
+            newItem.classList.add('right');
+        }
 
-    } else if (isTextBox&&!isCircleText) {
+        addEditText(textPath, newItem);
+
+    } else if (isTextBox && !isCircleText) {
         newItem.classList.add('text-box');
         const editableArea = element.querySelector('.editable-area');
 
-		if(isLeft){
-			editableArea.style.textAlign = 'left';
-			newItem.classList.add('left');
-		} else if(isCenter){
-			editableArea.style.textAlign = 'center';
-			newItem.classList.add('center');
-		} else if(isRight){
-			editableArea.style.textAlign = 'right';
-			newItem.classList.add('right');
-		}
+        if (isLeft) {
+            editableArea.style.textAlign = 'left';
+            newItem.classList.add('left');
+        } else if (isCenter) {
+            editableArea.style.textAlign = 'center';
+            newItem.classList.add('center');
+        } else if (isRight) {
+            editableArea.style.textAlign = 'right';
+            newItem.classList.add('right');
+        }
 
     } else {
-		newItem.tabIndex = 0;
-	}
-	newItem.id = `item-${itemCounter++}`;
-	makeElementDraggable(newItem);
-	newItem.addEventListener('click', function(e) {
-	    toggleSelectedElement(newItem, e);
-	});
-	
+        newItem.tabIndex = 0;
+    }
+    newItem.id = `item-${itemCounter++}`;
+    makeElementDraggable(newItem);
+    newItem.addEventListener('click', function(e) {
+        toggleSelectedElement(newItem, e);
+    });
+
     saveState();
     return newItem;
 }
@@ -1361,7 +1371,7 @@ function addEditText(textPath, newItem) {
     textPath.addEventListener('click', (e) => {
         e.stopPropagation();
         isResizing = true;
-        
+
         const input = document.createElement('input');
         input.type = 'text';
         input.value = textPath.textContent;
@@ -1377,14 +1387,14 @@ function addEditText(textPath, newItem) {
         input.style.backgroundColor = '#f9f9f9';
         input.style.color = '#333';
         input.style.outline = 'none';
-        
+
         input.addEventListener('blur', () => {
             textPath.textContent = input.value || "Edit Text Here";
             newItem.removeChild(input);
             isResizing = false;
             saveState();
         });
-        
+
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 input.blur();
@@ -1417,13 +1427,13 @@ addTextButton.addEventListener('click', () => {
     const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
     foreignObject.setAttribute('width', '100%');
     foreignObject.setAttribute('height', '100%');
-	foreignObject.setAttribute('letter-spacing', 0);
-	foreignObject.classList.add('spacing');
+    foreignObject.setAttribute('letter-spacing', 0);
+    foreignObject.classList.add('spacing');
 
-	const testDiv = document.createElement('div');
-	testDiv.style.width = '100%';
-	testDiv.style.height = '100%';
-		
+    const testDiv = document.createElement('div');
+    testDiv.style.width = '100%';
+    testDiv.style.height = '100%';
+
     const editableArea = document.createElement('div');
     editableArea.classList.add('editable-area');
     editableArea.contentEditable = 'true';
@@ -1435,13 +1445,13 @@ addTextButton.addEventListener('click', () => {
     editableArea.style.textAlign = 'center';
     editableArea.style.width = '100%';
     editableArea.style.height = '100%';
-	editableArea.spellcheck = false;
+    editableArea.spellcheck = false;
 
     foreignObject.appendChild(editableArea);
     svgContainer.appendChild(foreignObject);
-	testDiv.appendChild(svgContainer);
+    testDiv.appendChild(svgContainer);
     textBox.appendChild(testDiv);
-    
+
     addResizers(textBox);
     makeElementDraggable(textBox);
     textBox.id = `item-${itemCounter++}`;
@@ -1455,6 +1465,7 @@ addTextButton.addEventListener('click', () => {
     dropArea.appendChild(textBox);
     saveState();
 });
+
 function createCircleTextBox(isReverse = false) {
     const circleTextBox = document.createElement('div');
     circleTextBox.classList.add('text-box', 'resizable', 'circle-text', 'center');
@@ -1485,9 +1496,9 @@ function createCircleTextBox(isReverse = false) {
     const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("id", `circlePath-${itemCounter}`);
-    path.setAttribute("d", isReverse
-        ? "M 150, 150 m 0, 0 a 100,100 0 1,0 0,200 a 100,100 0 1,0 0,-200"
-        : "M 150, 150 m -100, 0 a 100,100 0 1,1 0,-200 a 100,100 0 1,1 0,200");
+    path.setAttribute("d", isReverse ?
+        "M 150, 150 m 0, 0 a 100,100 0 1,0 0,200 a 100,100 0 1,0 0,-200" :
+        "M 150, 150 m -100, 0 a 100,100 0 1,1 0,-200 a 100,100 0 1,1 0,200");
     path.setAttribute("stroke-dasharray", "5, 5");
     path.style.stroke = "#737373";
     defs.appendChild(path);
@@ -1527,83 +1538,85 @@ function createCircleTextBox(isReverse = false) {
 circleTextButton.addEventListener('click', () => createCircleTextBox(false));
 reverseCircleTextButton.addEventListener('click', () => createCircleTextBox(true));
 
-    document.getElementById("removebtn").addEventListener('click', () => {
-        inputContainer.innerHTML=''
-        createFont.style.display='none'
-        Rotatedropdown.style.display='none'
-        Sizedropdown.style.display='none'
-        textalign.style.display='none'
-        Spacingdropdown.style.display='none'
-        dropArea.replaceChildren();
-        saveState();
-    });
-    
-    saveButton.addEventListener('click', () => {
-        const saveName = prompt("이미지의 이름을 정해주세요")
-        if(saveName==null || saveName==""){
-            return;
-        }else{
-            dropArea.style.border = "none"
-       
-            html2canvas(dropArea, { backgroundColor: null }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = saveName+'.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                dropArea.style.border = "dashed #243642"
-            });
-        }
-    });
-document.addEventListener('keydown', (event) => {
-        if(event.ctrlKey && event.key === 'y'){
-            if (redoStack.length > 0) {
-                const state = redoStack.pop();
-                history.push(state); 
-                restoreState(state); 
-            } 
-        }else if(event.ctrlKey && event.key === 'z'){
-            if (history.length > 1) {
-                redoStack.push(history.pop()); 
-                restoreState(history[history.length - 1]);       
-            }else{
-                dropArea.innerHTML = ""
-            }
-        }
-       
-    });
+document.getElementById("removebtn").addEventListener('click', () => {
+    inputContainer.innerHTML = ''
+    createFont.style.display = 'none'
+    Rotatedropdown.style.display = 'none'
+    Sizedropdown.style.display = 'none'
+    textalign.style.display = 'none'
+    Spacingdropdown.style.display = 'none'
+    dropArea.replaceChildren();
+    saveState();
+});
 
-    document.getElementById('undoBtn').addEventListener('click', () => {
+saveButton.addEventListener('click', () => {
+    const saveName = prompt("이미지의 이름을 정해주세요")
+    if (saveName == null || saveName == "") {
+        return;
+    } else {
+        dropArea.style.border = "none"
+
+        html2canvas(dropArea, {
+            backgroundColor: null
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = saveName + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            dropArea.style.border = "dashed #243642"
+        });
+    }
+});
+document.addEventListener('keydown', (event) => {
+    if (event.ctrlKey && event.key === 'y') {
         if (redoStack.length > 0) {
             const state = redoStack.pop();
-            history.push(state); 
-            restoreState(state); 
+            history.push(state);
+            restoreState(state);
         }
-    });
-    document.getElementById('redoBtn').addEventListener('click', () => {
+    } else if (event.ctrlKey && event.key === 'z') {
         if (history.length > 1) {
-            redoStack.push(history.pop()); 
-            restoreState(history[history.length - 1]); 
-
-            
-        }else{
+            redoStack.push(history.pop());
+            restoreState(history[history.length - 1]);
+        } else {
             dropArea.innerHTML = ""
         }
-        
-    });
+    }
+
+});
+
+document.getElementById('undoBtn').addEventListener('click', () => {
+    if (redoStack.length > 0) {
+        const state = redoStack.pop();
+        history.push(state);
+        restoreState(state);
+    }
+});
+document.getElementById('redoBtn').addEventListener('click', () => {
+    if (history.length > 1) {
+        redoStack.push(history.pop());
+        restoreState(history[history.length - 1]);
+
+
+    } else {
+        dropArea.innerHTML = ""
+    }
+
+});
 
 const folderInput = document.getElementById('folderInput');
 
 
-folderInput.setAttribute('multiple','multiple')
-   folderInput.addEventListener('change', handleFolderUpload);
+folderInput.setAttribute('multiple', 'multiple')
+folderInput.addEventListener('change', handleFolderUpload);
 
-   function handleFolderUpload() {
-    const files = folderInput.files; 
+function handleFolderUpload() {
+    const files = folderInput.files;
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
-            reader.onload = e => addUploadedImage(e.target.result);     
+            reader.onload = e => addUploadedImage(e.target.result);
             reader.readAsDataURL(file);
         } else {
             alert('이미지 파일만 업로드할 수 있습니다.');
@@ -1648,7 +1661,7 @@ window.onclick = function(event) {
 
 // QRcloseModalBtn.onclick = function() {
 //     QRContainer.style.border = "dashed 3px gray"
-    
+
 //     card.removeEventListener("click",rotateCard)
 //     card.style.transform = "rotateY(0deg)"
 //     QRmodal.style.display = "none";
@@ -1668,13 +1681,14 @@ window.onclick = function(event) {
 // QRContainer.style.transform = "rotateY(0deg)"
 //         card.removeEventListener("click",rotateCard)
 //         QRContainer.style.border = "dashed 3px gray"
-    
+
 //         QRmodal.style.display = "none";
 //     }
 // }
 
-   function unionMakeElementDraggable(element) {
-    let offsetX = 0, offsetY = 0;
+function unionMakeElementDraggable(element) {
+    let offsetX = 0,
+        offsetY = 0;
 
     element.addEventListener('mousedown', (e) => {
         if (isResizing) return;
@@ -1714,10 +1728,11 @@ let width2 = 0;
 let height2 = 0;
 let top2 = 0;
 let left2 = 0;
+
 function handleFolder1Upload() {
     folder1Files = [...folderInput1.files].filter(file => file.type.startsWith('image/'));
     const backgroundReader = new FileReader();
-    
+
     backgroundReader.onload = (e) => {
         const src = e.target.result;
         const img = createImage(src);
@@ -1726,7 +1741,7 @@ function handleFolder1Upload() {
         const ratio = height / width;
         const newHeight = 300 * ratio;
         const item = createWrapper(300, newHeight);
-        item.id = 'folder1-item'; 
+        item.id = 'folder1-item';
         item.appendChild(img);
         addResizers(item)
         union.appendChild(item);
@@ -1776,6 +1791,7 @@ function checkStartButton() {
         startButton.disabled = true;
     }
 }
+
 function startProcessing() {
     if (folder1Files.length > 0 && folder2Files.length > 0) {
         const folder1Item = union.querySelector(`#folder1-item`);
@@ -1793,9 +1809,10 @@ function startProcessing() {
             left2 = folder2Item.offsetLeft;
         }
 
-        processImages(); 
+        processImages();
     }
 }
+
 function processImages() {
     let currentWrapper1 = null;
 
@@ -1806,14 +1823,14 @@ function processImages() {
             const img1Src = e1.target.result;
             currentWrapper1 = createWrapper(678, 100);
             const img1 = createImage(img1Src);
-            currentWrapper1.style.left =(left1*1.614)+'px';
-            currentWrapper1.style.top = (top1*1.614)+'px';
-            currentWrapper1.style.width = (width1*1.614)+'px';
-            currentWrapper1.style.height = (height1*1.614)+'px';
+            currentWrapper1.style.left = (left1 * 1.614) + 'px';
+            currentWrapper1.style.top = (top1 * 1.614) + 'px';
+            currentWrapper1.style.width = (width1 * 1.614) + 'px';
+            currentWrapper1.style.height = (height1 * 1.614) + 'px';
             img1.style.width = '100%';
             img1.style.height = '100%';
             currentWrapper1.appendChild(img1);
-            dropArea.innerHTML=''
+            dropArea.innerHTML = ''
             dropArea.appendChild(currentWrapper1);
 
             function processSingleImage(index2) {
@@ -1830,12 +1847,12 @@ function processImages() {
                     const img2Src = e2.target.result;
                     const wrapper2 = createWrapper(300, 100);
                     const img2 = createImage(img2Src);
-                    wrapper2.style.left = (left2*1.614)+'px';
-                    wrapper2.style.top = (top2*1.614)+'px';
-					wrapper2.style.width = (width2*1.614)+'px';
-					const aspectRatio = height2/width2;
-					const height =  (width2*1.614)*aspectRatio;
-					wrapper2.style.height = height+'px';
+                    wrapper2.style.left = (left2 * 1.614) + 'px';
+                    wrapper2.style.top = (top2 * 1.614) + 'px';
+                    wrapper2.style.width = (width2 * 1.614) + 'px';
+                    const aspectRatio = height2 / width2;
+                    const height = (width2 * 1.614) * aspectRatio;
+                    wrapper2.style.height = height + 'px';
                     wrapper2.appendChild(img2);
                     dropArea.appendChild(wrapper2);
                     const fileName = `${file2.name.split('.')[0]}_${file1.name.split('.')[0]}.png`;
@@ -1854,7 +1871,9 @@ function processImages() {
 
 function saveAndRemoveImages(fileName, wrapper2, callback) {
     dropArea.style.border = "none";
-    html2canvas(dropArea, { backgroundColor: null }).then(canvas => {
+    html2canvas(dropArea, {
+        backgroundColor: null
+    }).then(canvas => {
         const link = document.createElement('a');
         link.download = fileName;
         link.href = canvas.toDataURL('image/png');
@@ -1864,11 +1883,11 @@ function saveAndRemoveImages(fileName, wrapper2, callback) {
         if (callback) callback();
     });
 }
-let isImageAdded = false; 
+let isImageAdded = false;
 // QRInput.addEventListener('change', function(event) {
-    
+
 //     const file = event.target.files[0];
-    
+
 //     if (file) {
 //         console.log(file[0])
 //         QRContainer.style.border = "none";
@@ -1887,7 +1906,7 @@ let isImageAdded = false;
 //             var ccc = window.btoa(img.src)
 //             console.log(ccc)
 //             var ccc2 = window.atob(ccc)
-            
+
 //             isImageAdded = true;
 //             card.addEventListener('click', rotateCard);
 //         }
@@ -1895,9 +1914,9 @@ let isImageAdded = false;
 //         console.log(file)
 //     } else {
 //         QRContainer.innerHTML = '이미지를 선택하세요';
-        
+
 //     }
-   
+
 // });
 function rotateCard() {
     if (isImageAdded) {
@@ -1911,9 +1930,9 @@ const spacingDropdown = document.querySelector('.Spacingdropdown-content');
 const dropbtngDropdown = document.querySelector('.dropdown-content');
 
 document.addEventListener('click', function(e) {
-	if (!document.querySelector('.dropbtn').contains(e.target) && !rotateDropdown.contains(e.target)) {
-    dropbtngDropdown.classList.remove('Rotateshow');
-}
+    if (!document.querySelector('.dropbtn').contains(e.target) && !rotateDropdown.contains(e.target)) {
+        dropbtngDropdown.classList.remove('Rotateshow');
+    }
     if (!document.querySelector('.Rotatedropbtn').contains(e.target) && !rotateDropdown.contains(e.target)) {
         rotateDropdown.classList.remove('Rotateshow');
     }
@@ -1949,3 +1968,72 @@ links.forEach(link => {
         this.classList.add('active');
     });
 });
+
+
+function changeLanguage() {
+    const languageSelect = document.getElementById("language-select");
+    const selectedLanguage = languageSelect.value;
+    const elements = document.querySelectorAll("[data-lang]");
+
+    elements.forEach(element => {
+        const langKey = element.getAttribute("data-lang");
+        element.textContent = translations[selectedLanguage][langKey];
+
+        if (selectedLanguage === "ko") {
+            element.classList.add("small-text");
+            element.classList.add("small-text");
+        } else {
+            element.classList.remove("small-text");
+            element.classList.remove("small-text");
+        }
+    });
+}
+
+const translations = {
+    en: {
+        opacity: "opacity",
+        background: "Background",
+        badge: "Badge",
+        create: "Create",
+        badgeCreate: "Badge Create",
+        spacing: "Spacing",
+        fontsize: "Fontsize",
+        rotate: "Rotate",
+        file: "Upload New Image",
+        folderInput: "Upload New ImageFolder",
+        reverseCircle: "Reverse Circle Text",
+        circleText: "CircleText",
+        textInput: "Add Text",
+        language: "Language",
+        folder: "Folder",
+        text: "Text",
+        icon: "Icons",
+        Ribbons: "Ribbons",
+        Etc: "Etc",
+        Circle: "Circle",
+        Shild: "Shild"
+    },
+    ko: {
+        opacity: "투명도",
+        background: "배경",
+        badge: "배지",
+        create: "만들기",
+        badgeCreate: "배지 만들기",
+        spacing: "글씨 간격",
+        fontsize: "글씨 크기",
+        rotate: "회전",
+        file: "파일 불러오기",
+        folderInput: "폴더 불러오기",
+        reverseCircle: "거꾸로된 굽은 글씨",
+        circleText: "굽은 글씨",
+        textInput: "글씨 작성",
+        language: "언어",
+        folder: "폴더",
+        text: "글씨",
+        icon: "아이콘",
+        Ribbons: "리본",
+        Etc: "기타",
+        Circle: "원형",
+        Shild: "방패 모형"
+    }
+};

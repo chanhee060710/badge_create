@@ -1,18 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Protest+Strike&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Montserrat:700');
+
 body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    height: 100vh; /* 전체 페이지 높이를 100vh로 설정 */
+    height: 100vh;
     display: flex;
     overflow-y: hidden;
     box-sizing: border-box;
 }
 
 .container {
-    z-index:4;
+    z-index: 4;
     flex-shrink: 1;
     flex: 0;
     display: flex;
@@ -24,7 +25,7 @@ body {
     margin: 0;
     width: 100px;
     background-color: #243642;
-    height: 100vh; 
+    height: 100vh;
     position: fixed;
 }
 
@@ -34,12 +35,8 @@ body {
     margin: 0;
 }
 
-/* .sidebar ul li {
-    
-} */
-
 .sidebar ul li a {
-    padding: 18px;
+    padding: 20px 5px 20px 5px;
     font-size: 20px;
     text-align: center;
     font-family: "Protest Strike", sans-serif;
@@ -55,16 +52,9 @@ body {
 }
 
 .sidebar ul li a.active {
-    background-color: black; 
+    background-color: black;
     color: #00AE68;
 }
-
-/* .sidebar ul li a:hover {
-    transition: 0.5s;
-    background-color: #629584;
-    border-radius: 20px;
-    margin: 10px;
-} */
 
 .content {
     margin-left: 100px;
@@ -72,143 +62,152 @@ body {
     text-align: center;
     background-color: #387478;
     overflow-y: hidden;
-    height: 100vh; /* 콘텐츠 영역 높이를 100vh로 설정 */
+    height: 100vh;
     width: 50vw;
 }
 
- 
-        body{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            overflow-y: hidden;
 
-        }
-  
-        .draggable {
-            width: 100px;
-            height: 100px;
-            cursor: move;
-            display: inline-block;
-        }
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-y: hidden;
 
-        .resizable {
-            position: absolute;
-            display: inline-block;
-        }
-        .resizerRB {
-            width: 10px;
-            height: 10px;
-            background: #000;
-            position: absolute;
-            right: -5px;
-            bottom: -5px;
-            cursor: se-resize;
-            border-radius: 50%;
-            display: none;
-        }
+}
 
-        .resizerLB {
-            width: 10px;
-            height: 10px;
-            background: #000;
-            position: absolute;
-            left: -5px;
-            bottom: -5px;
-            cursor: sw-resize;
-            border-radius: 50%;
-            display: none;
-        }
-        .resizerLT {
-            width: 10px;
-            height: 10px;
-            background: #000;
-            position: absolute;
-            left: -5px;
-            top: -5px;
-            cursor: nw-resize;
-            border-radius: 50%;
-            display: none;
-        }
-        .resizerRT {
-            width: 10px;
-            height: 10px;
-            background: #000;
-            position: absolute;
-            right: -5px;
-            top: -5px;
-            cursor: ne-resize;
-            border-radius: 50%;
-            display: none;
-        }
-        
-		.z-index-controls {
-		    position: absolute;
-		    top: -46px;
-		    left: -5px;
-		    display: none;
-		    flex-direction: row;
-		}
-        .z-index-up, .z-index-down{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #00AE68;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 5px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin: 0 5px;
-        }
-        
-        .z-index-up:disabled, .z-index-down:disabled {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #D3D3D3;
-            color: white;
-            border: none;
-            cursor: not-allowed;
-            padding: 5px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin: 0 5px;
-        }
-        .text-box {
-            cursor: move;
-            white-space: normal;
-            background-color: transparent;
-        }
+.draggable {
+    width: 100px;
+    height: 100px;
+    cursor: move;
+    display: inline-block;
+}
 
-        .text-box.selected {
-            border: 1px solid #000;
-        }	
-        
-		
-    		.delete-button {     
-            background-color: #00AE68;
-            color: white;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            margin: 0 5px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-		}
-        .textalign{
-            display: none;
-        }
+.resizable {
+    position: absolute;
+    display: inline-block;
+}
+
+.resizerRB {
+    width: 10px;
+    height: 10px;
+    background: #000;
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    cursor: se-resize;
+    border-radius: 50%;
+    display: none;
+}
+
+.resizerLB {
+    width: 10px;
+    height: 10px;
+    background: #000;
+    position: absolute;
+    left: -5px;
+    bottom: -5px;
+    cursor: sw-resize;
+    border-radius: 50%;
+    display: none;
+}
+
+.resizerLT {
+    width: 10px;
+    height: 10px;
+    background: #000;
+    position: absolute;
+    left: -5px;
+    top: -5px;
+    cursor: nw-resize;
+    border-radius: 50%;
+    display: none;
+}
+
+.resizerRT {
+    width: 10px;
+    height: 10px;
+    background: #000;
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    cursor: ne-resize;
+    border-radius: 50%;
+    display: none;
+}
+
+.z-index-controls {
+    position: absolute;
+    top: -46px;
+    left: -5px;
+    display: none;
+    flex-direction: row;
+}
+
+.z-index-up,
+.z-index-down {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #00AE68;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 0 5px;
+}
+
+.z-index-up:disabled,
+.z-index-down:disabled {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #D3D3D3;
+    color: white;
+    border: none;
+    cursor: not-allowed;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 0 5px;
+}
+
+.text-box {
+    cursor: move;
+    white-space: normal;
+    background-color: transparent;
+}
+
+.text-box.selected {
+    border: 1px solid #000;
+}
 
 
-.fill-text{
+.delete-button {
+    background-color: #00AE68;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    margin: 0 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.textalign {
+    display: none;
+}
+
+
+.fill-text {
     background-color: #000;
     color: #00AE68;
 }
+
 .copy-button {
     background-color: #00AE68;
     color: white;
@@ -222,23 +221,23 @@ body {
 }
 
 .rounded {
-    -webkit-appearance: none; /* 크롬 및 사파리에서 기본 스타일 제거 */
-    appearance: none; /* 기본 스타일 제거 */
-    width: 50px; /* 크기 조정 */
-    height: 50px; /* 크기 조정 */
-    border: none; /* 기본 테두리 제거 */
-    border-radius: 50%; /* 동그란 모양 */
-    cursor: pointer; /* 마우스 커서 변경 */
-    outline: none; /* 포커스 아웃라인 제거 */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
+    -webkit-appearance: none;
+    appearance: none;
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
 .rounded::-webkit-color-swatch {
-    border-radius: 50%; /* 색상 스와치 동그랗게 */
+    border-radius: 50%;
 }
 
 .rounded::-moz-color-swatch {
-    border-radius: 50%; /* 색상 스와치 동그랗게 */
+    border-radius: 50%;
 }
 
 
@@ -251,29 +250,29 @@ body {
 }
 
 .modal {
-   
-    display: none; /* 기본적으로 모달을 숨김 */
+
+    display: none;
     position: fixed;
     z-index: 9999;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* 검은색 배경 */
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .modal-content {
     border-radius: 20px;
     background-color: #fff;
-    width: 600px; /* 모달 너비 */
-    height: 600px; /* 모달 높이 */
-    position: absolute; /* 절대 위치 설정 */
-    top: 50%; /* 세로 중앙 */
-    left: 50%; /* 가로 중앙 */
-    transform: translate(-50%, -50%); /* 중앙 정렬 */
-    
+    width: 600px;
+    height: 600px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
     border: 1px solid #888;
-    text-align: center; /* 내용 가운데 정렬 */
+    text-align: center;
 }
 
 .union {
@@ -286,7 +285,7 @@ body {
     border: dashed gray 1px;
     position: relative;
     overflow: hidden;
-    margin: 20px auto; /* 가운데 정렬 및 위아래 간격 */
+    margin: 20px auto;
 }
 
 .button-container {
@@ -297,10 +296,9 @@ body {
     text-align: center;
     position: relative;
     display: flex;
-    justify-content: center; /* 버튼 가운데 정렬 */
-    gap: 20px; /* 버튼 간 간격 */
-    margin-top: 20px; /* 버튼 위 간격 */
-
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
 }
 
 .modal-button {
@@ -329,22 +327,22 @@ body {
     cursor: not-allowed;
 }
 
-.container2{
+.container2 {
     flex: 1;
     width: 100%;
     height: 100vh;
 }
 
 .QRmodal {
-    
-    display: none; /* 기본적으로 모달을 숨김 */
+
+    display: none;
     position: fixed;
     z-index: 9999;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* 검은색 배경 */
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .QRmodal-content {
@@ -353,18 +351,17 @@ body {
     justify-content: space-around;
     border-radius: 20px;
     background-color: #fff;
-    width: 700px; /* 모달 너비 */
-    height: 700px; /* 모달 높이 */
-    position: absolute; /* 절대 위치 설정 */
-    top: 50%; /* 세로 중앙 */
-    left: 50%; /* 가로 중앙 */
-    transform: translate(-50%, -50%); /* 중앙 정렬 */
-    
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     border: 1px solid #888;
-    text-align: center; /* 내용 가운데 정렬 */
+    text-align: center;
 }
 
-#QRImage{
+#QRImage {
     color: #ccc;
     display: flex;
     align-items: center;
@@ -372,8 +369,7 @@ body {
     width: 420px;
     height: 420px;
     border: dashed gray 1px;
-    margin: 20px auto; /* 가운데 정렬 및 위아래 간격 */
-
+    margin: 20px auto;
 }
 
 
@@ -393,7 +389,8 @@ body {
     transition: transform 0.6s;
 }
 
-#card-front, #card-back {
+#card-front,
+#card-back {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -406,7 +403,7 @@ body {
 }
 
 #card-front {
-    
+
     color: white;
     border: 3px dashed gray;
 }
@@ -419,7 +416,7 @@ body {
 
 
 
-.styleBtns{
+.styleBtns {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -428,7 +425,7 @@ body {
     height: 60px;
 }
 
-.styleInput{
+.styleInput {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -449,13 +446,13 @@ body {
     z-index: 1;
 }
 
-.btnContainer{
+.btnContainer {
     margin-left: 10px;
 }
 
 
-.btns{
-    
+.btns {
+
     font-size: 15px;
     border-radius: 5px;
     border: none;
@@ -465,7 +462,7 @@ body {
     padding: 5px 17px;
 }
 
-.btns:hover{
+.btns:hover {
     cursor: pointer;
     transition: 0.5s;
     background-color: #00AE68;
@@ -474,9 +471,9 @@ body {
 
 input[type="file"] {
     display: none;
-  }
+}
 
-  .labels{
+.labels {
     font-size: 15px;
     display: inline-block;
     color: #00AE68;
@@ -486,27 +483,29 @@ input[type="file"] {
     border-radius: 5px;
     margin: 10px 10px;
 
-  }
- .labels:hover{
+}
+
+.labels:hover {
     cursor: pointer;
     background-color: #00AE68;
     color: white;
     transition: 0.5s;
-  }
+}
 
-  .slider {
-    
+.slider {
+
     margin: 20px;
-    width: 120px; /* 슬라이더 크기 조절 */
-    accent-color:#08f596;
+    width: 120px;
+    accent-color: #08f596;
     margin-left: 20px;
 }
 
-#colorInput{
+#colorInput {
     margin-right: 20px;
 }
 
-.QRlabel, .modalLabel{
+.QRlabel,
+.modalLabel {
     color: white;
     padding: 11px 22px;
     background-color: #00AE68;
@@ -515,47 +514,49 @@ input[type="file"] {
     margin: 10px;
 }
 
-.QRlabel:hover,.modalLabel:hover{
+.QRlabel:hover,
+.modalLabel:hover {
     cursor: pointer;
 }
 
-section{
+section {
     width: 100%;
     height: 100vh;
 }
 
-#section5 > svg{
+#section5>svg {
     width: 70px;
     height: 70px;
     margin: 5px;
 }
+
 .selection-rectangle {
     position: absolute;
     border: 2px #387478 solid;
-    background-color:#08f596;
+    background-color: #08f596;
     opacity: 0.5;
     pointer-events: none;
     will-change: transform, width, height;
-  }
+}
 
-  .styleInputContainer{
+.styleInputContainer {
     margin-left: 10px;
-  }
+}
 
-.inputContainer2{
+.inputContainer2 {
     display: flex;
     align-items: center;
     margin: 5px;
 }
 
-.inputContainer{
+.inputContainer {
     margin-right: 20px;
 }
 
-.angle{
+.angle {
     display: inline-block;
     border-radius: 5px;
-    border:#00AE68 1px solid;
+    border: #00AE68 1px solid;
 }
 
 input[type=number] {
@@ -568,45 +569,45 @@ input[type=number] {
 }
 
 
-.filelabel{
-        font-weight: 600;
-        font-size: 15px;
-        display: block;
-        color: #00AE68;
-        padding: 5px 17px;
-        background-color: white;
-        border: none;
-        border-radius: 5px;
-        margin: 30px;
-        cursor: pointer;
+.filelabel {
+    font-weight: 600;
+    font-size: 15px;
+    display: block;
+    color: #00AE68;
+    padding: 5px 17px;
+    background-color: white;
+    border: none;
+    border-radius: 5px;
+    margin: 30px;
+    cursor: pointer;
 }
 
-.filelabel:hover{
+.filelabel:hover {
     cursor: pointer;
     background-color: #00AE68;
     color: white;
     transition: 0.5s;
-  }
+}
 
- .textbtn{
+.textbtn {
     width: 200px;
     border: none;
     padding: 15px;
     color: #00AE68;
     margin: 20px;
-   font-size: 15px;
-   font-weight: 700;
+    font-size: 15px;
+    font-weight: 700;
     background-color: white;
     border-radius: 10px;
- }
+}
 
- #section6{
+#section6 {
     flex-direction: column;
     display: flex;
     align-items: center;
- }
+}
 
- .textbtn:hover{
+.textbtn:hover {
     cursor: pointer;
     transition: 0.5s;
     background-color: #00AE68;
@@ -628,7 +629,8 @@ input[type=number] {
     border: none;
     cursor: pointer;
 }
-.dropbtn:hover{
+
+.dropbtn:hover {
     transition: 0.5s;
     color: white;
     background-color: #00AE68;
@@ -640,7 +642,7 @@ input[type=number] {
     position: absolute;
     background-color: #f9f9f9;
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     max-height: 0;
     opacity: 0;
@@ -656,24 +658,30 @@ input[type=number] {
 }
 
 .show {
-    max-height: 100px; 
-    opacity: 1; 
+    max-height: 100px;
+    opacity: 1;
 }
 
-.Rotatedropdown ,.Sizedropdown,.Spacingdropdown{
+.Rotatedropdown,
+.Sizedropdown,
+.Spacingdropdown {
     margin-left: 10px;
     position: relative;
-    display:none;
+    display: none;
 }
 
-.Rotatedropbtn:hover, .Sizedropbtn:hover,.Spacingdropbtn:hover{
+.Rotatedropbtn:hover,
+.Sizedropbtn:hover,
+.Spacingdropbtn:hover {
     transition: 0.5s;
     color: white;
     background-color: #00AE68;
 }
 
 
-.Rotatedropbtn,.Sizedropbtn,.Spacingdropbtn{
+.Rotatedropbtn,
+.Sizedropbtn,
+.Spacingdropbtn {
     background-color: white;
     color: #00AE68;
     border-radius: 5px;
@@ -683,7 +691,9 @@ input[type=number] {
     cursor: pointer;
 }
 
-.Rotatedropdown-content,.Sizedropdown-content,.Spacingdropdown-content{
+.Rotatedropdown-content,
+.Sizedropdown-content,
+.Spacingdropdown-content {
     border-radius: 5px;
     display: flex;
     align-items: center;
@@ -691,7 +701,7 @@ input[type=number] {
     background-color: #f9f9f9;
     min-width: 160px;
     right: 0;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     max-height: 0;
     opacity: 0;
@@ -701,13 +711,15 @@ input[type=number] {
 
 
 
-.Rotateshow,.Sizeshow,.Spacingshow {
-    max-height: 100px; /* 최대 높이를 설정하여 애니메이션 효과를 줍니다. */
-    opacity: 1; /* 완전 불투명으로 변경 */
+.Rotateshow,
+.Sizeshow,
+.Spacingshow {
+    max-height: 100px;
+    opacity: 1;
 }
 
 
-.fontselect{
+.fontselect {
     width: 200px;
     height: 35px;
     border-radius: 10px;
@@ -715,7 +727,7 @@ input[type=number] {
     margin: 10px;
 }
 
-.fontselect:focus{
+.fontselect:focus {
     box-sizing: border-box;
     width: 200px;
     height: 35px;
@@ -724,30 +736,39 @@ input[type=number] {
     outline: 2px solid #08f596;
 }
 
-.fontselect:hover{
+.fontselect:hover {
     cursor: pointer;
 }
 
 .guide-line {
     position: absolute;
     z-index: 0;
-    display: none; /* 기본적으로 가이드라인 숨김 */
+    display: none;
 }
 
 .horizontal {
     width: 100%;
-    height: 0; /* 높이를 0으로 설정 */
+    height: 0;
     top: 50%;
     left: 0;
-    border-top: 3px dashed #00AE68; /* 점선 스타일 */
+    border-top: 3px dashed #00AE68;
     transform: translateY(-50%);
 }
 
 .vertical {
-    width: 0; /* 너비를 0으로 설정 */
+    width: 0;
     height: 100%;
     top: 0;
     left: 50%;
-    border-left: 3px dashed #00AE68; /* 점선 스타일 */
+    border-left: 3px dashed #00AE68;
     transform: translateX(-50%);
+}
+
+.small-text {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+h2.small-text {
+    font-size: 20px;
 }
