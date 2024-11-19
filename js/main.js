@@ -170,7 +170,7 @@ function endDrag() {
 dropArea.addEventListener("mouseup", endDrag);
 dropArea.addEventListener("focusout", endDrag);
 dropArea.addEventListener("error", endDrag);
-
+document.addEventListener("mouseup", endDrag);
 
 
 
@@ -583,6 +583,7 @@ if (!window.isKeyDownEventRegistered) {
         } else if (e.ctrlKey && e.key === 'g') {
             e.preventDefault();
             console.log(1);
+            
         } else if (e.ctrlKey && e.key === 'd') {
             e.preventDefault();
             const copykey = copyElement(selectedElement);

@@ -527,7 +527,7 @@ section {
 
 .selection-rectangle {
     position: absolute;
-    border: 2px #387478 solid;
+    border: 1px #387478 solid;
     background-color: #08f596;
     opacity: 0.5;
     pointer-events: none;
