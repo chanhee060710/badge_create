@@ -167,7 +167,7 @@ function endDrag() {
     isDraggingElement = false;
 }
 
-document.addEventListener("mouseup", endDrag);
+dropArea.addEventListener("mouseup", endDrag);
 dropArea.addEventListener("focusout", endDrag);
 dropArea.addEventListener("error", endDrag);
 
@@ -561,49 +561,57 @@ function toggleSelectedElement(newElement) {
         const svg = selectedElement.querySelector('svg');
         const path = selectedElement.querySelector('path');
 
-        document.addEventListener("keydown", function (event) {
-            let step = 10;
-        
-            if (event.key === "Delete") {
-                inputContainer.innerHTML = '';
-                createFont.style.display = 'none';
-                Rotatedropdown.style.display = 'none';
-                Sizedropdown.style.display = 'none';
-                textalign.style.display = 'none';
-                Spacingdropdown.style.display = 'none';
-                selectedElement.replaceChildren();
-                selectedElement.remove();
-            } else if (event.ctrlKey && event.key === 'g') {
-                event.preventDefault();
-                console.log(1);
-            } else if (event.ctrlKey && event.key === 'd') {
-                event.preventDefault();
-                
-                const copykey = copyElement(selectedElement);
-                elements.push(copykey);
-                setTimeout(()=>{
-                    dropArea.appendChild(copykey);
-                },100)
-            } else {
-                let movement = event.ctrlKey ? step : 1;
-        
-                switch (event.key) {
-                    case 'ArrowUp':
-                        selectedElement.style.top = (selectedElement.offsetTop - movement) + 'px';
-                        break;
-                    case 'ArrowDown':
-                        selectedElement.style.top = (selectedElement.offsetTop + movement) + 'px';
-                        break;
-                    case 'ArrowLeft':
-                        selectedElement.style.left = (selectedElement.offsetLeft - movement) + 'px';
-                        break;
-                    case 'ArrowRight':
-                        selectedElement.style.left = (selectedElement.offsetLeft + movement) + 'px';
-                        break;
-                }
+       // 먼저 중복 방지용 플래그를 정의합니다.
+if (!window.isKeyDownEventRegistered) {
+    window.isKeyDownEventRegistered = true;
+
+    document.addEventListener("keydown", function (e) {
+        if (e.isComposing) return;
+
+        let step = 10;
+
+        if (e.key === "Delete") {
+            console.log("Key down:", e.key);
+            inputContainer.innerHTML = '';
+            createFont.style.display = 'none';
+            Rotatedropdown.style.display = 'none';
+            Sizedropdown.style.display = 'none';
+            textalign.style.display = 'none';
+            Spacingdropdown.style.display = 'none';
+            selectedElement.replaceChildren();
+            selectedElement.remove();
+        } else if (e.ctrlKey && e.key === 'g') {
+            e.preventDefault();
+            console.log(1);
+        } else if (e.ctrlKey && e.key === 'd') {
+            e.preventDefault();
+            const copykey = copyElement(selectedElement);
+            console.log(copykey);
+            console.log(elements);
+            elements.push(copykey);
+            setTimeout(() => {
+                dropArea.appendChild(copykey);
+            }, 100);
+        } else {
+            let movement = e.ctrlKey ? step : 1;
+
+            switch (e.key) {
+                case 'ArrowUp':
+                    selectedElement.style.top = (selectedElement.offsetTop - movement) + 'px';
+                    break;
+                case 'ArrowDown':
+                    selectedElement.style.top = (selectedElement.offsetTop + movement) + 'px';
+                    break;
+                case 'ArrowLeft':
+                    selectedElement.style.left = (selectedElement.offsetLeft - movement) + 'px';
+                    break;
+                case 'ArrowRight':
+                    selectedElement.style.left = (selectedElement.offsetLeft + movement) + 'px';
+                    break;
             }
-        });
-        
+        }
+    });
+}
 
 
         if (isText) {
@@ -1590,6 +1598,7 @@ saveButton.addEventListener('click', () => {
     }
 });
 document.addEventListener('keydown', (event) => {
+    
     if (event.ctrlKey && event.key === 'y') {
         if (redoStack.length > 0) {
             const state = redoStack.pop();
