@@ -156,6 +156,7 @@ function endDrag() {
         selectedElements = elements.filter((element) => isElementInRect(element, rect));
 
         if (selectedElements.length > 0) {
+            console.log(selectedElements)
             groupSelectedElements(selectedElements);
         }
     }
@@ -326,6 +327,8 @@ function groupSelectedElements(selectedElements) {
         });
 
         resizeObserver.observe(groupDiv);
+
+        
 
         groupDiv.addEventListener('focusout', () => {
             if (!isZindex) {
@@ -645,15 +648,23 @@ if (!window.isKeyDownEventRegistered) {
             Spacingdropdown.style.display = 'none';
             selectedElement.replaceChildren();
             selectedElement.remove();
-        } else if (e.ctrlKey && e.key === 'g') {
-            e.preventDefault();
-            console.log(1);
+        // } else if (e.ctrlKey && e.key === 'g') {
+        //     e.preventDefault();
+        //     console.log(1);
             
         } else if (e.ctrlKey && e.key === 'd') {
             e.preventDefault();
-            const copykey = copyElement(selectedElement);
-            elements.push(copykey);
-           dropArea.appendChild(copykey)
+            if(selectedElement.querySelectorAll('.resizable').length > 0){
+                selectedElement.querySelectorAll('.resizable').forEach((el)=>{   
+                    const copykey = copyElement(el);
+                    elements.push(copykey);
+                    dropArea.appendChild(copykey)
+                })
+            }else{
+                    const copykey = copyElement(selectedElement);
+                    elements.push(copykey);
+                    dropArea.appendChild(copykey)
+            }
         } 
         if (
             selectedElement.querySelector('.editable-area')?.isContentEditable ||
@@ -982,7 +993,6 @@ function createFontSelector() {
     });
 
     let currentFont = window.getComputedStyle(selectedElement.querySelector('svg')).fontFamily;
-
     if (currentFont.includes(',')) {
         currentFont = currentFont.split(',')[0].replace(/['"]+/g, '').trim();
     }
@@ -1008,7 +1018,6 @@ function createFontSelector() {
 
 dropArea.addEventListener('focusout', function(e) {
     if (selectedElement) {
-        console.log(1)
         blindResizers(selectedElement);
     }
 });
@@ -1406,8 +1415,11 @@ function copyElement(element) {
     newItem.appendChild(svgContent.firstChild);
     const currentLeft = element.offsetLeft;
     const currentTop = element.offsetTop;
+    console.log(element)
     newItem.style.left = `${currentLeft + 20}px`;
     newItem.style.top = `${currentTop + 20}px`;
+    
+    console.log(newItem)
     addResizers(newItem);
     if (isCircleText) {
         newItem.classList.add('text-box', 'circle-text');
@@ -1454,8 +1466,6 @@ function copyElement(element) {
         }
         newItem.addEventListener('dblclick', function(e) {
             e.stopPropagation();
-            console.log(newItem)
-            console.log(edit)
             edit.contentEditable = "true";
             edit.focus();
         });
@@ -1581,7 +1591,6 @@ function createTextBox() {
     textBox.addEventListener('dblclick', function(e) {
         e.stopPropagation();
         editableArea.contentEditable = "true";
-        console.log(textBox)
         editableArea.focus();
     });
     document.addEventListener("click", (e) => {
@@ -1680,23 +1689,27 @@ document.getElementById("removebtn").addEventListener('click', () => {
 });
 
 saveButton.addEventListener('click', () => {
-    const saveName = prompt("이미지의 이름을 정해주세요")
-    if (saveName == null || saveName == "") {
-        return;
-    } else {
-        dropArea.style.border = "none"
+    const saveName = prompt("이미지의 이름을 정해주세요");
+    if (!saveName) return;
 
-        html2canvas(dropArea, {
-            backgroundColor: null
-        }).then(canvas => {
+    const originalBorder = dropArea.style.border;
+    dropArea.style.border = "none";
+    dropArea.style.left = '0%';
+    dropArea.style.margin = '0px';
+
+    domtoimage.toPng(dropArea)
+        .then(dataUrl => {
             const link = document.createElement('a');
-            link.download = saveName + '.png';
-            link.href = canvas.toDataURL('image/png');
+            link.download = `${saveName}.png`;
+            link.href = dataUrl;
             link.click();
-            dropArea.style.border = "dashed #243642"
+
+            dropArea.style.border = originalBorder;
+            dropArea.style.left = '15%';
+            dropArea.style.margin = '40px';
         });
-    }
 });
+
 document.addEventListener('keydown', (event) => {
     
     if (event.ctrlKey && event.key === 'y') {
