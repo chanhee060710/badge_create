@@ -22,6 +22,7 @@ let offsetY = 0;
 let draggedImage = null;
 let itemCounter = 0;
 let isResizing = false;
+let selectedElements = [];
 let history = [];
 let redoStack = [];
 let elements = [];
@@ -35,7 +36,7 @@ const folderInput2 = document.getElementById('filebadge');
 const startButton = document.getElementById('startButton');
 const svgs = document.querySelectorAll("section > svg")
 const svgPath = document.querySelector('#svgImages path');
-
+const editable = document.querySelector('.editable-area')
 function showResizers(element) {
     const resizerClasses = [
         '.resizerRB', '.resizerLB', '.resizerLT', '.resizerRT',
@@ -149,7 +150,7 @@ function endDrag() {
     isDragging = false;
     const rect = selectionRectangle.getBoundingClientRect();
     const minDragBoxSize = 1;
-    let selectedElements = [];
+
 
     if (rect.width > minDragBoxSize && rect.height > minDragBoxSize) {
         selectedElements = elements.filter((element) => isElementInRect(element, rect));
@@ -194,6 +195,72 @@ function calculateBoundingBox(selectedElements) {
         width: maxX - minX,
         height: maxY - minY
     };
+}
+
+function CreateGroup(selectedElements){
+    if (selectedElements.length >= 2 && !dropArea.querySelector('.group-container')) {
+        const boundingBox = calculateBoundingBox(selectedElements);
+        const dropAreaRect = dropArea.getBoundingClientRect();
+
+        const groupDiv = document.createElement('div');
+        addResizers(groupDiv);
+        groupDiv.classList.add('group-container');
+        groupDiv.style.border = "1px solid";
+        groupDiv.style.position = 'absolute';
+        groupDiv.style.left = `${boundingBox.left - dropAreaRect.left}px`;
+        groupDiv.style.top = `${boundingBox.top - dropAreaRect.top}px`;
+        groupDiv.style.width = `${boundingBox.width}px`;
+        groupDiv.style.height = `${boundingBox.height}px`;
+
+        selectedElements.forEach((element) => {
+            const elementRect = element.getBoundingClientRect();
+            const offsetX = elementRect.left - boundingBox.left;
+            const offsetY = elementRect.top - boundingBox.top;
+
+            element.dataset.initialWidth = elementRect.width - 1;
+            element.dataset.initialHeight = elementRect.height - 1;
+            element.dataset.initialLeft = offsetX;
+            element.dataset.initialTop = offsetY;
+
+            element.style.position = 'absolute';
+            element.style.left = `${offsetX}px`;
+            element.style.top = `${offsetY}px`;
+
+            element.style.pointerEvents = 'none';
+
+            groupDiv.appendChild(element);
+        });
+
+        groupDiv.tabIndex = 0;
+        makeElementDraggable(groupDiv);
+        groupDiv.addEventListener('focus', (e) => {
+            toggleSelectedElement(groupDiv, e);
+        });
+        dropArea.appendChild(groupDiv);
+
+        groupDiv.focus();
+
+        const resizeObserver = new ResizeObserver(() => {
+            const groupRect = groupDiv.getBoundingClientRect();
+
+            selectedElements.forEach((element) => {
+                const initialWidth = parseFloat(element.dataset.initialWidth);
+                const initialHeight = parseFloat(element.dataset.initialHeight);
+                const initialLeft = parseFloat(element.dataset.initialLeft);
+                const initialTop = parseFloat(element.dataset.initialTop);
+
+                const widthRatio = groupRect.width / boundingBox.width;
+                const heightRatio = groupRect.height / boundingBox.height;
+
+                element.style.width = `${initialWidth * widthRatio}px`;
+                element.style.height = `${initialHeight * heightRatio}px`;
+                element.style.left = `${initialLeft * widthRatio}px`;
+                element.style.top = `${initialTop * heightRatio}px`;
+            });
+        });
+
+        resizeObserver.observe(groupDiv);
+    }
 }
 
 function groupSelectedElements(selectedElements) {
@@ -287,7 +354,6 @@ function groupSelectedElements(selectedElements) {
                         dropArea.insertBefore(child, groupDiv);
                     }
                 });
-
                 groupDiv.remove();
             }
         });
@@ -567,9 +633,8 @@ if (!window.isKeyDownEventRegistered) {
 
     document.addEventListener("keydown", function (e) {
         if (e.isComposing) return;
-
         let step = 10;
-
+        
         if (e.key === "Delete") {
             console.log("Key down:", e.key);
             inputContainer.innerHTML = '';
@@ -587,30 +652,32 @@ if (!window.isKeyDownEventRegistered) {
         } else if (e.ctrlKey && e.key === 'd') {
             e.preventDefault();
             const copykey = copyElement(selectedElement);
-            console.log(copykey);
-            console.log(elements);
             elements.push(copykey);
-            setTimeout(() => {
-                dropArea.appendChild(copykey);
-            }, 100);
-        } else {
-            let movement = e.ctrlKey ? step : 1;
-
-            switch (e.key) {
-                case 'ArrowUp':
-                    selectedElement.style.top = (selectedElement.offsetTop - movement) + 'px';
-                    break;
-                case 'ArrowDown':
-                    selectedElement.style.top = (selectedElement.offsetTop + movement) + 'px';
-                    break;
-                case 'ArrowLeft':
-                    selectedElement.style.left = (selectedElement.offsetLeft - movement) + 'px';
-                    break;
-                case 'ArrowRight':
-                    selectedElement.style.left = (selectedElement.offsetLeft + movement) + 'px';
-                    break;
-            }
+           dropArea.appendChild(copykey)
+        } 
+        if (
+            selectedElement.querySelector('.editable-area')?.isContentEditable ||
+            (selectedElement.contains(document.activeElement) && document.activeElement.tagName === 'INPUT')) {
+            return;
         }
+        
+        let movement = e.ctrlKey ? step : 1;
+        
+        switch (e.key) {
+            case 'ArrowUp':
+                selectedElement.style.top = (selectedElement.offsetTop - movement) + 'px';
+                break;
+            case 'ArrowDown':
+                selectedElement.style.top = (selectedElement.offsetTop + movement) + 'px';
+                break;
+            case 'ArrowLeft':
+                selectedElement.style.left = (selectedElement.offsetLeft - movement) + 'px';
+                break;
+            case 'ArrowRight':
+                selectedElement.style.left = (selectedElement.offsetLeft + movement) + 'px';
+                break;
+        }
+        
     });
 }
 
@@ -941,7 +1008,7 @@ function createFontSelector() {
 
 dropArea.addEventListener('focusout', function(e) {
     if (selectedElement) {
-
+        console.log(1)
         blindResizers(selectedElement);
     }
 });
@@ -1373,6 +1440,7 @@ function copyElement(element) {
     } else if (isTextBox && !isCircleText) {
         newItem.classList.add('text-box');
         const editableArea = element.querySelector('.editable-area');
+        const edit = newItem.querySelector('.editable-area');
 
         if (isLeft) {
             editableArea.style.textAlign = 'left';
@@ -1384,7 +1452,20 @@ function copyElement(element) {
             editableArea.style.textAlign = 'right';
             newItem.classList.add('right');
         }
-
+        newItem.addEventListener('dblclick', function(e) {
+            e.stopPropagation();
+            console.log(newItem)
+            console.log(edit)
+            edit.contentEditable = "true";
+            edit.focus();
+        });
+        document.addEventListener("click", (e) => {
+            if (!newItem.contains(e.target)) {
+                edit.contentEditable = "false";
+                blindResizers(newItem);
+            }
+        });
+    
     } else {
         newItem.tabIndex = 0;
     }
@@ -1439,6 +1520,10 @@ function addEditText(textPath, newItem) {
 }
 
 addTextButton.addEventListener('click', () => {
+    createTextBox()
+});
+
+function createTextBox() {
     const textBox = document.createElement('div');
     textBox.classList.add('text-box', 'resizable', 'center');
     textBox.style.position = 'absolute';
@@ -1467,7 +1552,6 @@ addTextButton.addEventListener('click', () => {
 
     const editableArea = document.createElement('div');
     editableArea.classList.add('editable-area');
-    editableArea.contentEditable = 'true';
     editableArea.style.position = 'relative';
     editableArea.innerText = 'Edit Text';
     editableArea.style.fontSize = '20px';
@@ -1487,16 +1571,31 @@ addTextButton.addEventListener('click', () => {
     makeElementDraggable(textBox);
     textBox.id = `item-${itemCounter++}`;
 
-    textBox.addEventListener('click', function(e) {
-        toggleSelectedElement(textBox);
+    
+
+    textBox.addEventListener("click", (e) => {
         e.stopPropagation();
+        toggleSelectedElement(textBox);
     });
 
+    textBox.addEventListener('dblclick', function(e) {
+        e.stopPropagation();
+        editableArea.contentEditable = "true";
+        console.log(textBox)
+        editableArea.focus();
+    });
+    document.addEventListener("click", (e) => {
+        if (!textBox.contains(e.target)) {
+            editableArea.contentEditable = "false";
+            blindResizers(textBox);
+        }
+    });
+
+    textBox.focus();
     elements.push(textBox);
     dropArea.appendChild(textBox);
     saveState();
-});
-
+}
 function createCircleTextBox(isReverse = false) {
     const circleTextBox = document.createElement('div');
     circleTextBox.classList.add('text-box', 'resizable', 'circle-text', 'center');
