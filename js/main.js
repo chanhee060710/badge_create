@@ -652,20 +652,36 @@ if (!window.isKeyDownEventRegistered) {
         //     e.preventDefault();
         //     console.log(1);
             
-        } else if (e.ctrlKey && e.key === 'd') {
-            e.preventDefault();
-            if(selectedElement.querySelectorAll('.resizable').length > 0){
-                selectedElement.querySelectorAll('.resizable').forEach((el)=>{   
-                    const copykey = copyElement(el);
-                    elements.push(copykey);
-                    dropArea.appendChild(copykey)
-                })
-            }else{
-                    const copykey = copyElement(selectedElement);
-                    elements.push(copykey);
-                    dropArea.appendChild(copykey)
-            }
-        } 
+    } else if (e.ctrlKey && e.key === 'd') {
+        e.preventDefault();
+        const resizableElements = Array.from(selectedElement.querySelectorAll('.resizable'));
+        if (resizableElements.length > 0) {
+            const elementStyle = window.getComputedStyle(selectedElement);
+            const elementLeft = parseFloat(elementStyle.left) || 0;
+            const elementTop = parseFloat(elementStyle.top) || 0;
+
+            resizableElements.forEach((resizableElement) => {
+                const resizableStyle = window.getComputedStyle(resizableElement);
+                const resizableLeft = parseFloat(resizableStyle.left) || 0;
+                const resizableTop = parseFloat(resizableStyle.top) || 0;
+
+                const newLeft = resizableLeft + elementLeft;
+                const newTop = resizableTop + elementTop;
+
+                const newElement = copyElement(resizableElement);
+                newElement.style.position = 'absolute';
+                newElement.style.left = `${newLeft + 20}px`;
+                newElement.style.top = `${newTop + 20}px`;
+
+                elements.push(newElement);
+                dropArea.appendChild(newElement);
+            });
+        }else{
+                const copykey = copyElement(selectedElement);
+                elements.push(copykey);
+                dropArea.appendChild(copykey)
+        }
+    }
         if (
             selectedElement.querySelector('.editable-area')?.isContentEditable ||
             (selectedElement.contains(document.activeElement) && document.activeElement.tagName === 'INPUT')) {
@@ -1688,27 +1704,46 @@ document.getElementById("removebtn").addEventListener('click', () => {
     saveState();
 });
 
-saveButton.addEventListener('click', () => {
-    const saveName = prompt("이미지의 이름을 정해주세요");
-    if (!saveName) return;
+const loadingOverlay = document.getElementById('loadingOverlay');
 
-    const originalBorder = dropArea.style.border;
-    dropArea.style.border = "none";
-    dropArea.style.left = '0%';
-    dropArea.style.margin = '0px';
+        saveButton.addEventListener('click', () => {
+            const saveName = document.querySelector('#savefile').value
+            if (!saveName) return;
 
-    domtoimage.toPng(dropArea)
-        .then(dataUrl => {
-            const link = document.createElement('a');
-            link.download = `${saveName}.png`;
-            link.href = dataUrl;
-            link.click();
+            // 로딩 화면 표시
+            loadingOverlay.style.display = 'block';
 
-            dropArea.style.border = originalBorder;
-            dropArea.style.left = '15%';
-            dropArea.style.margin = '40px';
+            const originalBorder = dropArea.style.border;
+            dropArea.style.border = "none";
+            dropArea.style.left = '0%';
+            dropArea.style.margin = '0px';
+
+            domtoimage.toPng(dropArea)
+                .then(dataUrl => {
+                    const link = document.createElement('a');
+                    link.download = `${saveName}.png`;
+                    link.href = dataUrl;
+                    link.click();
+
+                    // 로딩 화면 숨기기
+                    loadingOverlay.style.display = 'none';
+
+                    dropArea.style.border = originalBorder;
+                    dropArea.style.left = '15%';
+                    dropArea.style.margin = '40px';
+                })
+                .catch(err => {
+                    console.error("이미지 저장 중 오류 발생:", err);
+                    alert("이미지를 저장하는 중에 오류가 발생했습니다.");
+
+                    // 로딩 화면 숨기기
+                    loadingOverlay.style.display = 'none';
+
+                    dropArea.style.border = originalBorder;
+                    dropArea.style.left = '15%';
+                    dropArea.style.margin = '40px';
+                });
         });
-});
 
 document.addEventListener('keydown', (event) => {
     

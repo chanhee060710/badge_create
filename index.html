@@ -1054,10 +1054,12 @@
     <div class="container2">
         <nav class="styleBtns">
             <div class="btnContainer">
-                <button class="btns" id="save-button"><i class="fa-solid fa-floppy-disk"></i></button>
                 <button class="btns" id="removebtn"><i class="fa-solid fa-eraser"></i></button>
                 <!-- <button class="btns" id="qrSave"><i class="fa-solid fa-qrcode"></i></button> -->
                 <button class="btns" id="openModal"><i class="fa-solid fa-id-badge"></i></button>
+                <button class="btns" id="save-button"><i class="fa-solid fa-floppy-disk"></i></button>
+
+        <input type="text" id="savefile"  placeholder="파일명을 입력해주세요" />
             </div>
             <div class="inputContainer"></div>
         </nav>
@@ -1100,11 +1102,15 @@
                 </div>
             </div>
         </nav>
-        <div id="drop-area">
+        <div class="loading-container">
+            <img src="/rmimg/loadingPage.gif" alt="" id="loadingOverlay">
+            <div id="drop-area">
 
-            <div class="guide-line horizontal" id="horizontal-line"></div>
-            <div class="guide-line vertical" id="vertical-line"></div>
+                <div class="guide-line horizontal" id="horizontal-line"></div>
+                <div class="guide-line vertical" id="vertical-line"></div>
+            </div>
         </div>
+        
         <div id="modal" class="modal">
             <div class="modal-content">
                 <h2 data-lang="badgeCreate">Badge Create</h2>
