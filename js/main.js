@@ -198,71 +198,7 @@ function calculateBoundingBox(selectedElements) {
     };
 }
 
-function CreateGroup(selectedElements){
-    if (selectedElements.length >= 2 && !dropArea.querySelector('.group-container')) {
-        const boundingBox = calculateBoundingBox(selectedElements);
-        const dropAreaRect = dropArea.getBoundingClientRect();
 
-        const groupDiv = document.createElement('div');
-        addResizers(groupDiv);
-        groupDiv.classList.add('group-container');
-        groupDiv.style.border = "1px solid";
-        groupDiv.style.position = 'absolute';
-        groupDiv.style.left = `${boundingBox.left - dropAreaRect.left}px`;
-        groupDiv.style.top = `${boundingBox.top - dropAreaRect.top}px`;
-        groupDiv.style.width = `${boundingBox.width}px`;
-        groupDiv.style.height = `${boundingBox.height}px`;
-
-        selectedElements.forEach((element) => {
-            const elementRect = element.getBoundingClientRect();
-            const offsetX = elementRect.left - boundingBox.left;
-            const offsetY = elementRect.top - boundingBox.top;
-
-            element.dataset.initialWidth = elementRect.width - 1;
-            element.dataset.initialHeight = elementRect.height - 1;
-            element.dataset.initialLeft = offsetX;
-            element.dataset.initialTop = offsetY;
-
-            element.style.position = 'absolute';
-            element.style.left = `${offsetX}px`;
-            element.style.top = `${offsetY}px`;
-
-            element.style.pointerEvents = 'none';
-
-            groupDiv.appendChild(element);
-        });
-
-        groupDiv.tabIndex = 0;
-        makeElementDraggable(groupDiv);
-        groupDiv.addEventListener('focus', (e) => {
-            toggleSelectedElement(groupDiv, e);
-        });
-        dropArea.appendChild(groupDiv);
-
-        groupDiv.focus();
-
-        const resizeObserver = new ResizeObserver(() => {
-            const groupRect = groupDiv.getBoundingClientRect();
-
-            selectedElements.forEach((element) => {
-                const initialWidth = parseFloat(element.dataset.initialWidth);
-                const initialHeight = parseFloat(element.dataset.initialHeight);
-                const initialLeft = parseFloat(element.dataset.initialLeft);
-                const initialTop = parseFloat(element.dataset.initialTop);
-
-                const widthRatio = groupRect.width / boundingBox.width;
-                const heightRatio = groupRect.height / boundingBox.height;
-
-                element.style.width = `${initialWidth * widthRatio}px`;
-                element.style.height = `${initialHeight * heightRatio}px`;
-                element.style.left = `${initialLeft * widthRatio}px`;
-                element.style.top = `${initialTop * heightRatio}px`;
-            });
-        });
-
-        resizeObserver.observe(groupDiv);
-    }
-}
 
 function groupSelectedElements(selectedElements) {
     if (selectedElements.length >= 2 && !dropArea.querySelector('.group-container')) {
@@ -532,7 +468,9 @@ function setupTextBox(element, item) {
     element.classList.add('text-box');
     const editableArea = item.innerHTML;
     editableArea.style.textAlign = item.array || 'center';
+	enableTextEdit(element, editableArea.querySelector('.editable-area'));
     element.appendChild(editableArea);
+	element.tabIndex = 0;
 }
 
 function setupCircleText(element, item) {
@@ -648,10 +586,7 @@ if (!window.isKeyDownEventRegistered) {
             Spacingdropdown.style.display = 'none';
             selectedElement.replaceChildren();
             selectedElement.remove();
-        // } else if (e.ctrlKey && e.key === 'g') {
-        //     e.preventDefault();
-        //     console.log(1);
-            
+
     } else if (e.ctrlKey && e.key === 'd') {
         e.preventDefault();
         const resizableElements = Array.from(selectedElement.querySelectorAll('.resizable'));
@@ -889,6 +824,11 @@ if (!window.isKeyDownEventRegistered) {
         selectedElement.focus();
 
     }
+    dropArea.addEventListener('focusout', function(e) {
+        if (selectedElement) {
+            blindResizers(selectedElement);
+        }
+    });
 }
 
 AngleFunction = () => {
@@ -1032,11 +972,11 @@ function createFontSelector() {
     createFont.appendChild(fontSelect);
 }
 
-dropArea.addEventListener('focusout', function(e) {
-    if (selectedElement) {
-        blindResizers(selectedElement);
-    }
-});
+// dropArea.addEventListener('focusout', function(e) {
+//     if (selectedElement) {
+//         blindResizers(selectedElement);
+//     }
+// });
 union.addEventListener('focusout', function(e) {
     if (selectedElement) {
         blindResizers(selectedElement);
@@ -1275,25 +1215,25 @@ function sendToBack(element) {
 
 function updateButtonStates(element) {
     const currentIndex = Array.from(dropArea.children).indexOf(element);
-    const zIndexUp = element.querySelector('.z-index-up');
-    const zIndexDown = element.querySelector('.z-index-down');
+  const zIndexUp = element.querySelector('.z-index-up');
+  const zIndexDown = element.querySelector('.z-index-down');
 
-    if (currentIndex >= dropArea.children.length - 1) {
-        zIndexUp.disabled = true;
-        zIndexUp.style.pointerEvents = 'none';
-    } else {
-        zIndexUp.disabled = false;
-        zIndexUp.style.pointerEvents = 'auto';
-    }
+      if (currentIndex >= dropArea.children.length - 1) {
+          zIndexUp.disabled = true;
+          zIndexUp.style.pointerEvents = 'none';
+      } else {
+          zIndexUp.disabled = false;
+          zIndexUp.style.pointerEvents = 'auto';
+      }
 
-    if (currentIndex <= 0) {
-        zIndexDown.disabled = true;
-        zIndexDown.style.pointerEvents = 'none';
-    } else {
-        zIndexDown.disabled = false;
-        zIndexDown.style.pointerEvents = 'auto';
-    }
-}
+      if (currentIndex <= 0 ||dropArea.children[currentIndex - 1].classList.contains('guide-line')) {
+          zIndexDown.disabled = true;
+          zIndexDown.style.pointerEvents = 'none';
+      } else {
+          zIndexDown.disabled = false;
+          zIndexDown.style.pointerEvents = 'auto';
+      }
+  }
 
 
 function createZIndexControls(element) {
@@ -1480,17 +1420,8 @@ function copyElement(element) {
             editableArea.style.textAlign = 'right';
             newItem.classList.add('right');
         }
-        newItem.addEventListener('dblclick', function(e) {
-            e.stopPropagation();
-            edit.contentEditable = "true";
-            edit.focus();
-        });
-        document.addEventListener("click", (e) => {
-            if (!newItem.contains(e.target)) {
-                edit.contentEditable = "false";
-                blindResizers(newItem);
-            }
-        });
+		enableTextEdit(newItem, edit);
+		newItem.tabIndex = 0;
     
     } else {
         newItem.tabIndex = 0;
@@ -1549,6 +1480,27 @@ addTextButton.addEventListener('click', () => {
     createTextBox()
 });
 
+function enableTextEdit(textBox, editableArea) {
+    textBox.addEventListener('dblclick', function (e) {
+        e.stopPropagation();
+        makeContentEditable(editableArea, true);
+        showResizers(textBox);
+    });
+
+    document.addEventListener("click", function (e) {
+        if (!textBox.contains(e.target)) {
+            makeContentEditable(editableArea, false);
+        }
+    });
+}
+
+function makeContentEditable(element, isEditable) {
+    element.contentEditable = isEditable ? "true" : "false";
+    if (isEditable) {
+        element.focus();
+    }
+}
+
 function createTextBox() {
     const textBox = document.createElement('div');
     textBox.classList.add('text-box', 'resizable', 'center');
@@ -1603,18 +1555,9 @@ function createTextBox() {
         e.stopPropagation();
         toggleSelectedElement(textBox);
     });
+    textBox.tabIndex = 0;
+    enableTextEdit(textBox, editableArea);
 
-    textBox.addEventListener('dblclick', function(e) {
-        e.stopPropagation();
-        editableArea.contentEditable = "true";
-        editableArea.focus();
-    });
-    document.addEventListener("click", (e) => {
-        if (!textBox.contains(e.target)) {
-            editableArea.contentEditable = "false";
-            blindResizers(textBox);
-        }
-    });
 
     textBox.focus();
     elements.push(textBox);
