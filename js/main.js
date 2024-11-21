@@ -322,12 +322,15 @@ function makeElementDraggable(element) {
                 element.style.left = newLeft + "px";
                 element.style.top = newTop + "px";
 
-                const isCentered = checkIfCentered(element);
-                if (isCentered) {
+                const snappedPosition = checkIfCentered(element);
+                if (snappedPosition) {
+                    element.style.left = snappedPosition.left + "px";
+                    element.style.top = snappedPosition.top + "px";
+
                     isDraggingElement = false;
                     setTimeout(() => {
                         isDraggingElement = true;
-                    }, 60);
+                    }, 0);
                 }
             }
         }
@@ -352,24 +355,26 @@ function checkIfCentered(element) {
     const elementCenterX = element.offsetLeft + element.offsetWidth / 2;
     const elementCenterY = element.offsetTop + element.offsetHeight / 2;
 
-    const tolerance = 2;
-    let isCentered = false;
-
-    if (Math.abs(elementCenterY - containerCenterY) < tolerance) {
-        horizontalLine.style.display = "block";
-        isCentered = true;
-    } else {
-        horizontalLine.style.display = "none";
-    }
+    const tolerance = 10;
+    let snappedPosition = null;
 
     if (Math.abs(elementCenterX - containerCenterX) < tolerance) {
         verticalLine.style.display = "block";
-        isCentered = true;
+        snappedPosition = snappedPosition || {};
+        snappedPosition.left = containerCenterX - element.offsetWidth / 2;
     } else {
         verticalLine.style.display = "none";
     }
 
-    return isCentered;
+    if (Math.abs(elementCenterY - containerCenterY) < tolerance) {
+        horizontalLine.style.display = "block";
+        snappedPosition = snappedPosition || {};
+        snappedPosition.top = containerCenterY - element.offsetHeight / 2;
+    } else {
+        horizontalLine.style.display = "none";
+    }
+
+    return snappedPosition;
 }
 
 function saveState() {
@@ -552,15 +557,43 @@ function createImage(src) {
     return img;
 }
 
+    let isCtrlPressed = false; // Ctrl 키 상태 확인
+    
+    // Ctrl 키 상태 감지
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Control') isCtrlPressed = true;
+    });
+    
+    document.addEventListener('keyup', (e) => {
+        if (e.key === 'Control') isCtrlPressed = false;
+    });       
+
 function toggleSelectedElement(newElement) {
     selectedElement = newElement;
+    
 
-
-
+    if (isCtrlPressed) {
+        if (selectedElements.includes(newElement)) {
+            // 이미 선택된 경우 -> 선택 해제
+            blindResizers(selectedElement)
+            newElement.classList.remove('selected');
+            selectedElements = selectedElements.filter((el) => el !== newElement);
+        } else {
+            // 새로 선택된 경우 -> 추가
+            newElement.classList.add('selected');
+            selectedElements.push(newElement);
+            groupSelectedElements(selectedElements)
+        }
+    } else {
+        // Ctrl 키 없이 선택 -> 단일 선택
+        selectedElements.forEach((el) => el.classList.remove('selected'));
+        selectedElements = [newElement];
+        newElement.classList.add('selected');
+    }
     if (dropArea.children) {
         updateButtonStates(selectedElement);
         showResizers(selectedElement);
-
+        
         const isText = selectedElement.classList.contains('text-box');
         const isCircleText = selectedElement.classList.contains('circle-text');
         const isReverse = selectedElement.classList.contains('reverse');
@@ -673,33 +706,28 @@ if (!window.isKeyDownEventRegistered) {
                 button.addEventListener('click', () => {
                     selectedElement.classList.remove('left', 'center', 'right');
                     selectedElement.classList.add(alignment);
-                    if (isCircleText) {
-                        if (alignment === 'left') {
-                            if (isReverse) {
-                                svg.setAttribute("viewBox", "37 37 225 225");
-                                path.setAttribute("d", "M 150, 150 m 100, 0 a 100,100 0 1,0 -200,0 a 100,100 0 1,0 200,0");
-                            } else {
-                                svg.setAttribute("viewBox", "-185 15 270 270");
-                                path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,1 -200,0 a 100,100 0 1,1 200,0");
-                            }
-                        } else if (alignment === 'center') {
-                            if (isReverse) {
-                                svg.setAttribute("viewBox", "37 137 225 225");
-                                path.setAttribute("d", "M 150, 150 m 0, 0 a 100,100 0 1,0 0,200 a 100,100 0 1,0 0,-200");
-                            } else {
-                                svg.setAttribute("viewBox", "-85 -85 270 270");
-                                path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,1 0,-200 a 100,100 0 1,1 0,200");
-                            }
-                        } else if (alignment === 'right') {
-                            if (isReverse) {
-                                svg.setAttribute("viewBox", "37 37 225 225");
-                                path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,0 200,0 a 100,100 0 1,0 -200,0");
-                            } else {
-                                svg.setAttribute("viewBox", "15 15 270 270");
-                                path.setAttribute("d", "M 150, 150 m -100, 0 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0");
-                            }
-                        }
-                    } else {
+					if (isCircleText) {
+					    const viewBoxValues = {
+					        left: isReverse ? "37 37 225 225" : "-185 15 270 270",
+					        center: isReverse ? "37 137 225 225" : "-85 -85 270 270",
+					        right: isReverse ? "37 37 225 225" : "15 15 270 270",
+					    };
+
+					    const pathValues = {
+					        left: isReverse 
+					            ? "M 150, 150 m 100, 0 a 100,100 0 1,0 -200,0 a 100,100 0 1,0 200,0" 
+					            : "M 150, 150 m -100, 0 a 100,100 0 1,1 -200,0 a 100,100 0 1,1 200,0",
+					        center: isReverse 
+					            ? "M 150, 150 m 0, 0 a 100,100 0 1,0 0,200 a 100,100 0 1,0 0,-200" 
+					            : "M 150, 150 m -100, 0 a 100,100 0 1,1 0,-200 a 100,100 0 1,1 0,200",
+					        right: isReverse 
+					            ? "M 150, 150 m -100, 0 a 100,100 0 1,0 200,0 a 100,100 0 1,0 -200,0" 
+					            : "M 150, 150 m -100, 0 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0",
+					    };
+
+					    svg.setAttribute("viewBox", viewBoxValues[alignment]);
+					    path.setAttribute("d", pathValues[alignment]);
+					} else {
                         selectedElement.querySelector('.editable-area').style.textAlign = alignment;
                     }
                     alignments.forEach(align => {
@@ -824,11 +852,24 @@ if (!window.isKeyDownEventRegistered) {
         selectedElement.focus();
 
     }
-    dropArea.addEventListener('focusout', function(e) {
-        if (selectedElement) {
-            blindResizers(selectedElement);
-        }
-    });
+dropArea.addEventListener('click', (e) => {
+    const clickedElement = e.target.closest('.selectable'); 
+
+    if (!clickedElement) return; 
+    toggleSelectedElement(clickedElement); 
+});
+
+dropArea.addEventListener('focusout', (e) => {
+    selectedElements.forEach((el)=>{
+        blindResizers(el)
+        console.log(el)
+    })
+});
+dropArea.addEventListener('focusout', (e) => {
+    if(selectedElement){
+        blindResizers(selectedElement)
+    }
+});
 }
 
 AngleFunction = () => {
