@@ -209,30 +209,31 @@ function groupSelectedElements(selectedElements) {
         addResizers(groupDiv);
         groupDiv.classList.add('group-container');
         groupDiv.style.border = "1px solid";
+        groupDiv.style.boxSizing = "border-box";
         groupDiv.style.position = 'absolute';
-        groupDiv.style.left = `${boundingBox.left - dropAreaRect.left}px`;
-        groupDiv.style.top = `${boundingBox.top - dropAreaRect.top}px`;
+        groupDiv.style.left = `${boundingBox.left - dropAreaRect.left - 3}px`;
+        groupDiv.style.top = `${boundingBox.top - dropAreaRect.top - 3}px`;
         groupDiv.style.width = `${boundingBox.width}px`;
         groupDiv.style.height = `${boundingBox.height}px`;
 
         selectedElements.forEach((element) => {
             const elementRect = element.getBoundingClientRect();
-            const offsetX = elementRect.left - boundingBox.left;
-            const offsetY = elementRect.top - boundingBox.top;
+            const offsetX = Math.round(elementRect.left - boundingBox.left);
+            const offsetY = Math.round(elementRect.top - boundingBox.top);
 
-            element.dataset.initialWidth = elementRect.width - 1;
-            element.dataset.initialHeight = elementRect.height - 1;
+            element.dataset.initialWidth = Math.round(elementRect.width);
+            element.dataset.initialHeight = Math.round(elementRect.height);
             element.dataset.initialLeft = offsetX;
             element.dataset.initialTop = offsetY;
 
             element.style.position = 'absolute';
             element.style.left = `${offsetX}px`;
             element.style.top = `${offsetY}px`;
-
             element.style.pointerEvents = 'none';
 
             groupDiv.appendChild(element);
         });
+
 
         groupDiv.tabIndex = 0;
         makeElementDraggable(groupDiv);
@@ -266,39 +267,39 @@ function groupSelectedElements(selectedElements) {
 
         
 
-        groupDiv.addEventListener('focusout', () => {
-            if (!isZindex) {
-                resizeObserver.unobserve(groupDiv);
+		groupDiv.addEventListener('focusout', () => {
+		    if (!isZindex) {
+		        resizeObserver.unobserve(groupDiv);
 
-                const groupLeft = parseFloat(groupDiv.style.left);
-                const groupTop = parseFloat(groupDiv.style.top);
+		        const groupLeft = parseFloat(groupDiv.style.left);
+		        const groupTop = parseFloat(groupDiv.style.top);
 
-                const children = Array.from(groupDiv.children);
-                children.forEach((child) => {
-                    if (child.classList.contains('resizable')) {
-                        const computedStyle = window.getComputedStyle(child);
-                        const childWidth = computedStyle.width;
-                        const childHeight = computedStyle.height;
+		        const children = Array.from(groupDiv.children);
+		        children.forEach((child) => {
+		            if (child.classList.contains('resizable')) {
+		                const computedStyle = window.getComputedStyle(child);
+		                const childWidth = parseFloat(computedStyle.width);
+		                const childHeight = parseFloat(computedStyle.height);
 
-                        const offsetX = groupLeft + parseFloat(child.style.left);
-                        const offsetY = groupTop + parseFloat(child.style.top);
+		                const offsetX = Math.round(groupLeft + parseFloat(child.style.left));
+		                const offsetY = Math.round(groupTop + parseFloat(child.style.top));
 
-                        child.style.width = childWidth;
-                        child.style.height = childHeight;
-                        child.style.left = `${offsetX}px`;
-                        child.style.top = `${offsetY}px`;
-                        child.style.border = "none";
-                        child.style.pointerEvents = '';
+		                child.style.width = `${childWidth}px`;
+		                child.style.height = `${childHeight}px`;
+		                child.style.left = `${offsetX + 1}px`;
+		                child.style.top = `${offsetY + 1}px`;
+		                child.style.border = "none";
+		                child.style.pointerEvents = '';
 
-                        dropArea.insertBefore(child, groupDiv);
-                    }
-                });
-                groupDiv.remove();
-            }
-        });
+		                dropArea.insertBefore(child, groupDiv);
+		            }
+		        });
+		        groupDiv.remove();
+		    }
+		});
+
     }
 }
-
 
 const horizontalLine = document.getElementById("horizontal-line");
 const verticalLine = document.getElementById("vertical-line");
@@ -573,16 +574,21 @@ function toggleSelectedElement(newElement) {
     
 
     if (isCtrlPressed) {
-        if (selectedElements.includes(newElement)) {
+        if (selectedElements.includes(selectedElement)) {
             // 이미 선택된 경우 -> 선택 해제
             blindResizers(selectedElement)
-            newElement.classList.remove('selected');
+            selectedElement.classList.remove('group-container');
+            selectedElement.classList.remove('selected');
             selectedElements = selectedElements.filter((el) => el !== newElement);
         } else {
-            // 새로 선택된 경우 -> 추가
-            newElement.classList.add('selected');
-            selectedElements.push(newElement);
-            groupSelectedElements(selectedElements)
+            const selectChild = selectedElement.children
+            selectedElements.push(selectChild);
+            
+            console.log(selectedElements)
+            if(selectedElements.length >0){
+
+                groupSelectedElements(selectedElements)
+            }
         }
     } else {
         // Ctrl 키 없이 선택 -> 단일 선택
@@ -610,7 +616,6 @@ if (!window.isKeyDownEventRegistered) {
         let step = 10;
         
         if (e.key === "Delete") {
-            console.log("Key down:", e.key);
             inputContainer.innerHTML = '';
             createFont.style.display = 'none';
             Rotatedropdown.style.display = 'none';
@@ -862,7 +867,6 @@ dropArea.addEventListener('click', (e) => {
 dropArea.addEventListener('focusout', (e) => {
     selectedElements.forEach((el)=>{
         blindResizers(el)
-        console.log(el)
     })
 });
 dropArea.addEventListener('focusout', (e) => {
