@@ -2340,14 +2340,10 @@ HtmlInput.addEventListener('change', function() {
 HtmlSave.addEventListener('click', function () {
     const htmlContent = dropArea.innerHTML;
     const saveName = document.querySelector('#savefile').value;
-
-    // 파일 이름이 빈 경우 경고 메시지
     if (saveName.trim() === '') {
         return alert('파일이름을 입력해주세요');
     }
-
-    loadingOverlay.style.display = 'block'; // overlay 표시
-
+    loadingOverlay.style.display = 'block';
     const blob = new Blob([htmlContent], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -2357,7 +2353,5 @@ HtmlSave.addEventListener('click', function () {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url); 
-
-    // 파일 저장이 완료된 후 loadingOverlay 숨기기
-    loadingOverlay.style.display = 'none'; // overlay 숨기기
+    loadingOverlay.style.display = 'none'; 
 });
