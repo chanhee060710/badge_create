@@ -38,8 +38,12 @@
                 <li><a href="#section7"><i class="fa-solid fa-folder-open"></i>
                         <div data-lang="folder">Folder</div>
                     </a></li>
-                <li><a href="#section8"><i class="fa-solid fa-language"></i>
+                    <li><a href="#section8"><i class="fa-solid fa-floppy-disk"></i>
+                        <div data-lang="save">Save</div>
+                <li><a href="#section9"><i class="fa-solid fa-language"></i>
                         <div data-lang="language">Language</div>
+                    </a></li>
+                    
                     </a></li>
             </ul>
         </aside>
@@ -1040,9 +1044,16 @@
                 <input type="file" id="fileInput">
                 <label class="filelabel" for="folderInput" data-lang="folderInput">Upload New ImageFolder</label>
                 <input type="file" id="folderInput" webkitdirectory directory multiple>
-
+                <label class="filelabel" for="HtmlInput" data-lang="htmlInput">Upload New Html</label>
+                <input type="file" id="HtmlInput" accept=".html">
             </section>
+            
             <section id="section8">
+                <button class="textbtn" id="save-button">Png Save</button>
+                <button class="textbtn" id="save-button">Jpg Save</button>
+                <button class="textbtn" id="HtmlSave">Html Save</button>
+            </section>
+            <section id="section9">
                 <select id="language-select" class="fontselect" onchange="changeLanguage()">
                     <option value="en" selected>English</option>
                     <option value="ko">한국어</option>
@@ -1057,10 +1068,8 @@
                 <button class="btns" id="removebtn"><i class="fa-solid fa-eraser"></i></button>
                 <!-- <button class="btns" id="qrSave"><i class="fa-solid fa-qrcode"></i></button> -->
                 <button class="btns" id="openModal"><i class="fa-solid fa-id-badge"></i></button>
-                <button class="btns" id="save-button"><i class="fa-solid fa-floppy-disk"></i></button>
-
-        <input type="text" id="savefile"  placeholder="파일명을 입력해주세요" />
-            </div>
+       <input type="text" id="savefile"  placeholder="파일명을 입력해주세요" />
+    </div>
             <div class="inputContainer"></div>
         </nav>
         <nav class="styleInput" id="textInput">
@@ -1072,7 +1081,8 @@
                         <input type="range" id="opacity-slider" min="0" max="100" value="100" class="slider">
                     </div>
                 </div>
-
+                <input type="checkbox" id="darkModeToggle" class="toggle-checkbox">
+                <label class="darkModeToggle" for="darkModeToggle"></label>   
             </div>
             <div class="inputContainer2">
                 <div class="createFont"></div>

@@ -17,7 +17,7 @@ body {
     flex-shrink: 1;
     flex: 0;
     display: flex;
-    width: 25vw;
+    width: 450px;
     height: 100vh;
 }
 
@@ -40,19 +40,19 @@ body {
     font-size: 20px;
     text-align: center;
     font-family: "Protest Strike", sans-serif;
-    color: white;
+    color: #ffffff;
     text-decoration: none;
     display: block;
 }
 
 .sidebar ul li a:hover {
     transition: 0.5s;
-    background-color: black;
+    background-color: #f0f0f0;
     color: #00AE68;
 }
 
 .sidebar ul li a.active {
-    background-color: black;
+    background-color: #f0f0f0;
     color: #00AE68;
 }
 
@@ -430,7 +430,7 @@ body {
 }
 
 #drop-area {
-    top: 15px;
+    top: 5%;
     left: 15%;
     border-radius: 40px;
     border: dashed #243642;
@@ -439,8 +439,8 @@ body {
     position: relative;
     overflow: hidden;
     z-index: 1;
+    background-color: #f0f0f0;
 }
-
 .btnContainer {
     margin-left: 10px;
 }
@@ -536,6 +536,9 @@ section {
 }
 
 .styleInputContainer {
+    
+    display: flex;
+    align-items: center;
     margin-left: 10px;
 }
 
@@ -694,7 +697,7 @@ input[type=number] {
     display: flex;
     align-items: center;
     position: absolute;
-    background-color: #f9f9f9;
+    background-color: white;
     min-width: 160px;
     right: 0;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
@@ -794,3 +797,49 @@ h2.small-text {
     padding: 7px;
     border-radius: 10px;
 }
+
+
+.dark-mode {
+    filter: invert(90%);
+    transition: filter 0.3s ease;
+  }
+  .dark-mode-exclude {
+    filter: none !important;
+  }
+
+
+  .toggle-checkbox {
+    margin-left: 10px;
+    width: 40px;
+    height: 20px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #00AE68;
+    outline: none;
+    border-radius: 20px;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.3s ease;
+  }
+  .toggle-checkbox:checked {
+    filter: invert(90%);
+  }
+  .toggle-checkbox::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: left 0.3s ease;
+  }
+  .toggle-checkbox:checked::before {
+    left: 22px;
+  }
+
+  /* .darkModeToggle{
+    display: flex;
+    align-items: center;
+  } */

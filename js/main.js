@@ -13,6 +13,8 @@ const Sizedropdown = document.querySelector('.Sizedropdown')
 const textalign = document.querySelector('.textalign')
 const createFont = document.querySelector('.createFont')
 const Spacingdropdown = document.querySelector('.Spacingdropdown')
+const HtmlInput = document.querySelector('#HtmlInput')
+const HtmlSave = document.querySelector('#HtmlSave')
 let isZindex = false;
 colorInput.type = 'color'
 colorInput.id = 'colorInput'
@@ -22,6 +24,7 @@ let offsetY = 0;
 let draggedImage = null;
 let itemCounter = 0;
 let isResizing = false;
+let isCtrlPressed = false; 
 let selectedElements = [];
 let history = [];
 let redoStack = [];
@@ -37,6 +40,87 @@ const startButton = document.getElementById('startButton');
 const svgs = document.querySelectorAll("section > svg")
 const svgPath = document.querySelector('#svgImages path');
 const editable = document.querySelector('.editable-area')
+const darkModeToggle = document.getElementById('darkModeToggle');
+const isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+const darkSelectors = [
+  '.sidebar ul li a',
+  '.content-box',
+  '.header',
+  '.btns',
+  '.loading-container',
+  '.inputContainer2',
+  '.dropbtn',
+  '.textbtn',
+  '.language-select',
+  '.filelabel',
+  '.z-index-controls',
+  '.content',
+  '#savefile',
+  '#language-select',
+  '#drop-area',
+];
+
+if (isDarkMode) {
+  applyDarkMode();
+  darkModeToggle.checked = true;
+}
+
+function applyDarkMode() {
+  darkSelectors.forEach((selector) => {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach((element) => {
+      if (selector === '#drop-area' || selector === '.loading-container' || selector === '.content') {
+        if (selector === '#drop-area') {
+          element.style.backgroundColor = '#e9e9e9';
+        }
+        if (selector === '.loading-container') {
+          element.style.backgroundColor = '#444444';
+        }
+		if (selector === '.content') {
+		  element.style.backgroundColor = '#185458';
+		}
+      } else {
+        element.style.filter = 'invert(90%)';
+      }
+    });
+  });
+  document.querySelectorAll('.sidebar ul li a').forEach((el)=>{
+    el.style.color = '#00AE68'
+    el.style.filter ="invert(90%)"
+  })
+}
+
+function removeDarkMode() {
+  darkSelectors.forEach((selector) => {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach((element) => {
+      element.style.filter = '';
+      element.style.backgroundColor = '';
+    });
+  });
+  document.querySelectorAll('.sidebar ul li a').forEach((el)=>{
+    el.style.color = ''
+    el.style.filter =""
+  })
+}
+
+function toggleDarkMode() {
+  const isChecked = darkModeToggle.checked;
+
+  if (isChecked) {
+    applyDarkMode();
+    localStorage.setItem('darkMode', 'true');
+  } else {
+    removeDarkMode();
+    localStorage.setItem('darkMode', 'false');
+  }
+}
+
+darkModeToggle.addEventListener('change', toggleDarkMode);
+
+
+
 function showResizers(element) {
     const resizerClasses = [
         '.resizerRB', '.resizerLB', '.resizerLT', '.resizerRT',
@@ -47,6 +131,9 @@ function showResizers(element) {
         const resizer = element.querySelector(className);
         if (resizer) {
             resizer.style.display = className === '.z-index-controls' ? 'flex' : 'block';
+			if(localStorage.getItem('darkMode') === 'true'){
+				resizer.style.filter = className === '.z-index-controls' ? 'invert(90%)': '';
+			}
         }
     });
 
@@ -307,9 +394,10 @@ const verticalLine = document.getElementById("vertical-line");
 
 
 function makeElementDraggable(element) {
+   
     element.addEventListener("mousedown", (e) => {
         if (isResizing) return;
-
+        
         isDraggingElement = true;
         offsetX = e.clientX - element.getBoundingClientRect().left;
         offsetY = e.clientY - element.getBoundingClientRect().top;
@@ -440,11 +528,11 @@ function restoreState(state) {
         }
 
         addResizers(newItem);
-        makeElementDraggable(newItem);
 
         newItem.addEventListener('click', function(e) {
             toggleSelectedElement(newItem, e);
         });
+        makeElementDraggable(newItem);
 
         elements.push(newItem);
         dropArea.appendChild(newItem);
@@ -557,7 +645,6 @@ function createImage(src) {
     return img;
 }
 
-    let isCtrlPressed = false; // Ctrl 키 상태 확인
     
     // Ctrl 키 상태 감지
     document.addEventListener('keydown', (e) => {
@@ -579,10 +666,9 @@ function toggleSelectedElement(newElement) {
             selectedElement.classList.remove('selected');
             selectedElements = selectedElements.filter((el) => el !== newElement);
         } else {
-            console.log(selectedElement)
-            
-            console.log(selectedElements)
             if (!selectedElement.classList.contains('group-container')) {
+                isDragging=false
+                isDraggingElement =false
                 selectedElements.push(selectedElement);
                 if (selectedElements.length > 0) {
                     groupSelectedElements(selectedElements);
@@ -591,9 +677,12 @@ function toggleSelectedElement(newElement) {
         }
     } else {
         // Ctrl 키 없이 선택 -> 단일 선택
-        selectedElements.forEach((el) => el.classList.remove('selected'));
+        if (!selectedElement.classList.contains('group-container')) {
+            selectedElements.forEach((el) => el.classList.remove('selected'));
         selectedElements = [newElement];
         newElement.classList.add('selected');
+        }
+        
     }
     if (dropArea.children) {
         updateButtonStates(selectedElement);
@@ -782,7 +871,7 @@ if (!window.isKeyDownEventRegistered) {
                 sizeSlider.value = sizeValue;
             });
 
-            AngleFunction()
+           AngleFunction()
             spacingFunction()
 
         }
@@ -876,9 +965,32 @@ dropArea.addEventListener('focusout', (e) => {
 }
 
 AngleFunction = () => {
-    Rotatedropdown.style.display = 'inline-block'
-    const angleSlider = document.querySelector('#angleSlider')
-    const angleInput = document.querySelector('#angle')
+    // Rotatedropdown.remove()
+    // const Rotatedropdown_content = document.createElement('div')
+    // Rotatedropdown_content.classList.add('.Rotatedropdown-content')
+    // const angleSlider = document.createElement('input');
+    // angleSlider.type = 'range';
+    // angleSlider.id = 'angleSlider';
+    // angleSlider.min = 0;
+    // angleSlider.max = 360;
+    // angleSlider.value = 0;
+    // angleSlider.className = 'slider';
+
+    // const angleInput = document.createElement('input');
+    // angleInput.type = 'number';
+    // angleInput.id = 'angle';
+    // angleInput.min = 0;
+    // angleInput.max = 360;
+    // angleInput.value = 0;
+    // angleInput.className = 'angle';
+    // Rotatedropdown.style.display = 'inline-block'
+    // Rotatedropdown_content.appendChild(angleSlider)
+    // Rotatedropdown_content.appendChild(angleInput)
+    // dropArea.appendChild(Rotatedropdown_content)
+    Rotatedropdown.style.display='inline-block'
+const angleSlider = document.querySelector("#angleSlider")
+const angleInput = document.querySelector('#angle')
+
 
     const currentAngle = window.getComputedStyle(selectedElement.firstChild).transform;
     const matrix = currentAngle.match(/matrix\(([^)]+)\)/);
@@ -1714,7 +1826,7 @@ const loadingOverlay = document.getElementById('loadingOverlay');
 
                     dropArea.style.border = originalBorder;
                     dropArea.style.left = '15%';
-                    dropArea.style.margin = '40px';
+                    dropArea.style.top="5%"
                 })
                 .catch(err => {
                     console.error("이미지 저장 중 오류 발생:", err);
@@ -1722,10 +1834,11 @@ const loadingOverlay = document.getElementById('loadingOverlay');
 
                     // 로딩 화면 숨기기
                     loadingOverlay.style.display = 'none';
-
+                    loadingOverlay.style.position ="relative"
                     dropArea.style.border = originalBorder;
                     dropArea.style.left = '15%';
-                    dropArea.style.margin = '40px';
+                    dropArea.style.top = '5%';
+
                 });
         });
 
@@ -2174,7 +2287,9 @@ const translations = {
         Ribbons: "Ribbons",
         Etc: "Etc",
         Circle: "Circle",
-        Shild: "Shild"
+        Shild: "Shild",
+        save:"Save",
+        htmlInput:"Upload New Html"
     },
     ko: {
         opacity: "투명도",
@@ -2197,6 +2312,52 @@ const translations = {
         Ribbons: "리본",
         Etc: "기타",
         Circle: "원형",
-        Shild: "방패 모형"
+        Shild: "방패 모형",
+        save:"저장",
+        htmlInput:"요소 불러오기"
     }
 };
+
+HtmlInput.addEventListener('change', function() {
+    const file = HtmlInput.files[0];
+
+    if (file) {
+        
+    console.log(1)
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            console.log(e.target.result)
+            const content = e.target.result;
+            dropArea.innerHTML = content;
+            console.log(content)
+        };
+        reader.readAsText(file);
+    } else{
+        alert('파일을 선택해주세요')
+    }
+});
+
+HtmlSave.addEventListener('click', function () {
+    const htmlContent = dropArea.innerHTML;
+    const saveName = document.querySelector('#savefile').value;
+
+    // 파일 이름이 빈 경우 경고 메시지
+    if (saveName.trim() === '') {
+        return alert('파일이름을 입력해주세요');
+    }
+
+    loadingOverlay.style.display = 'block'; // overlay 표시
+
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${saveName}.html`; 
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url); 
+
+    // 파일 저장이 완료된 후 loadingOverlay 숨기기
+    loadingOverlay.style.display = 'none'; // overlay 숨기기
+});
