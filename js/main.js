@@ -156,7 +156,6 @@ function endDrag() {
         selectedElements = elements.filter((element) => isElementInRect(element, rect));
 
         if (selectedElements.length > 0) {
-            console.log(selectedElements)
             groupSelectedElements(selectedElements);
         }
     }
@@ -567,12 +566,11 @@ function createImage(src) {
     
     document.addEventListener('keyup', (e) => {
         if (e.key === 'Control') isCtrlPressed = false;
-    });       
+    });
 
 function toggleSelectedElement(newElement) {
     selectedElement = newElement;
     
-
     if (isCtrlPressed) {
         if (selectedElements.includes(selectedElement)) {
             // 이미 선택된 경우 -> 선택 해제
@@ -581,13 +579,14 @@ function toggleSelectedElement(newElement) {
             selectedElement.classList.remove('selected');
             selectedElements = selectedElements.filter((el) => el !== newElement);
         } else {
-            const selectChild = selectedElement.children
-            selectedElements.push(selectChild);
+            console.log(selectedElement)
             
             console.log(selectedElements)
-            if(selectedElements.length >0){
-
-                groupSelectedElements(selectedElements)
+            if (!selectedElement.classList.contains('group-container')) {
+                selectedElements.push(selectedElement);
+                if (selectedElements.length > 0) {
+                    groupSelectedElements(selectedElements);
+                }
             }
         }
     } else {
@@ -1416,11 +1415,8 @@ function copyElement(element) {
     newItem.appendChild(svgContent.firstChild);
     const currentLeft = element.offsetLeft;
     const currentTop = element.offsetTop;
-    console.log(element)
     newItem.style.left = `${currentLeft + 20}px`;
     newItem.style.top = `${currentTop + 20}px`;
-    
-    console.log(newItem)
     addResizers(newItem);
     if (isCircleText) {
         newItem.classList.add('text-box', 'circle-text');
